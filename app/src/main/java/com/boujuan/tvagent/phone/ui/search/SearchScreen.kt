@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -106,7 +107,7 @@ fun SearchScreen() {
     val loading by vm.loading.collectAsStateWithLifecycle()
     val tap = rememberTap()
     var text by rememberSaveable { mutableStateOf("") }
-    var tab by rememberSaveable { mutableStateOf(0) }
+    var tab by rememberSaveable { mutableIntStateOf(0) }
     val list = LISTS[tab].first
     LaunchedEffect(list) { vm.load(list) }
     val send = { if (text.isNotBlank()) { tap(); vm.send(text.trim()) } }

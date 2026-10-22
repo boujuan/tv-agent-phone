@@ -19,7 +19,7 @@ certificate; no Google Play services, no account, no cloud of its own.
 | **More › Agents** | Every computer this phone is paired with: switch, edit its addresses (e.g. LAN then Tailscale), forget (here and on the agent) |
 | **More › This app** | Theme (system, light, dark), colours from the wallpaper, vibration on remote presses |
 
-English and Spanish (from the phone's language). Android 10 (API 29) or newer.
+English and Spanish (from the phone's language). Android 10 (API 29) or newer; built for Android 17 (API 37).
 
 ## What it needs
 
@@ -31,7 +31,8 @@ English and Spanish (from the phone's language). Android 10 (API 29) or newer.
 
 ## Set up
 
-1. Build and install (the Android SDK, JDK 17; `local.properties` with `sdk.dir=…`, which isn't committed):
+1. Build and install (JDK 17 and the Android SDK with Platform 37.0; `local.properties` with `sdk.dir=…`, which
+   isn't committed; the Gradle wrapper fetches Gradle 9.8.2, checked against its SHA-256):
 
    ```bash
    ./gradlew assembleDebug
@@ -43,7 +44,9 @@ English and Spanish (from the phone's language). Android 10 (API 29) or newer.
 2. On the computer: the panel's **Settings › Phones › Pair a phone…** shows a QR code and a code (5 minutes, one use).
 3. On the phone: open TV Agent, **Scan the QR code**. Or **Type the code** with the computer's address: the app
    then shows the certificate's fingerprint, which must be the one under the code in the panel.
-4. The first time you speak, allow the microphone; the first scan, the camera.
+4. On Android 17, allow access to the local network (asked at the start; without it the app reaches the computer
+   only on an address outside the LAN, such as Tailscale). The first time you speak, allow the microphone; the
+   first scan, the camera.
 
 To control the TV from the Quick Settings panel, edit the tiles and add **TV command**; the home-screen widget is a
 single microphone button. Both open a small panel that listens at once and closes after the result.

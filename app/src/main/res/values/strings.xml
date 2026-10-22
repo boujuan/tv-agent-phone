@@ -267,4 +267,10 @@
     <string name="dynamic_color">Colours from the wallpaper</string>
     <string name="feel">Feel</string>
     <string name="haptics">Vibrate on remote presses</string>
+
+    <!-- Local network (Android 17+) -->
+    <string name="local_network_title">Allow access to the local network</string>
+    <string name="local_network_why">TV Agent talks to the agent on your computer over your home network; Android 17 asks first. Without it, only an address outside the local network (e.g. Tailscale) works.</string>
+    <string name="allow">Allow</string>
+    <string name="open_settings">Open the app’s settings</string>
 </resources>

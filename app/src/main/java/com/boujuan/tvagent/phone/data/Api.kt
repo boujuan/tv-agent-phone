@@ -162,10 +162,10 @@ class AgentApi(
         call(Request.Builder().post(body), path, slow, okCodes) { json.decodeFromString(de, it) }
 
     private suspend fun bytes(builder: Request.Builder, path: String): ByteArray =
-        execute(builder, path, slow = true, okCodes = emptySet()).use { it.body!!.bytes() }
+        execute(builder, path, slow = true, okCodes = emptySet()).use { it.body.bytes() }
 
     private suspend fun <T> call(builder: Request.Builder, path: String, slow: Boolean, okCodes: Set<Int>, parse: (String) -> T): T =
-        execute(builder, path, slow, okCodes).use { parse(it.body!!.string()) }
+        execute(builder, path, slow, okCodes).use { parse(it.body.string()) }
 
     private suspend fun execute(builder: Request.Builder, path: String, slow: Boolean, okCodes: Set<Int>): Response {
         if (token != null) builder.header("Authorization", "Bearer $token")
@@ -191,7 +191,7 @@ class AgentApi(
     }
 
     private fun errorDetail(r: Response): String {
-        val text = r.body?.string().orEmpty()
+        val text = r.body.string()
         val detail = runCatching {
             val o = json.parseToJsonElement(text).jsonObject
             (o["detail"] ?: o["error"])?.let { (it as? JsonPrimitive)?.content ?: it.toString() }

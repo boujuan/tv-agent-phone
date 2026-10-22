@@ -97,8 +97,10 @@ fun AppRoot(pairingLink: PairingLink?, onLinkUsed: () -> Unit) {
         when {
             agents == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             agents!!.isEmpty() || pairingLink != null -> Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { pad ->
-                PairScreen(Modifier.padding(pad), link = pairingLink, onDone = onLinkUsed,
-                    onCancel = if (agents!!.isEmpty()) null else onLinkUsed)
+                Column(Modifier.padding(pad)) {
+                    LocalNetworkNotice()
+                    PairScreen(link = pairingLink, onDone = onLinkUsed, onCancel = if (agents!!.isEmpty()) null else onLinkUsed)
+                }
             }
             else -> Main(snackbar)
         }
@@ -158,6 +160,7 @@ private fun Main(snackbar: SnackbarHostState) {
                 composable("app") { AppPrefsScreen() }
                 composable("pair") { PairScreen(link = null, onDone = { nav.popBackStack() }, onCancel = { nav.popBackStack() }) }
             }
+            LocalNetworkNotice(Modifier.align(Alignment.BottomCenter))
             VoicePanel(Modifier.align(Alignment.TopCenter))       // the mic button floats at the bottom
         }
     }

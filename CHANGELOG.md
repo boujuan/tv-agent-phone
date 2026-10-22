@@ -5,7 +5,8 @@ One section per release, newest first; each `## X.Y.Z` section becomes that tag'
 
 ## 0.1.0 — unreleased
 
-Needs tv-agent's server with paired phones (its `clients.py`, after server 0.2.0) and its panel to pair.
+Needs tv-agent's server with paired phones (its `clients.py`, after server 0.2.0) and its panel to pair. Built for
+Android 17 (API 37; Gradle 9.8.2, AGP 9.4.1, Kotlin 2.4.21), runs on Android 10 and newer.
 
 ### Added
 - Pairing with an agent from the panel's QR code (CameraX + ZXing, no Google Play services) or a typed code with
@@ -25,3 +26,4 @@ Needs tv-agent's server with paired phones (its `clients.py`, after server 0.2.0
   Decisions (steps, models, speech-to-text, taught sentences, try a sentence), Settings (player, quality, languages,
   binge, auto skip, Twitch, history), Agents, This app (theme, colours, haptics).
 - English and Spanish.
+- Asks for Android 17's local-network access, which reaching the computer on the LAN needs.

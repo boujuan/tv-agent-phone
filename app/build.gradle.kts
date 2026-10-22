@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.android.application)        // compiles the Kotlin too (AGP 9)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -15,12 +14,12 @@ fun releaseKey(name: String): String? =
 
 android {
     namespace = "com.boujuan.tvagent.phone"
-    compileSdk = 34
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.boujuan.tvagent.phone"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 37
         // Released as v<versionName> tags (see RELEASING.md); bump versionCode with every release.
         versionCode = 1
         versionName = "0.1.0"
@@ -52,9 +51,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures {
         compose = true

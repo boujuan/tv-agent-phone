@@ -262,4 +262,10 @@
     <string name="dynamic_color">Colores del fondo de pantalla</string>
     <string name="feel">Tacto</string>
     <string name="haptics">Vibrar al pulsar el mando</string>
+
+    <!-- Local network (Android 17+) -->
+    <string name="local_network_title">Permite el acceso a la red local</string>
+    <string name="local_network_why">TV Agent habla con el agente de tu ordenador por la red de casa; Android 17 pregunta antes. Sin él, solo funciona una dirección fuera de la red local (p. ej. Tailscale).</string>
+    <string name="allow">Permitir</string>
+    <string name="open_settings">Abrir los ajustes de la app</string>
 </resources>

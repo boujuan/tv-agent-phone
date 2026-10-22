@@ -1,8 +1,9 @@
 package com.boujuan.tvagent.phone.data
 
 import kotlinx.coroutines.runBlocking
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
+import mockwebserver3.MockResponse
+import mockwebserver3.MockWebServer
+import okhttp3.Headers.Companion.headersOf
 import okhttp3.tls.HandshakeCertificates
 import okhttp3.tls.HeldCertificate
 import org.junit.After
@@ -24,17 +25,16 @@ class AgentApiTest {
     fun start() {
         val held = HeldCertificate.Builder().commonName("tv-agent on test").build()     // no SAN: host names unchecked
         server = MockWebServer()
-        server.useHttps(HandshakeCertificates.Builder().heldCertificate(held).build().sslSocketFactory(), false)
+        server.useHttps(HandshakeCertificates.Builder().heldCertificate(held).build().sslSocketFactory())
         server.start()
         pin = sha256(held.certificate.encoded)
         url = "https://127.0.0.1:${server.port}"
     }
 
     @After
-    fun stop() = server.shutdown()
+    fun stop() = server.close()
 
-    private fun json(body: String, code: Int = 200) =
-        MockResponse().setResponseCode(code).setHeader("Content-Type", "application/json").setBody(body)
+    private fun json(body: String, code: Int = 200) = MockResponse(code, headersOf("Content-Type", "application/json"), body)
 
     @Test
     fun `calls go to the pinned agent with this phone's token`() = runBlocking {
@@ -49,8 +49,8 @@ class AgentApiTest {
         assertEquals(600L, np.player?.positionS)
         assertEquals("English", np.tracks?.audio?.first()?.label)
         val request = server.takeRequest()
-        assertEquals("/v1/now-playing", request.path)
-        assertEquals("Bearer tvp_secret", request.getHeader("Authorization"))
+        assertEquals("/v1/now-playing", request.target)
+        assertEquals("Bearer tvp_secret", request.headers["Authorization"])
     }
 
     @Test
@@ -97,8 +97,8 @@ class AgentApiTest {
         assertEquals("tvp_new", reply.token)
         assertEquals(8769, reply.streamPort)
         val request = server.takeRequest()
-        assertNull(request.getHeader("Authorization"))
-        assertEquals("""{"code":"AN3977VW","name":"Pixel"}""", request.body.readUtf8())
+        assertNull(request.headers["Authorization"])
+        assertEquals("""{"code":"AN3977VW","name":"Pixel"}""", request.body?.utf8())
     }
 
     @Test
@@ -109,11 +109,11 @@ class AgentApiTest {
         api.audio(ByteArray(32000))
         api.text("pause")
         val audio = server.takeRequest()
-        assertEquals("32000", audio.getHeader("Content-Length"))
-        assertNull(audio.getHeader("Transfer-Encoding"))
+        assertEquals("32000", audio.headers["Content-Length"])
+        assertNull(audio.headers["Transfer-Encoding"])
         val text = server.takeRequest()
-        assertEquals("""{"text":"pause","source":"phone"}""", text.body.readUtf8())
-        assertNull(text.getHeader("Transfer-Encoding"))
+        assertEquals("""{"text":"pause","source":"phone"}""", text.body?.utf8())
+        assertNull(text.headers["Transfer-Encoding"])
     }
 
     @Test

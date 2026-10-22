@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -100,12 +101,13 @@ inline fun <reified VM : ViewModel> appViewModel(crossinline make: (TvAgentApp) 
 fun Messages(vm: AgentViewModel) {
     val snackbar = LocalSnackbar.current
     val context = LocalContext.current
+    val resources = LocalResources.current
     LaunchedEffect(vm) {
         val scope = this
         vm.messages.collect { m ->
             val text = when (m) {
                 is UiMessage.Text -> m.text
-                is UiMessage.Res -> context.getString(m.id)
+                is UiMessage.Res -> resources.getString(m.id)
                 is UiMessage.Error -> describe(context, m.error)
             }
             snackbar.currentSnackbarData?.dismiss()         // the newest replaces it at once
@@ -183,7 +185,7 @@ fun RemoteImage(url: String?, modifier: Modifier = Modifier, contentScale: Conte
         value = withContext(Dispatchers.IO) {
             runCatching {
                 context.app.web.newCall(Request.Builder().url(url).build()).execute().use { r ->
-                    val bytes = r.body?.bytes() ?: return@use null
+                    val bytes = r.body.bytes()
                     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
                     BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
                     var sample = 1

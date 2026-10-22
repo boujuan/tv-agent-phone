@@ -3,6 +3,8 @@
 
     <!-- The agent's HTTPS API and audio stream on the LAN (or Tailscale); posters from the internet. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 17+: reaching devices on the local network (the agent's computer) needs the user's OK. -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
     <!-- Hold-to-talk: the phone's microphone, only while a command is spoken. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Scanning the panel's pairing QR code. -->

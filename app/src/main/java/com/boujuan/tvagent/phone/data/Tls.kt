@@ -1,5 +1,6 @@
 package com.boujuan.tvagent.phone.data
 
+import android.annotation.SuppressLint
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.security.MessageDigest
@@ -17,6 +18,7 @@ import javax.net.ssl.X509TrustManager
  * the token is never sent, because the handshake fails first. Host names aren't checked, since the pin already
  * names the one certificate (and the laptop's address can change).
  */
+@SuppressLint("CustomX509TrustManager")     // it narrows trust to one certificate; it never widens it
 class PinnedTrust(private val pin: String) : X509TrustManager {
     override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
         val leaf = chain?.firstOrNull() ?: throw CertificateException("no certificate")
@@ -62,6 +64,8 @@ object Tls {
      */
     fun fingerprintOf(host: String, port: Int, timeoutMs: Int = 4000): String {
         var seen: String? = null
+        // Trusts anything, but only for this handshake, which sends nothing: the user compares what it saw.
+        @SuppressLint("CustomX509TrustManager")
         val capture = object : X509TrustManager {
             override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
                 seen = chain?.firstOrNull()?.let { sha256(it.encoded) }

@@ -53,6 +53,8 @@ fun AgentsScreen(onAdd: () -> Unit) {
     val snackbar = LocalSnackbar.current
     var forgetting by remember { mutableStateOf<SavedAgent?>(null) }
     var editing by remember { mutableStateOf<SavedAgent?>(null) }
+    val forgottenBoth = stringResource(R.string.forgotten_both)
+    val forgottenHere = stringResource(R.string.forgotten_here)
     Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         agents.orEmpty().forEach { a ->
             SectionCard(a.name + if (a.id == conn?.agent?.id) " ✓" else "") {
@@ -82,7 +84,7 @@ fun AgentsScreen(onAdd: () -> Unit) {
                     forgetting = null
                     scope.launch {
                         val told = repo.forget(a)
-                        snackbar.showSnackbar(context.getString(if (told) R.string.forgotten_both else R.string.forgotten_here))
+                        snackbar.showSnackbar(if (told) forgottenBoth else forgottenHere)
                     }
                 }) { Text(stringResource(R.string.forget)) }
             },
