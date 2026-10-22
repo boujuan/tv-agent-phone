@@ -66,6 +66,8 @@ single microphone button. Both open a small panel that listens at once and close
 
 ```bash
 ./gradlew assembleDebug testDebugUnitTest lintDebug
+# Against a running agent too (pairs, uses the API and the voice stream, unpairs): a pairing link from the panel
+./gradlew testDebugUnitTest --tests '*LiveAgentTest' -PtvAgentPairLink='tvagent://pair?…'
 ```
 
 | Path | What it is |
