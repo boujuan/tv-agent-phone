@@ -150,7 +150,7 @@ fun SearchScreen() {
             items.isNullOrEmpty() -> item {
                 Text(stringResource(R.string.list_empty), Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            else -> items(items, key = { it.imdb + (it.video ?: "") }) { item ->
+            else -> items(items, key = { "$list-${it.number}" }) { item ->
                 ListRow(item) { tap(); vm.pick(list, item) }
             }
         }

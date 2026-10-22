@@ -160,7 +160,7 @@ fun ActivityScreen() {
         if (!enabled) item {
             Text(stringResource(R.string.history_off), color = Amber)
         }
-        items(shown, key = { it.t }) { e -> EntryRow(e) { open = e } }
+        items(shown) { e -> EntryRow(e) { open = e } }
         if (more && filter == "all") item {
             OutlinedButton(onClick = { vm.loadMore() }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.load_more)) }
         }

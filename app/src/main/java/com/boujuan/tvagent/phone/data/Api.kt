@@ -62,6 +62,8 @@ class AgentApi(
     @Volatile var preferred = 0
         private set
     val activeUrl: String get() = urls[preferred]
+    /** The addresses in the order they're tried: the one that last answered first. */
+    val addresses: List<String> get() = urls.indices.map { urls[(preferred + it) % urls.size] }
 
     private val http: OkHttpClient = run {
         val trust = PinnedTrust(pin)

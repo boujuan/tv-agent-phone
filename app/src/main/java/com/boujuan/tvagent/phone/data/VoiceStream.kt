@@ -10,7 +10,9 @@ import java.io.BufferedOutputStream
 import java.io.BufferedReader
 import java.io.Closeable
 import java.io.DataOutputStream
+import java.io.IOException
 import java.net.Socket
+import java.net.URI
 
 /** What the agent says while a command streams in. */
 sealed interface StreamEvent {
@@ -88,11 +90,19 @@ class VoiceStream(private val socket: Socket, token: String) : Closeable {
     override fun close() = socket.close()
 
     companion object {
+        /** To the agent's addresses in turn, the one its API last answered on first. */
         fun open(api: AgentApi, agent: SavedAgent, token: String): VoiceStream {
-            val host = java.net.URI(api.activeUrl).host.removePrefix("[").removeSuffix("]")
-            val socket = Tls.socket(host, agent.streamPort, agent.pin)
-            socket.soTimeout = 20_000
-            return VoiceStream(socket, token)
+            var last: Exception? = null
+            for (url in api.addresses) {
+                try {
+                    val socket = Tls.socket(URI(url).host.trim('[', ']'), agent.streamPort, agent.pin)
+                    socket.soTimeout = 20_000
+                    return VoiceStream(socket, token)
+                } catch (e: Exception) {
+                    last = e
+                }
+            }
+            throw last ?: IOException("no address")
         }
     }
 }
