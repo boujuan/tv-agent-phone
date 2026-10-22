@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV Agent</string>
+    <string name="about_line">TV Agent for phones %1$s · MIT · github.com/boujuan/tv-agent-phone</string>
+    <string name="tile_label">TV command</string>
+    <string name="widget_description">Speak a command to the TV</string>
+
+    <!-- Navigation -->
+    <string name="tab_remote">Remote</string>
+    <string name="tab_playing">Playing</string>
+    <string name="tab_search">Search</string>
+    <string name="tab_activity">Activity</string>
+    <string name="tab_more">More</string>
+    <string name="overview">Overview</string>
+    <string name="overview_detail">The voice agent and the TV: status, diagnose, reconnect, screenshot</string>
+    <string name="decisions">Decisions</string>
+    <string name="decisions_detail">How a command is decided: steps, models, speech-to-text</string>
+    <string name="agent_settings">Settings</string>
+    <string name="agent_settings_detail">Player, quality, languages, binge mode, history</string>
+    <string name="agents">Agents</string>
+    <string name="agents_detail">The computers this phone is paired with</string>
+    <string name="app_settings">This app</string>
+    <string name="app_settings_detail">Theme, colours, haptics</string>
+    <string name="back">Back</string>
+    <string name="switch_agent">Switch agent</string>
+    <string name="add_agent">Add an agent</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="saved">Saved</string>
+    <string name="send">Send</string>
+    <string name="remove">Remove</string>
+    <string name="loading">Loading…</string>
+    <string name="try_again">Try again</string>
+    <string name="off">Off</string>
+
+    <!-- Errors -->
+    <string name="error_unreachable">Can’t reach the agent: is the computer on, the voice agent running and the phone on its network (or Tailscale)?</string>
+    <string name="error_revoked">This phone isn’t paired any more (revoked in the panel): pair it again</string>
+    <string name="error_other_computer">A different computer answers at that address (its certificate isn’t the paired one): not sent</string>
+
+    <!-- Voice -->
+    <string name="voice_button">Speak a command (hold, or tap)</string>
+    <string name="voice_connecting">Connecting…</string>
+    <string name="voice_listening">Listening: it decides when you pause</string>
+    <string name="voice_listening_whole">Listening: release or pause to send</string>
+    <string name="voice_deciding">Deciding…</string>
+    <string name="voice_no_agent">Pair an agent first</string>
+    <string name="voice_no_microphone">The microphone isn’t available</string>
+    <string name="voice_busy">Another command is being decided: try again in a moment</string>
+
+    <!-- Remote -->
+    <string name="key_sleep">Sleep</string>
+    <string name="key_wake">Wake</string>
+    <string name="key_info">Info</string>
+    <string name="key_menu">Menu</string>
+    <string name="key_numbers">Numbers</string>
+    <string name="key_back">Back</string>
+    <string name="key_home">Home</string>
+    <string name="key_back10">Back 10 s</string>
+    <string name="key_forward30">Forward 30 s</string>
+    <string name="key_play_pause">Play / pause</string>
+    <string name="key_ok">OK</string>
+    <string name="key_up">Up</string>
+    <string name="key_down">Down</string>
+    <string name="key_left">Left</string>
+    <string name="key_right">Right</string>
+    <string name="key_volume_down">Volume down</string>
+    <string name="key_volume_up">Volume up</string>
+    <string name="key_delete">Delete</string>
+    <string name="key_enter">Enter</string>
+    <string name="key_search">Search</string>
+    <string name="volume">Volume</string>
+    <string name="volume_level">Volume %1$d</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Sound on</string>
+    <string name="apps">Apps</string>
+    <string name="keyboard">Keyboard</string>
+    <string name="type_on_tv">Type on the TV</string>
+    <string name="type_on_tv_hint">Into the field the TV has selected (a search box). Letters without accents.</string>
+
+    <!-- Now playing -->
+    <string name="nothing_playing">Nothing playing</string>
+    <string name="nothing_playing_hint">Say a title, pick one in Search, or carry on with what you were watching.</string>
+    <string name="continue_watching">Continue watching</string>
+    <string name="something_playing">Playing</string>
+    <string name="season_episode">Season %1$d · Episode %2$d</string>
+    <string name="player_kodi">in Kodi</string>
+    <string name="player_just">in Just Player</string>
+    <string name="previous_episode">Previous episode</string>
+    <string name="next_episode">Next episode</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="stop">Stop</string>
+    <string name="skip">Skip</string>
+    <string name="skip_this">Skip the %1$s</string>
+    <string name="segment_intro">intro</string>
+    <string name="segment_recap">recap</string>
+    <string name="segment_credits">credits</string>
+    <string name="tracks">Audio and subtitles</string>
+    <string name="tracks_kodi_only">Choosing a track works in Kodi; here, subtitles on or off.</string>
+    <string name="audio">Audio</string>
+    <string name="subtitles">Subtitles</string>
+    <string name="subtitles_on">Subtitles on</string>
+    <string name="subtitles_off">Subtitles off</string>
+
+    <!-- Search -->
+    <string name="search_label">Play or do</string>
+    <string name="search_placeholder">the bear season 3 · dune · lofi on youtube</string>
+    <string name="suggest_continue" translatable="false">continue watching</string>
+    <string name="suggest_next" translatable="false">next episode</string>
+    <string name="suggest_whats_new" translatable="false">what\'s new</string>
+    <string name="suggest_new_films" translatable="false">new films</string>
+    <string name="suggest_skip_intro" translatable="false">skip the intro</string>
+    <string name="list_recent">Watching</string>
+    <string name="list_new">New episodes</string>
+    <string name="list_movies">New films</string>
+    <string name="list_empty">Nothing here</string>
+    <string name="decided_by">Decided by %1$s (%2$s)</string>
+
+    <!-- Activity -->
+    <string name="filter_all">All</string>
+    <string name="filter_voice">Spoken</string>
+    <string name="filter_wrong">Wrong or failed</string>
+    <string name="history_off">The agent keeps no history (Settings › Keep a history)</string>
+    <string name="load_more">Older</string>
+    <string name="heard_nothing">(nothing heard)</string>
+    <string name="response_times">Response times</string>
+    <string name="median_decided">Decided after you spoke (median)</string>
+    <string name="median_stt">Speech-to-text (median)</string>
+    <string name="median_doing">Doing it (median)</string>
+    <string name="chart_caption">Time to a decision, the last %1$d spoken commands</string>
+    <string name="t_after_speech">decided %1$d ms after speech</string>
+    <string name="t_stt">speech-to-text %1$d ms</string>
+    <string name="t_decide">%1$s %2$s ms</string>
+    <string name="t_done">done in %1$d ms</string>
+    <string name="action">Action</string>
+    <string name="decided_via">Decided by</string>
+    <string name="confidence">Confidence</string>
+    <string name="speech_to_text">Speech-to-text</string>
+    <string name="audio_length">Audio</string>
+    <string name="cost">Cost</string>
+    <string name="mark_wrong">Mark wrong</string>
+    <string name="not_wrong">Not wrong</string>
+    <string name="teach">Teach</string>
+    <string name="do_again">Do it again</string>
+    <string name="play_recording">Play the recording</string>
+    <string name="teach_title">Teach the right action</string>
+    <string name="teach_hint">It heard “%1$s”. Write what it should have done, as a command:</string>
+    <string name="teach_as">The right command</string>
+    <string name="check">Check</string>
+    <string name="teach_would">That does: %1$s</string>
+    <string name="teach_not_understood">The agent doesn’t understand that either</string>
+    <string name="taught">Taught: next time it does that</string>
+
+    <!-- Overview -->
+    <string name="voice_agent">Voice agent</string>
+    <string name="computer">Computer</string>
+    <string name="address">Address</string>
+    <string name="version">Version</string>
+    <string name="running_since">Running since</string>
+    <string name="llm">LLM</string>
+    <string name="player">Player</string>
+    <string name="tv">TV</string>
+    <string name="tv_unreachable">Can’t read the TV: %1$s</string>
+    <string name="model">Model</string>
+    <string name="screen">Screen</string>
+    <string name="in_front">In front</string>
+    <string name="network">Network</string>
+    <string name="ping">Ping from the computer</string>
+    <string name="cpu">CPU</string>
+    <string name="memory">Memory</string>
+    <string name="uptime">Up</string>
+    <string name="tv_app">TV app</string>
+    <string name="not_installed">not installed</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="diagnose">Diagnose</string>
+    <string name="speedtest">Speed test</string>
+    <string name="screenshot">Screenshot</string>
+    <string name="latency">Latency by stage</string>
+    <string name="latency_hint">Median / 95th percentile · how many, since the agent started</string>
+
+    <!-- Decisions -->
+    <string name="steps">Decision steps</string>
+    <string name="steps_hint">After the clean-up, these decide a command in this order; one that can’t be reached passes to the next.</string>
+    <string name="step_phrases">Fixed phrases</string>
+    <string name="step_patterns">Pattern rules</string>
+    <string name="step_llm">The LLM</string>
+    <string name="step_d1">d1</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="rules_counts">Rules</string>
+    <string name="reasoning">Reasoning</string>
+    <string name="llm_private">Only providers that keep no data</string>
+    <string name="key_set">✔ %1$s key set on the agent’s computer</string>
+    <string name="key_missing">⚠ No %1$s key on the agent’s computer (set it in the panel)</string>
+    <string name="where_runs">Where</string>
+    <string name="where_local">On the computer</string>
+    <string name="where_hosted">Hosted</string>
+    <string name="where_local_first">Computer, hosted if it fails</string>
+    <string name="where_hosted_first">Hosted, computer if it fails</string>
+    <string name="hosted_model">Hosted model</string>
+    <string name="local_model">Local model</string>
+    <string name="stt_loaded">Local model loaded</string>
+    <string name="keep_recordings">Keep recordings (Activity)</string>
+    <string name="try_sentence">Try a sentence</string>
+    <string name="sentence">Sentence</string>
+    <string name="decide_only">Decide (doesn’t run it)</string>
+    <string name="taught_sentences">Taught sentences (%1$d)</string>
+    <string name="taught_none">None yet: teach one from Activity</string>
+
+    <!-- Settings -->
+    <string name="settings_hint">The agent’s settings: each change is saved on the computer and used from the next command.</string>
+    <string name="playback">Playback</string>
+    <string name="player_kodi_long">Kodi · full control</string>
+    <string name="player_just_long">Just Player · simple screen</string>
+    <string name="max_resolution">Highest resolution</string>
+    <string name="bitrate_limit">Highest bitrate: %1$d Mbit/s</string>
+    <string name="bitrate_unlimited">Highest bitrate: no limit</string>
+    <string name="bitrate_hint">Streams above it are skipped. The TV’s Ethernet tops out at ~94 Mbit/s; Wi-Fi does ~300.</string>
+    <string name="probe_streams">Check a link answers before playing it</string>
+    <string name="binge">Binge mode: the next episode starts by itself</string>
+    <string name="auto_skip">Skip intros and recaps by themselves</string>
+    <string name="languages">Languages</string>
+    <string name="languages_hint">Titles made where the native language is spoken play in it without subtitles; everything else uses this audio and the first available subtitles below.</string>
+    <string name="native_language">Native language</string>
+    <string name="subtitles_order">Subtitles, in order</string>
+    <string name="other">Other</string>
+    <string name="twitch_favourites">Twitch favourites (comma separated)</string>
+    <string name="keep_history">Keep a history of commands</string>
+
+    <!-- Agents and pairing -->
+    <string name="pair_title">Pair with an agent</string>
+    <string name="pair_intro">On the computer, open the TV Agent panel: Settings › Phones › Pair a phone. Scan its QR code, or type its address and code.</string>
+    <string name="this_phone_name">This phone’s name (shown in the panel)</string>
+    <string name="pair_link_found">Pair with %1$s at %2$s?</string>
+    <string name="fingerprint_is">Certificate fingerprint: %1$s</string>
+    <string name="pair">Pair</string>
+    <string name="scan_qr">Scan the QR code</string>
+    <string name="type_code">Type the code</string>
+    <string name="scan_hint">Point the camera at the QR code in the panel.</string>
+    <string name="allow_camera">Allow the camera</string>
+    <string name="agent_address">The computer’s address</string>
+    <string name="pairing_code">Code</string>
+    <string name="connect">Connect</string>
+    <string name="compare_fingerprint">Same fingerprint as the panel?</string>
+    <string name="compare_fingerprint_hint">The panel shows a fingerprint under the code. Pair only if it is this one; otherwise another computer is answering.</string>
+    <string name="it_matches">It matches: pair</string>
+    <string name="it_doesnt">It doesn’t</string>
+    <string name="addresses">Addresses</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="this_phone_there">This phone there</string>
+    <string name="use">Use</string>
+    <string name="edit_addresses">Addresses…</string>
+    <string name="addresses_hint">One per line, tried in this order (e.g. the LAN, then Tailscale). The certificate must stay the same.</string>
+    <string name="forget">Forget</string>
+    <string name="forget_title">Forget %1$s?</string>
+    <string name="forget_hint">The agent is told to forget this phone too, when it can be reached.</string>
+    <string name="forgotten_both">Forgotten here and on the agent</string>
+    <string name="forgotten_here">Forgotten here (the agent couldn’t be reached: revoke it in the panel)</string>
+
+    <!-- This app -->
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="dynamic_color">Colours from the wallpaper</string>
+    <string name="feel">Feel</string>
+    <string name="haptics">Vibrate on remote presses</string>
+</resources>

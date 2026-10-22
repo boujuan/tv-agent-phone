@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV Agent</string>
+    <string name="about_line">TV Agent para móviles %1$s · MIT · github.com/boujuan/tv-agent-phone</string>
+    <string name="tile_label">Orden a la tele</string>
+    <string name="widget_description">Di una orden a la tele</string>
+
+    <!-- Navegación -->
+    <string name="tab_remote">Mando</string>
+    <string name="tab_playing">En curso</string>
+    <string name="tab_search">Buscar</string>
+    <string name="tab_activity">Actividad</string>
+    <string name="tab_more">Más</string>
+    <string name="overview">Resumen</string>
+    <string name="overview_detail">El agente de voz y la tele: estado, diagnóstico, reconectar, captura</string>
+    <string name="decisions">Decisiones</string>
+    <string name="decisions_detail">Cómo se decide una orden: pasos, modelos, voz a texto</string>
+    <string name="agent_settings">Ajustes</string>
+    <string name="agent_settings_detail">Reproductor, calidad, idiomas, modo maratón, historial</string>
+    <string name="agents">Agentes</string>
+    <string name="agents_detail">Los ordenadores con los que está emparejado este móvil</string>
+    <string name="app_settings">Esta app</string>
+    <string name="app_settings_detail">Tema, colores, vibración</string>
+    <string name="back">Atrás</string>
+    <string name="switch_agent">Cambiar de agente</string>
+    <string name="add_agent">Añadir un agente</string>
+    <string name="close">Cerrar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="saved">Guardado</string>
+    <string name="send">Enviar</string>
+    <string name="remove">Quitar</string>
+    <string name="loading">Cargando…</string>
+    <string name="try_again">Reintentar</string>
+    <string name="off">Desactivados</string>
+
+    <!-- Errores -->
+    <string name="error_unreachable">No se llega al agente: ¿está encendido el ordenador, el agente de voz en marcha y el móvil en su red (o en Tailscale)?</string>
+    <string name="error_revoked">Este móvil ya no está emparejado (revocado en el panel): vuelve a emparejarlo</string>
+    <string name="error_other_computer">En esa dirección responde otro ordenador (su certificado no es el emparejado): no se ha enviado nada</string>
+
+    <!-- Voz -->
+    <string name="voice_button">Di una orden (mantén pulsado, o toca)</string>
+    <string name="voice_connecting">Conectando…</string>
+    <string name="voice_listening">Escuchando: decide cuando haces una pausa</string>
+    <string name="voice_listening_whole">Escuchando: suelta o haz una pausa para enviar</string>
+    <string name="voice_deciding">Decidiendo…</string>
+    <string name="voice_no_agent">Primero empareja un agente</string>
+    <string name="voice_no_microphone">El micrófono no está disponible</string>
+    <string name="voice_busy">Se está decidiendo otra orden: prueba en un momento</string>
+
+    <!-- Mando -->
+    <string name="key_sleep">Reposo</string>
+    <string name="key_wake">Encender</string>
+    <string name="key_info">Info</string>
+    <string name="key_menu">Menú</string>
+    <string name="key_numbers">Números</string>
+    <string name="key_back">Atrás</string>
+    <string name="key_home">Inicio</string>
+    <string name="key_back10">Atrás 10 s</string>
+    <string name="key_forward30">Adelante 30 s</string>
+    <string name="key_play_pause">Reproducir / pausa</string>
+    <string name="key_ok">OK</string>
+    <string name="key_up">Arriba</string>
+    <string name="key_down">Abajo</string>
+    <string name="key_left">Izquierda</string>
+    <string name="key_right">Derecha</string>
+    <string name="key_volume_down">Bajar volumen</string>
+    <string name="key_volume_up">Subir volumen</string>
+    <string name="key_delete">Borrar</string>
+    <string name="key_enter">Intro</string>
+    <string name="key_search">Buscar</string>
+    <string name="volume">Volumen</string>
+    <string name="volume_level">Volumen %1$d</string>
+    <string name="mute">Silenciar</string>
+    <string name="unmute">Con sonido</string>
+    <string name="apps">Apps</string>
+    <string name="keyboard">Teclado</string>
+    <string name="type_on_tv">Escribir en la tele</string>
+    <string name="type_on_tv_hint">En el campo que la tele tiene seleccionado (un buscador). Letras sin tildes.</string>
+
+    <!-- En curso -->
+    <string name="nothing_playing">No se está reproduciendo nada</string>
+    <string name="nothing_playing_hint">Di un título, elige uno en Buscar o sigue con lo que estabas viendo.</string>
+    <string name="continue_watching">Seguir viendo</string>
+    <string name="something_playing">Reproduciendo</string>
+    <string name="season_episode">Temporada %1$d · Capítulo %2$d</string>
+    <string name="player_kodi">en Kodi</string>
+    <string name="player_just">en Just Player</string>
+    <string name="previous_episode">Capítulo anterior</string>
+    <string name="next_episode">Siguiente capítulo</string>
+    <string name="pause">Pausa</string>
+    <string name="resume">Reanudar</string>
+    <string name="stop">Parar</string>
+    <string name="skip">Saltar</string>
+    <string name="skip_this">Saltar: %1$s</string>
+    <string name="segment_intro">intro</string>
+    <string name="segment_recap">resumen</string>
+    <string name="segment_credits">créditos</string>
+    <string name="tracks">Audio y subtítulos</string>
+    <string name="tracks_kodi_only">Elegir pista funciona en Kodi; aquí, subtítulos sí o no.</string>
+    <string name="audio">Audio</string>
+    <string name="subtitles">Subtítulos</string>
+    <string name="subtitles_on">Subtítulos sí</string>
+    <string name="subtitles_off">Subtítulos no</string>
+
+    <!-- Buscar -->
+    <string name="search_label">Reproducir o hacer</string>
+    <string name="search_placeholder">the bear temporada 3 · dune · lofi en youtube</string>
+    <string name="list_recent">Viendo</string>
+    <string name="list_new">Capítulos nuevos</string>
+    <string name="list_movies">Películas nuevas</string>
+    <string name="list_empty">Aquí no hay nada</string>
+    <string name="decided_by">Decidido por %1$s (%2$s)</string>
+
+    <!-- Actividad -->
+    <string name="filter_all">Todo</string>
+    <string name="filter_voice">Hablado</string>
+    <string name="filter_wrong">Mal o fallido</string>
+    <string name="history_off">El agente no guarda historial (Ajustes › Guardar un historial)</string>
+    <string name="load_more">Anteriores</string>
+    <string name="heard_nothing">(no se oyó nada)</string>
+    <string name="response_times">Tiempos de respuesta</string>
+    <string name="median_decided">Decidido tras hablar (mediana)</string>
+    <string name="median_stt">Voz a texto (mediana)</string>
+    <string name="median_doing">Hacerlo (mediana)</string>
+    <string name="chart_caption">Tiempo hasta decidir, las últimas %1$d órdenes habladas</string>
+    <string name="t_after_speech">decidido %1$d ms tras hablar</string>
+    <string name="t_stt">voz a texto %1$d ms</string>
+    <string name="t_decide">%1$s %2$s ms</string>
+    <string name="t_done">hecho en %1$d ms</string>
+    <string name="action">Acción</string>
+    <string name="decided_via">Decidido por</string>
+    <string name="confidence">Confianza</string>
+    <string name="speech_to_text">Voz a texto</string>
+    <string name="audio_length">Audio</string>
+    <string name="cost">Coste</string>
+    <string name="mark_wrong">Marcar como mal</string>
+    <string name="not_wrong">No está mal</string>
+    <string name="teach">Enseñar</string>
+    <string name="do_again">Repetir</string>
+    <string name="play_recording">Escuchar la grabación</string>
+    <string name="teach_title">Enseñar la acción correcta</string>
+    <string name="teach_hint">Oyó «%1$s». Escribe lo que debería haber hecho, como una orden:</string>
+    <string name="teach_as">La orden correcta</string>
+    <string name="check">Comprobar</string>
+    <string name="teach_would">Eso hace: %1$s</string>
+    <string name="teach_not_understood">El agente tampoco entiende eso</string>
+    <string name="taught">Aprendido: la próxima vez hará eso</string>
+
+    <!-- Resumen -->
+    <string name="voice_agent">Agente de voz</string>
+    <string name="computer">Ordenador</string>
+    <string name="address">Dirección</string>
+    <string name="version">Versión</string>
+    <string name="running_since">En marcha desde</string>
+    <string name="llm">LLM</string>
+    <string name="player">Reproductor</string>
+    <string name="tv">Tele</string>
+    <string name="tv_unreachable">No se puede leer la tele: %1$s</string>
+    <string name="model">Modelo</string>
+    <string name="screen">Pantalla</string>
+    <string name="in_front">Delante</string>
+    <string name="network">Red</string>
+    <string name="ping">Ping desde el ordenador</string>
+    <string name="cpu">CPU</string>
+    <string name="memory">Memoria</string>
+    <string name="uptime">Encendida</string>
+    <string name="tv_app">App de la tele</string>
+    <string name="not_installed">no instalada</string>
+    <string name="reconnect">Reconectar</string>
+    <string name="diagnose">Diagnosticar</string>
+    <string name="speedtest">Test de velocidad</string>
+    <string name="screenshot">Captura</string>
+    <string name="latency">Latencia por etapa</string>
+    <string name="latency_hint">Mediana / percentil 95 · cuántas, desde que arrancó el agente</string>
+
+    <!-- Decisiones -->
+    <string name="steps">Pasos de decisión</string>
+    <string name="steps_hint">Tras la limpieza, estos deciden una orden en este orden; uno al que no se llega pasa al siguiente.</string>
+    <string name="step_phrases">Frases fijas</string>
+    <string name="step_patterns">Reglas de patrones</string>
+    <string name="step_llm">El LLM</string>
+    <string name="step_d1">d1</string>
+    <string name="move_up">Subir</string>
+    <string name="move_down">Bajar</string>
+    <string name="rules_counts">Reglas</string>
+    <string name="reasoning">Razonamiento</string>
+    <string name="llm_private">Solo proveedores que no guardan datos</string>
+    <string name="key_set">✔ Clave de %1$s puesta en el ordenador del agente</string>
+    <string name="key_missing">⚠ Sin clave de %1$s en el ordenador del agente (ponla en el panel)</string>
+    <string name="where_runs">Dónde</string>
+    <string name="where_local">En el ordenador</string>
+    <string name="where_hosted">En la nube</string>
+    <string name="where_local_first">Ordenador; la nube si falla</string>
+    <string name="where_hosted_first">La nube; el ordenador si falla</string>
+    <string name="hosted_model">Modelo en la nube</string>
+    <string name="local_model">Modelo local</string>
+    <string name="stt_loaded">Modelo local cargado</string>
+    <string name="keep_recordings">Guardar grabaciones (Actividad)</string>
+    <string name="try_sentence">Probar una frase</string>
+    <string name="sentence">Frase</string>
+    <string name="decide_only">Decidir (sin hacerlo)</string>
+    <string name="taught_sentences">Frases enseñadas (%1$d)</string>
+    <string name="taught_none">Ninguna todavía: enseña una desde Actividad</string>
+
+    <!-- Ajustes -->
+    <string name="settings_hint">Los ajustes del agente: cada cambio se guarda en el ordenador y se usa desde la siguiente orden.</string>
+    <string name="playback">Reproducción</string>
+    <string name="player_kodi_long">Kodi · control completo</string>
+    <string name="player_just_long">Just Player · pantalla sencilla</string>
+    <string name="max_resolution">Resolución máxima</string>
+    <string name="bitrate_limit">Bitrate máximo: %1$d Mbit/s</string>
+    <string name="bitrate_unlimited">Bitrate máximo: sin límite</string>
+    <string name="bitrate_hint">Se saltan los streams por encima. El Ethernet de la tele llega a ~94 Mbit/s; el Wi-Fi a ~300.</string>
+    <string name="probe_streams">Comprobar que un enlace responde antes de reproducirlo</string>
+    <string name="binge">Modo maratón: el siguiente capítulo empieza solo</string>
+    <string name="auto_skip">Saltar intros y resúmenes solos</string>
+    <string name="languages">Idiomas</string>
+    <string name="languages_hint">Los títulos hechos donde se habla el idioma nativo se ven en él sin subtítulos; el resto usa este audio y los primeros subtítulos disponibles de abajo.</string>
+    <string name="native_language">Idioma nativo</string>
+    <string name="subtitles_order">Subtítulos, en orden</string>
+    <string name="other">Otros</string>
+    <string name="twitch_favourites">Favoritos de Twitch (separados por comas)</string>
+    <string name="keep_history">Guardar un historial de órdenes</string>
+
+    <!-- Agentes y emparejar -->
+    <string name="pair_title">Emparejar con un agente</string>
+    <string name="pair_intro">En el ordenador, abre el panel de TV Agent (en inglés): Settings › Phones › Pair a phone. Escanea su código QR o escribe su dirección y código.</string>
+    <string name="this_phone_name">Nombre de este móvil (lo verás en el panel)</string>
+    <string name="pair_link_found">¿Emparejar con %1$s en %2$s?</string>
+    <string name="fingerprint_is">Huella del certificado: %1$s</string>
+    <string name="pair">Emparejar</string>
+    <string name="scan_qr">Escanear el QR</string>
+    <string name="type_code">Escribir el código</string>
+    <string name="scan_hint">Apunta la cámara al código QR del panel.</string>
+    <string name="allow_camera">Permitir la cámara</string>
+    <string name="agent_address">Dirección del ordenador</string>
+    <string name="pairing_code">Código</string>
+    <string name="connect">Conectar</string>
+    <string name="compare_fingerprint">¿La misma huella que en el panel?</string>
+    <string name="compare_fingerprint_hint">El panel muestra una huella bajo el código. Empareja solo si es esta; si no, está respondiendo otro ordenador.</string>
+    <string name="it_matches">Coincide: emparejar</string>
+    <string name="it_doesnt">No coincide</string>
+    <string name="addresses">Direcciones</string>
+    <string name="fingerprint">Huella</string>
+    <string name="this_phone_there">Este móvil allí</string>
+    <string name="use">Usar</string>
+    <string name="edit_addresses">Direcciones…</string>
+    <string name="addresses_hint">Una por línea, probadas en este orden (p. ej. la LAN y luego Tailscale). El certificado tiene que ser el mismo.</string>
+    <string name="forget">Olvidar</string>
+    <string name="forget_title">¿Olvidar %1$s?</string>
+    <string name="forget_hint">También se le pide al agente que olvide este móvil, si se le puede alcanzar.</string>
+    <string name="forgotten_both">Olvidado aquí y en el agente</string>
+    <string name="forgotten_here">Olvidado aquí (no se llegó al agente: revócalo en el panel)</string>
+
+    <!-- Esta app -->
+    <string name="theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="dynamic_color">Colores del fondo de pantalla</string>
+    <string name="feel">Tacto</string>
+    <string name="haptics">Vibrar al pulsar el mando</string>
+</resources>
