@@ -3,7 +3,7 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
-## Unreleased
+## 0.2.1 — 2026-10-24
 
 ### Added
 - **More › Settings › Player** offers **TV Agent Player** (tv-agent's own player on the TV, with tv-agent from its
