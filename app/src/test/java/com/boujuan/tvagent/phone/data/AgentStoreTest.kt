@@ -79,4 +79,21 @@ class AgentStoreTest {
         assertEquals("dark", store.prefs.first().theme)
         assertFalse(store.prefs.first().haptics)
     }
+
+    @Test
+    fun `an answer from the agent brings its addresses up to date, an older agent's changes none`() = runBlocking {
+        val tailscale = "https://100.125.125.38:8768"
+        val saved = store.add(agent("laptop", "c".repeat(64)).copy(urls = listOf(tailscale, "https://192.168.1.51:8768")), "tvp_x")
+        val repo = AgentRepository(store, scope, okhttp3.OkHttpClient())
+        val conn = Connection(saved, AgentApi(saved.urls, saved.pin, "tvp_x"), "tvp_x")    // answered over Tailscale
+        val device = DeviceInfo(id = "d1", name = "Pixel")
+        repo.refresh(conn, Me(device, AgentInfo("laptop", "0.4.0"), 8769, addresses = null))
+        assertEquals(listOf(tailscale, "https://192.168.1.51:8768"), store.agents.first().single { it.id == saved.id }.urls)
+        repo.refresh(conn, Me(device, AgentInfo("laptop", "0.4.0"), 8769,
+            addresses = listOf("https://192.168.1.52:8768", tailscale)))
+        val now = store.agents.first().single { it.id == saved.id }
+        assertEquals(listOf(tailscale, "https://192.168.1.52:8768"), now.urls)
+        assertEquals("0.4.0", now.version)
+        assertEquals("tvp_x", store.token(now))
+    }
 }

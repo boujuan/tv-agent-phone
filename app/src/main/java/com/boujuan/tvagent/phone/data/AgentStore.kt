@@ -31,6 +31,7 @@ data class SavedAgent(
     val deviceName: String,
     val version: String = "",
     val sealedToken: String,
+    val manualUrls: List<String> = emptyList(),     // typed in by hand (Agents › Addresses…), kept after the agent's
 )
 
 @Serializable
@@ -112,6 +113,13 @@ class AgentStore(private val data: DataStore<Preferences>, private val sealer: S
 
     suspend fun update(agent: SavedAgent) = data.edit { p ->
         p[agentsKey] = json.encodeToString(agentList, decode(p).map { if (it.id == agent.id) agent else it })
+    }
+
+    /** An agent changed from its saved state as it is now (one transaction: no edit in between is lost). */
+    suspend fun edit(id: String, change: (SavedAgent) -> SavedAgent) = data.edit { p ->
+        val all = decode(p)
+        val next = all.map { if (it.id == id) change(it) else it }
+        if (next != all) p[agentsKey] = json.encodeToString(agentList, next)
     }
 
     suspend fun remove(id: String) = data.edit { p ->

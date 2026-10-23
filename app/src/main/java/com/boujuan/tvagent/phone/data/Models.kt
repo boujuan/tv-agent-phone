@@ -32,7 +32,13 @@ data class DeviceInfo(
 data class AgentInfo(val name: String = "", val version: String = "")
 
 @Serializable
-data class Me(val device: DeviceInfo, val agent: AgentInfo, @SerialName("stream_port") val streamPort: Int)
+data class Me(
+    val device: DeviceInfo,
+    val agent: AgentInfo,
+    @SerialName("stream_port") val streamPort: Int,
+    /** The agent's phone addresses as it listens on them now, in the order to try; null from an older agent. */
+    val addresses: List<String>? = null,
+)
 
 @Serializable
 data class Outcome(val ok: Boolean = false, val say: String = "")

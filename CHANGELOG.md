@@ -3,6 +3,15 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
+## Unreleased
+
+### Added
+- **The agent's addresses stay current by themselves**: whenever the agent answers (at start, on return, every
+  15 s while the app is open) the app reads the addresses it listens on now (`addresses` in
+  `GET /v1/clients/me`, tv-agent with it) and saves them, the one that answered first and any typed in by hand kept
+  after the agent's. A new LAN address, or Tailscale switched on, needs no pairing again and nothing typed. Every
+  address is still pinned to the agent's certificate; an agent without `addresses` changes nothing.
+
 ## 0.2.1 — 2026-10-24
 
 ### Added

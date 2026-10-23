@@ -54,8 +54,24 @@ class AgentRepository(val store: AgentStore, scope: CoroutineScope, private val 
         return told
     }
 
-    /** Addresses edited by hand (the laptop got a new one): kept in the order given. */
-    suspend fun setUrls(agent: SavedAgent, urls: List<String>) = store.update(agent.copy(urls = urls))
+    /** Addresses edited by hand: kept in the order given, and the ones added there kept from then on. */
+    suspend fun setUrls(agent: SavedAgent, urls: List<String>) = store.edit(agent.id) { Addresses.edited(it, urls) }
+
+    /**
+     * After the agent answered [me] over [conn]: its addresses as it listens on them now (a new LAN address, Tailscale)
+     * replace the saved ones, with the one that answered first and those typed by hand kept; its version and stream
+     * port too. An older agent that sends no addresses changes nothing.
+     */
+    suspend fun refresh(conn: Connection, me: Me) {
+        val offered = Addresses.offered(me.addresses)
+        store.edit(conn.agent.id) { a ->
+            a.copy(
+                urls = offered?.let { Addresses.merge(a, it, conn.api.activeUrl) } ?: a.urls,
+                version = me.agent.version.ifEmpty { a.version },
+                streamPort = me.streamPort.takeIf { it in 1..65535 } ?: a.streamPort,
+            )
+        }
+    }
 
     suspend fun select(agent: SavedAgent) = store.select(agent.id)
     suspend fun setPrefs(prefs: AppPrefs) = store.setPrefs(prefs)

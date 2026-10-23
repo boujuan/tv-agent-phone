@@ -188,10 +188,10 @@ private fun AgentSwitcher(nav: NavHostController) {
     val scope = rememberCoroutineScope()
     var open by remember { mutableStateOf(false) }
     var reachable by remember { mutableStateOf<Boolean?>(null) }
-    WhileVisible(15_000) {
-        reachable = conn?.api?.let { api -> runCatching { api.me() }.isSuccess }
+    WhileVisible(15_000) {            // also keeps the agent's addresses current (a new LAN address needs no fixing)
+        reachable = conn?.let { c -> runCatching { c.api.me() }.onSuccess { runCatching { repo.refresh(c, it) } }.isSuccess }
     }
-    LaunchedEffect(conn) { reachable = null }
+    LaunchedEffect(conn?.agent?.id) { reachable = null }
     Box {
         TextButton(onClick = { open = true }) {
             Box(Modifier.size(10.dp).background(

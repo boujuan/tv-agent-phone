@@ -61,7 +61,8 @@ single microphone button. Both open a small panel that listens at once and close
   Settings › Phones, or here: Agents › Forget, which tells the agent too).
 - **Every call is HTTPS pinned** to the agent's own certificate, by the SHA-256 the QR code carried (or you compared):
   on another network with the same addresses, nothing is sent, not even the token. Host names aren't checked
-  because the pin names the one certificate, and the laptop's address may change.
+  because the pin names the one certificate, and the laptop's address may change: the app keeps the addresses the
+  agent says it listens on (a new LAN address, its Tailscale one), each still pinned.
 - **The token is sealed** with AES-256-GCM under an Android Keystore key that can't leave the phone; the app's data
   isn't backed up (a restored copy couldn't open it anyway).
 - **The phone never gets** the agent's API keys, Stremio key, Kodi password or stream links (the agent doesn't serve
