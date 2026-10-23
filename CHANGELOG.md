@@ -3,6 +3,12 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
+## Unreleased
+
+### Added
+- **More › Settings › Player** offers **TV Agent Player** (tv-agent's own player on the TV, with tv-agent from its
+  `tvplayer` support on), and Playing names it and shows its tracks as it does Kodi's.
+
 ## 0.2.0 — 2026-10-23
 
 Works with any tv-agent server 0.3.0 or newer; one that reads it shows each phone's app version in the panel.

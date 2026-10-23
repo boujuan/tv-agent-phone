@@ -217,7 +217,7 @@ data class LangChoice(val code: String, val label: String)
 
 @Serializable
 data class SettingsChoices(
-    val player: List<String> = listOf("kodi", "just"),
+    val player: List<String> = listOf("tvplayer", "kodi", "just"),
     @SerialName("max_height") val maxHeight: List<Int> = listOf(2160, 1440, 1080, 720),
     val audio: List<LangChoice> = emptyList(),
     val subtitles: List<LangChoice> = emptyList(),

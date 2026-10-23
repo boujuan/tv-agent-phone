@@ -131,7 +131,11 @@ fun NowPlayingScreen() {
                         (item.episodeName?.let { " · $it" } ?: ""), style = MaterialTheme.typography.bodyLarge)
                 }
                 player?.let {
-                    Text(stringResource(if (it.app == "kodi") R.string.player_kodi else R.string.player_just),
+                    Text(stringResource(when (it.app) {
+                        "tvplayer" -> R.string.player_tvplayer
+                        "kodi" -> R.string.player_kodi
+                        else -> R.string.player_just
+                    }),
                         color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }

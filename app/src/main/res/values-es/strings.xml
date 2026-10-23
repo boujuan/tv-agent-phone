@@ -83,6 +83,7 @@
     <string name="continue_watching">Seguir viendo</string>
     <string name="something_playing">Reproduciendo</string>
     <string name="season_episode">Temporada %1$d · Capítulo %2$d</string>
+    <string name="player_tvplayer">en TV Agent Player</string>
     <string name="player_kodi">en Kodi</string>
     <string name="player_just">en Just Player</string>
     <string name="previous_episode">Capítulo anterior</string>
@@ -96,7 +97,7 @@
     <string name="segment_recap">resumen</string>
     <string name="segment_credits">créditos</string>
     <string name="tracks">Audio y subtítulos</string>
-    <string name="tracks_kodi_only">Elegir pista funciona en Kodi; aquí, subtítulos sí o no.</string>
+    <string name="tracks_kodi_only">Elegir pista funciona en TV Agent Player y Kodi; aquí, subtítulos sí o no.</string>
     <string name="audio">Audio</string>
     <string name="subtitles">Subtítulos</string>
     <string name="subtitles_on">Subtítulos sí</string>
@@ -205,6 +206,7 @@
     <!-- Ajustes -->
     <string name="settings_hint">Los ajustes del agente: cada cambio se guarda en el ordenador y se usa desde la siguiente orden.</string>
     <string name="playback">Reproducción</string>
+    <string name="player_tvplayer_long">TV Agent Player · el más rápido, saltos exactos</string>
     <string name="player_kodi_long">Kodi · control completo</string>
     <string name="player_just_long">Just Player · pantalla sencilla</string>
     <string name="max_resolution">Resolución máxima</string>

@@ -75,7 +75,11 @@ fun SettingsScreen() {
             color = MaterialTheme.colorScheme.onSurfaceVariant)
         SectionCard(stringResource(R.string.playback)) {
             Choice(stringResource(R.string.player), r.choices.player.map {
-                it to stringResource(if (it == "kodi") R.string.player_kodi_long else R.string.player_just_long)
+                it to stringResource(when (it) {
+                    "tvplayer" -> R.string.player_tvplayer_long
+                    "kodi" -> R.string.player_kodi_long
+                    else -> R.string.player_just_long
+                })
             }, s.player) { vm.set("player", JsonPrimitive(it)) }
             Choice(stringResource(R.string.max_resolution), r.choices.maxHeight.map { it to "${it}p" }, s.maxHeight) {
                 vm.set("max_height", JsonPrimitive(it))
