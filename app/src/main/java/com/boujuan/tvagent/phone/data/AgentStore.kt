@@ -38,6 +38,7 @@ data class AppPrefs(
     val theme: String = "system",   // "system", "light", "dark"
     val haptics: Boolean = true,
     val dynamicColor: Boolean = true,
+    val autoUpdate: Boolean = true,     // install newer GitHub releases by themselves (About)
 )
 
 /** Seals and opens secrets at rest. */

@@ -21,8 +21,8 @@ android {
         minSdk = 29
         targetSdk = 37
         // Released as v<versionName> tags (see RELEASING.md); bump versionCode with every release.
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     signingConfigs {
@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.camera.lifecycle)
     implementation(libs.camera.view)
     implementation(libs.zxing.core)
+    implementation(libs.work.runtime)
     implementation(libs.okhttp)
     implementation(libs.serialization.json)
     implementation(libs.coroutines.android)

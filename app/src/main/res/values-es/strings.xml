@@ -302,4 +302,40 @@
     <string name="vocabulary_also_unknown">Este agente aún no los lista: actualiza tv-agent.</string>
     <string name="vocabulary_also_none">Ninguno todavía: la biblioteca se lee un momento después de activarlo.</string>
     <string name="vocabulary_count">%1$d tuyos · %2$d enviados con cada orden</string>
+
+    <!-- Acerca de, actualizaciones -->
+    <string name="about">Acerca de</string>
+    <string name="about_detail">Versiones, actualizaciones, licencia</string>
+    <string name="about_app">TV Agent para móviles</string>
+    <string name="signed_with">Firmada con</string>
+    <string name="release_key">la clave de publicación</string>
+    <string name="debug_key">una clave de desarrollo</string>
+    <string name="updates">Actualizaciones</string>
+    <string name="updates_channel">Actualizaciones</string>
+    <string name="update_idle">Aún no se ha comprobado.</string>
+    <string name="update_none">Al día: la %1$s es la última.</string>
+    <string name="update_available">Ya está la %1$s (esta es la %2$s).</string>
+    <string name="update_downloading">Descargando la %1$s…</string>
+    <string name="update_installing">Instalando la %1$s…</string>
+    <string name="update_failed">La actualización no ha funcionado: %1$s</string>
+    <string name="update_check">Buscar actualizaciones</string>
+    <string name="update_now">Actualizar ahora</string>
+    <string name="update_allow">Permitir instalar actualizaciones</string>
+    <string name="update_permission_hint">Android lo pregunta una vez: permite «Instalar aplicaciones desconocidas» para TV Agent, para que pueda instalar sus propias actualizaciones.</string>
+    <string name="update_auto">Actualizar automáticamente</string>
+    <string name="update_auto_hint">Cada 12 horas busca una versión más nueva en GitHub y la instala sola, si su SHA-256 y la firma de la clave de publicación cuadran. Nunca una versión anterior.</string>
+    <string name="update_needs_you">Hay una actualización lista: toca para instalarla.</string>
+    <string name="update_done">Actualizada a la %1$s.</string>
+    <string name="update_available_notice">Ya está la %1$s: toca para instalarla.</string>
+    <string name="server_version">Versión del agente</string>
+    <string name="panel">Panel</string>
+    <string name="agent_update_newer">%1$s: ya está la %2$s</string>
+    <string name="agent_updates_checked">El agente buscó actualizaciones %1$s</string>
+    <string name="licence">Licencia</string>
+    <string name="licence_text">Licencia MIT, © boujuan: libre de usar, cambiar y compartir, sin garantía.</string>
+    <string name="link_repo">Código</string>
+    <string name="link_releases">Versiones</string>
+    <string name="link_changelog">Cambios</string>
+    <string name="link_licence">Licencia</string>
+    <string name="show_all">Ver todo</string>
 </resources>

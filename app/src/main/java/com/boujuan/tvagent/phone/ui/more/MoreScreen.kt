@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Tune
@@ -32,6 +33,7 @@ private val ENTRIES = listOf(
     Entry("settings", R.string.agent_settings, R.string.agent_settings_detail, Icons.Filled.Tune),
     Entry("agents", R.string.agents, R.string.agents_detail, Icons.Filled.Computer),
     Entry("app", R.string.app_settings, R.string.app_settings_detail, Icons.Filled.Palette),
+    Entry("about", R.string.about, R.string.about_detail, Icons.Filled.Info),
 )
 
 @Composable

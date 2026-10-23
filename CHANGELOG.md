@@ -3,6 +3,23 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
+## 0.2.0 — 2026-10-23
+
+Works with any tv-agent server 0.3.0 or newer; one that reads it shows each phone's app version in the panel.
+
+### Added
+- **More › About**: this app's version and build and the key it's signed with, the agent it's paired with (name,
+  server version), the TV app's version, the licence, and links to the source, releases and changelog.
+- **Updates from GitHub Releases**: *Check for updates* shows the latest release against this one, with its notes;
+  *Update now* downloads the APK, checks its SHA-256 against the digest GitHub records and that it's this app, newer,
+  and signed with the release key only, then installs it. *Update automatically* (on by default) does the same every
+  12 hours. Never an older version. Android asks once to allow "Install unknown apps" for TV Agent; after that, on
+  Android 12 and newer, updates install without asking. Notifications say an update was installed, is waiting or
+  failed.
+- The app sends its version with every call (`X-App-Version`) and in the voice stream's first line (`app_version`),
+  so the agent can list each phone's version; About shows what the agent knows of its own updates when it has
+  `GET /v1/updates`.
+
 ## 0.1.0 — 2026-10-23
 
 Needs tv-agent server 0.3.0 or newer (paired phones, the full vocabulary list, the remote's gear and input keys)

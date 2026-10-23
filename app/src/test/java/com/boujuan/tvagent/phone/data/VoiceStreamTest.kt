@@ -1,5 +1,6 @@
 package com.boujuan.tvagent.phone.data
 
+import com.boujuan.tvagent.phone.BuildConfig
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -53,7 +54,7 @@ class VoiceStreamTest {
                 assertNull(stream.next())
             }
             agent.join(5000)
-            assertEquals("""{"token":"tvp_secret","rate":16000}""", hello)
+            assertEquals("""{"token":"tvp_secret","rate":16000,"app_version":"${BuildConfig.VERSION_NAME}"}""", hello)
             assertEquals(listOf(8192, 1808), got.map { it.size })          // no frame over the agent's 8192
             assertArrayEquals(audio, got.reduce { a, b -> a + b })
         }

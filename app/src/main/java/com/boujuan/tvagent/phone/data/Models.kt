@@ -25,6 +25,7 @@ data class DeviceInfo(
     val paired: Double = 0.0,
     @SerialName("last_seen") val lastSeen: Double? = null,
     @SerialName("last_ip") val lastIp: String = "",
+    @SerialName("app_version") val appVersion: String? = null,
 )
 
 @Serializable
@@ -281,6 +282,23 @@ data class Diagnosis(val steps: List<DiagnoseStep> = emptyList())
 
 @Serializable
 data class Reconnect(val ok: Boolean = false, val host: String? = null, val error: String? = null)
+
+/** GET /v1/updates: what the agent found of newer releases (server, panel, TV app, this app). */
+@Serializable
+data class UpdatesInfo(
+    val checked: Double? = null,
+    val error: String? = null,
+    val mode: String? = null,
+    val components: Map<String, ComponentUpdate> = emptyMap(),
+)
+
+@Serializable
+data class ComponentUpdate(
+    val current: String? = null,
+    val latest: String? = null,
+    val newer: Boolean? = null,
+    val url: String? = null,
+)
 
 @Serializable
 data class Speed(val mbps: Double? = null, val error: String? = null)

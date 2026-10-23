@@ -1,5 +1,6 @@
 package com.boujuan.tvagent.phone.data
 
+import com.boujuan.tvagent.phone.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -139,6 +140,14 @@ class AgentApi(
     suspend fun setSettings(change: JsonObject): SettingsResponse = post("/v1/settings", change, SettingsResponse.serializer())
 
     suspend fun about(): About = get("/v1/about", About.serializer())
+    /** The TV app and the players on the TV ({"tvagent": {"installed", "version"}, "kodi": …, "just": …}). */
+    suspend fun tvPackages(): JsonObject = get("/v1/tv/packages", JsonObject.serializer(), slow = true, okCodes = setOf(503))
+    /** What the agent knows of newer releases of each part; null from an agent without it. */
+    suspend fun updates(): UpdatesInfo? = try {
+        get("/v1/updates", UpdatesInfo.serializer())
+    } catch (e: ApiException) {
+        if (e.code == 404) null else throw e
+    }
     suspend fun stats(): Map<String, StageStats> = get("/v1/stats", MapSerializer(String.serializer(), StageStats.serializer()))
     suspend fun tvStatus(): TvStatus = get("/v1/tv/status", TvStatus.serializer(), slow = true, okCodes = setOf(503))
     suspend fun diagnose(): Diagnosis = post("/v1/tv/diagnose", "{}", Diagnosis.serializer(), slow = true)
@@ -173,6 +182,7 @@ class AgentApi(
 
     private suspend fun execute(builder: Request.Builder, path: String, slow: Boolean, okCodes: Set<Int>): Response {
         if (token != null) builder.header("Authorization", "Bearer $token")
+        builder.header("X-App-Version", BuildConfig.VERSION_NAME)      // the agent shows each phone's version
         var last: Throwable? = null
         val order = urls.indices.map { (preferred + it) % urls.size }
         for (i in order) {

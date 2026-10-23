@@ -1,5 +1,6 @@
 package com.boujuan.tvagent.phone.data
 
+import com.boujuan.tvagent.phone.BuildConfig
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.buildJsonObject
@@ -36,8 +37,8 @@ object StreamProtocol {
     const val RATE = 16000
     const val MAX_FRAME = 8192
 
-    fun hello(token: String): ByteArray =
-        (buildJsonObject { put("token", token); put("rate", RATE) }.toString() + "\n").toByteArray()
+    fun hello(token: String, appVersion: String = BuildConfig.VERSION_NAME): ByteArray =
+        (buildJsonObject { put("token", token); put("rate", RATE); put("app_version", appVersion) }.toString() + "\n").toByteArray()
 
     fun parse(line: String): StreamEvent? {
         val o: JsonObject = runCatching { json.parseToJsonElement(line).jsonObject }.getOrNull() ?: return null

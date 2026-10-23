@@ -65,6 +65,7 @@ import com.boujuan.tvagent.phone.ui.agents.AppPrefsScreen
 import com.boujuan.tvagent.phone.ui.agents.PairScreen
 import com.boujuan.tvagent.phone.ui.decisions.DecisionsScreen
 import com.boujuan.tvagent.phone.ui.decisions.VocabularyScreen
+import com.boujuan.tvagent.phone.ui.more.AboutScreen
 import com.boujuan.tvagent.phone.ui.more.MoreScreen
 import com.boujuan.tvagent.phone.ui.overview.OverviewScreen
 import com.boujuan.tvagent.phone.ui.playing.NowPlayingScreen
@@ -89,11 +90,11 @@ private val TABS = listOf(
 private val SUB = mapOf(
     "overview" to R.string.overview, "decisions" to R.string.decisions, "settings" to R.string.agent_settings,
     "agents" to R.string.agents, "app" to R.string.app_settings, "pair" to R.string.pair_title,
-    "vocabulary" to R.string.vocabulary_title,
+    "vocabulary" to R.string.vocabulary_title, "about" to R.string.about,
 )
 
 @Composable
-fun AppRoot(pairingLink: PairingLink?, onLinkUsed: () -> Unit) {
+fun AppRoot(pairingLink: PairingLink?, onLinkUsed: () -> Unit, open: String? = null, onOpened: () -> Unit = {}) {
     val repo = LocalContext.current.app.repo
     val agents by repo.agents.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
@@ -106,15 +107,16 @@ fun AppRoot(pairingLink: PairingLink?, onLinkUsed: () -> Unit) {
                     PairScreen(link = pairingLink, onDone = onLinkUsed, onCancel = if (agents!!.isEmpty()) null else onLinkUsed)
                 }
             }
-            else -> Main(snackbar)
+            else -> Main(snackbar, open, onOpened)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Main(snackbar: SnackbarHostState) {
+private fun Main(snackbar: SnackbarHostState, open: String?, onOpened: () -> Unit) {
     val nav = rememberNavController()
+    LaunchedEffect(open) { if (open != null) { nav.navigate(open); onOpened() } }
     val entry by nav.currentBackStackEntryAsState()
     val route = entry?.destination?.route ?: "remote"
     val isTab = TABS.any { it.route == route }
@@ -168,6 +170,7 @@ private fun Main(snackbar: SnackbarHostState) {
                 composable("settings") { SettingsScreen() }
                 composable("agents") { AgentsScreen(onAdd = { nav.navigate("pair") }) }
                 composable("app") { AppPrefsScreen() }
+                composable("about") { AboutScreen() }
                 composable("pair") { PairScreen(link = null, onDone = { nav.popBackStack() }, onCancel = { nav.popBackStack() }) }
             }
             LocalNetworkNotice(Modifier.align(Alignment.BottomCenter))

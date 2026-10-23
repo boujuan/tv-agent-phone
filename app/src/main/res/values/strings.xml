@@ -307,4 +307,40 @@
     <string name="vocabulary_also_unknown">This agent doesn’t list them yet: update tv-agent.</string>
     <string name="vocabulary_also_none">None yet: the library is read a moment after this is switched on.</string>
     <string name="vocabulary_count">%1$d yours · %2$d sent with each command</string>
+
+    <!-- About, updates -->
+    <string name="about">About</string>
+    <string name="about_detail">Versions, updates, licence</string>
+    <string name="about_app">TV Agent for phones</string>
+    <string name="signed_with">Signed with</string>
+    <string name="release_key">the release key</string>
+    <string name="debug_key">a development key</string>
+    <string name="updates">Updates</string>
+    <string name="updates_channel">Updates</string>
+    <string name="update_idle">Not checked yet.</string>
+    <string name="update_none">Up to date: %1$s is the latest.</string>
+    <string name="update_available">%1$s is out (this is %2$s).</string>
+    <string name="update_downloading">Downloading %1$s…</string>
+    <string name="update_installing">Installing %1$s…</string>
+    <string name="update_failed">The update didn’t work: %1$s</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_now">Update now</string>
+    <string name="update_allow">Allow installing updates</string>
+    <string name="update_permission_hint">Android asks once: allow “Install unknown apps” for TV Agent, so it can install its own updates.</string>
+    <string name="update_auto">Update automatically</string>
+    <string name="update_auto_hint">Every 12 hours it looks for a newer release on GitHub and installs it by itself, once its SHA-256 and the release key’s signature check out. Never an older version.</string>
+    <string name="update_needs_you">An update is ready: tap to install it.</string>
+    <string name="update_done">Updated to %1$s.</string>
+    <string name="update_available_notice">%1$s is out: tap to install it.</string>
+    <string name="server_version">Agent version</string>
+    <string name="panel">Panel</string>
+    <string name="agent_update_newer">%1$s: %2$s is out</string>
+    <string name="agent_updates_checked">The agent last looked for updates %1$s</string>
+    <string name="licence">Licence</string>
+    <string name="licence_text">MIT licence, © boujuan: free to use, change and share, with no warranty.</string>
+    <string name="link_repo">Source</string>
+    <string name="link_releases">Releases</string>
+    <string name="link_changelog">Changelog</string>
+    <string name="link_licence">Licence</string>
+    <string name="show_all">Show all</string>
 </resources>

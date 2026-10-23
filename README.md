@@ -18,6 +18,7 @@ certificate; no Google Play services, no account, no cloud of its own.
 | **More › Settings** | The agent's player, highest resolution and bitrate, link check, binge mode, auto skip, audio / native / subtitle languages (ordered), Twitch favourites, history on/off, each saved live |
 | **More › Agents** | Every computer this phone is paired with: switch, edit its addresses (e.g. LAN then Tailscale), forget (here and on the agent) |
 | **More › This app** | Theme (system, light, dark), colours from the wallpaper, vibration on remote presses |
+| **More › About** | Versions (this app, the agent, the TV app), licence and links; checks GitHub for a newer release and installs it, by itself every 12 hours if you leave *Update automatically* on |
 
 English and Spanish (from the phone's language). Android 10 (API 29) or newer; built for Android 17 (API 37).
 
@@ -40,7 +41,8 @@ English and Spanish (from the phone's language). Android 10 (API 29) or newer; b
    ```
 
    Or install a release APK from GitHub Releases (signed with the project's release key, see
-   [RELEASING.md](RELEASING.md)).
+   [RELEASING.md](RELEASING.md)). A release install updates itself from then on (More › About): allow
+   "Install unknown apps" for TV Agent once when it asks.
 2. On the computer: the panel's **Settings › Phones › Pair a phone…** shows a QR code and a code (5 minutes, one use).
 3. On the phone: open TV Agent, **Scan the QR code**. Or **Type the code** with the computer's address: the app
    then shows the certificate's fingerprint, which must be the one under the code in the panel.
@@ -64,6 +66,10 @@ single microphone button. Both open a small panel that listens at once and close
   them to phones), and its settings are the playback and language ones, not addresses or ports.
 - **The microphone** records only while you hold the button or a command is being heard (12 s at most), straight to
   your agent. Posters come from the addresses the agent gives (Cinemeta / metahub, over https).
+- **Updates** come only from this repository's GitHub Releases (api.github.com, no account): an APK is installed only
+  if its SHA-256 matches the digest GitHub records, it's this app with a higher version, and it's signed with the
+  release key alone (the certificate's SHA-256 is pinned in the app). Switch *Update automatically* off in About to
+  check by hand only.
 
 ## Develop
 
