@@ -5,9 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -63,6 +66,8 @@ fun Toggle(label: String, value: Boolean, onChange: (Boolean) -> Unit) {
 fun Editable(label: String, value: String, onSave: (String) -> Unit) {
     var text by remember(value) { mutableStateOf(value) }
     OutlinedTextField(text, { text = it }, singleLine = true, modifier = Modifier.fillMaxWidth(), label = { Text(label) },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { if (text != value) onSave(text.trim()) }),
         trailingIcon = {
             if (text != value) TextButton(onClick = { onSave(text.trim()) }) { Text(stringResource(R.string.save)) }
         })
@@ -121,7 +126,7 @@ private fun ModelPickerDialog(title: String, value: String, options: List<ModelO
                 })
             },
         ) { pad ->
-            LazyColumn(Modifier.fillMaxSize().padding(pad).imePadding()) {
+            LazyColumn(Modifier.fillMaxSize().padding(pad).imePadding(), contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
                 items(options, key = { it.id }) { m ->
                     ListItem(
                         headlineContent = { Text(m.label) },
@@ -140,10 +145,12 @@ private fun ModelPickerDialog(title: String, value: String, options: List<ModelO
                         OutlinedTextField(other, { other = it }, singleLine = true, modifier = Modifier.fillMaxWidth(),
                             placeholder = { Text("provider/model") },
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(onDone = { if (other.isNotBlank()) onPick(other.trim()) }))
-                        OutlinedButton(onClick = { onPick(other.trim()) }, enabled = other.isNotBlank()) {
-                            Text(stringResource(R.string.use))
-                        }
+                            keyboardActions = KeyboardActions(onDone = { if (other.isNotBlank()) onPick(other.trim()) }),
+                            trailingIcon = {
+                                TextButton(onClick = { onPick(other.trim()) }, enabled = other.isNotBlank()) {
+                                    Text(stringResource(R.string.use))
+                                }
+                            })
                         Text(stringResource(R.string.model_other_hint), style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }

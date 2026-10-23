@@ -273,7 +273,7 @@
     <string name="stt_language">Pista de idioma</string>
     <string name="stt_language_native">Idioma nativo (%1$s)</string>
     <string name="stt_language_guess">Que lo adivine el modelo</string>
-    <string name="stt_vocabulary">Vocabulario (separado por comas)</string>
+    <string name="stt_vocabulary">Vocabulario</string>
     <string name="stt_vocabulary_library">Más los títulos de mi biblioteca y mis favoritos de Twitch</string>
     <string name="stt_vocabulary_hint">Nombres que el modelo en la nube debe oír tal como se escriben (modelos de AssemblyAI): %1$d en total ahora.</string>
     <string name="laptop_only">Los modelos locales (archivos del portátil) se eligen en el panel del portátil.</string>

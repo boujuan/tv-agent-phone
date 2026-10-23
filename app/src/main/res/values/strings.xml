@@ -278,7 +278,7 @@
     <string name="stt_language">Language hint</string>
     <string name="stt_language_native">Native language (%1$s)</string>
     <string name="stt_language_guess">The model guesses</string>
-    <string name="stt_vocabulary">Vocabulary (comma separated)</string>
+    <string name="stt_vocabulary">Vocabulary</string>
     <string name="stt_vocabulary_library">Plus my library’s titles and Twitch favourites</string>
     <string name="stt_vocabulary_hint">Names the hosted model should hear as written (AssemblyAI models): %1$d in all now.</string>
     <string name="laptop_only">The local models (files on the laptop) are chosen in the laptop’s panel.</string>

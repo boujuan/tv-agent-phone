@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -87,7 +89,11 @@ fun VocabularyScreen() {
     val library by vm.library.collectAsStateWithLifecycle()
     val total by vm.total.collectAsStateWithLifecycle()
     var text by rememberSaveable { mutableStateOf("") }
-    val add = { vm.add(text); text = "" }
+    val listState = rememberLazyListState()
+    var added by rememberSaveable { mutableStateOf<String?>(null) }
+    val add = { added = text.trim(); vm.add(text); text = "" }
+    // A new name goes first: scroll up to it once the agent has saved it (the list otherwise keeps its place)
+    LaunchedEffect(words) { if (added != null && words?.firstOrNull() == added) { listState.animateScrollToItem(0); added = null } }
     Column {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.vocabulary_intro), style = MaterialTheme.typography.bodyMedium,
@@ -111,7 +117,7 @@ fun VocabularyScreen() {
         }
         // Typing filters the list too, so a name already there shows up before it's added twice.
         val shown = if (text.isBlank()) list else list.filter { it.contains(text.trim(), ignoreCase = true) }
-        LazyColumn(contentPadding = PaddingValues(bottom = 24.dp)) {
+        LazyColumn(state = listState, contentPadding = PaddingValues(bottom = 24.dp)) {
             items(shown, key = { it }) { w ->
                 ListItem(
                     headlineContent = { Text(w) },

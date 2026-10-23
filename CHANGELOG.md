@@ -27,3 +27,5 @@ Android 17 (API 37; Gradle 9.8.2, AGP 9.4.1, Kotlin 2.4.21), runs on Android 10 
   binge, auto skip, Twitch, history), Agents, This app (theme, colours, haptics).
 - English and Spanish.
 - Asks for Android 17's local-network access, which reaching the computer on the LAN needs.
+- The LLM, decision-model and speech-to-text models picked from the panel's benchmarked lists (or any OpenRouter id);
+  the speech-to-text vocabulary edited on its own screen; the remote's TV settings (gear) and Inputs keys.

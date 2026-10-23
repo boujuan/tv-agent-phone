@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -25,8 +27,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -181,8 +185,11 @@ fun DecisionsScreen(onVocabulary: () -> Unit) {
         }
         SectionCard(stringResource(R.string.try_sentence)) {
             var text by rememberSaveable { mutableStateOf("") }
+            val keyboard = LocalSoftwareKeyboardController.current     // the answer shows under the field
             OutlinedTextField(text, { text = it }, singleLine = true, modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.sentence)) })
+                label = { Text(stringResource(R.string.sentence)) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),     // the button is under the keyboard
+                keyboardActions = KeyboardActions(onGo = { if (text.isNotBlank()) { keyboard?.hide(); vm.tryOut(text) } }))
             OutlinedButton(onClick = { vm.tryOut(text) }, enabled = text.isNotBlank()) { Text(stringResource(R.string.decide_only)) }
             tried?.let { t ->
                 Text(t.describe, fontWeight = FontWeight.Medium)
