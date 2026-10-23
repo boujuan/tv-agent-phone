@@ -16,7 +16,7 @@
     <string name="decisions">Decisions</string>
     <string name="decisions_detail">How a command is decided: steps, models, speech-to-text</string>
     <string name="agent_settings">Settings</string>
-    <string name="agent_settings_detail">Player, quality, languages, binge mode, history</string>
+    <string name="agent_settings_detail">Player, quality, languages, binge mode, history, updates</string>
     <string name="agents">Agents</string>
     <string name="agents_detail">The computers this phone is paired with</string>
     <string name="app_settings">This app</string>
@@ -221,6 +221,14 @@
     <string name="probe_streams">Check a link answers before playing it</string>
     <string name="binge">Binge mode: the next episode starts by itself</string>
     <string name="auto_skip">Skip intros and recaps by themselves</string>
+    <string name="check_episodes">Check each episode is the one asked for, by its subtitles</string>
+    <string name="check_episodes_hint">A streaming service’s copy can be numbered its own way (Netflix’s Community season 2 skips a pulled episode). A wrong file gives way to a right one at the same moment: a few seconds the first time, nothing after.</string>
+    <string name="updates_mode">The agent’s updates</string>
+    <string name="updates_mode_auto">Install updates by themselves</string>
+    <string name="updates_mode_notify">Check, and tell me</string>
+    <string name="updates_mode_off">Don’t check</string>
+    <string name="updates_mode_hint">By themselves: the agent installs the TV app’s and TV Agent Player’s new releases when the TV isn’t listening, and the computer moves to a new release. This app updates itself apart (More › About).</string>
+    <string name="tv_player">TV Agent Player</string>
     <string name="languages">Languages</string>
     <string name="languages_hint">Titles made where the native language is spoken play in it without subtitles; everything else uses this audio and the first available subtitles below.</string>
     <string name="native_language">Native language</string>

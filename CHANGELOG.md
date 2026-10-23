@@ -8,6 +8,11 @@ One section per release, newest first; each `## X.Y.Z` section becomes that tag'
 ### Added
 - **More › Settings › Player** offers **TV Agent Player** (tv-agent's own player on the TV, with tv-agent from its
   `tvplayer` support on), and Playing names it and shows its tracks as it does Kodi's.
+- **More › Settings**: *Check each episode is the one asked for, by its subtitles* (`check_episodes`), and the
+  agent's own **Updates**: install them by themselves, check and tell me, or don't check (`updates`; this app's
+  updates stay in About).
+- **More › About** shows TV Agent Player's version on the TV, and says when the agent has found a newer release of
+  it (`components.tvplayer` in `GET /v1/updates`), as for the TV app and the agent.
 
 ## 0.2.0 — 2026-10-23
 

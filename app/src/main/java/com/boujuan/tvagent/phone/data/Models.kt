@@ -199,7 +199,7 @@ data class Pipeline(
 
 @Serializable
 data class SettingsValues(
-    val player: String = "kodi",
+    val player: String = "tvplayer",
     @SerialName("max_height") val maxHeight: Int = 2160,
     @SerialName("max_mbps") val maxMbps: Double = 60.0,
     @SerialName("probe_streams") val probeStreams: Boolean = true,
@@ -210,6 +210,9 @@ data class SettingsValues(
     @SerialName("native_language") val nativeLanguage: String = "spa",
     @SerialName("twitch_favorites") val twitchFavorites: List<String> = emptyList(),
     @SerialName("log_transcripts") val logTranscripts: Boolean = true,
+    /** The agent's own updates: "auto" (installs them by themselves), "notify" or "off". */
+    val updates: String = "notify",
+    @SerialName("check_episodes") val checkEpisodes: Boolean = true,
 )
 
 @Serializable

@@ -15,7 +15,7 @@ certificate; no Google Play services, no account, no cloud of its own.
 | **Activity** | The agent's history (remote, phone, panel, typed, Claude), newest first with paging, each with its response times; a chart of time-to-decision; mark a command wrong, teach the right action, do it again, play its recording |
 | **More › Overview** | The agent (version, models, since when) and the TV (model, screen, app in front, network, ping, CPU, memory, TV app version), with wake, sleep, reconnect, diagnose, speed test and a screenshot; latency per stage |
 | **More › Decisions** | The decision steps (order, on/off), the LLM (model, reasoning, private providers), d1 (where, hosted model), speech-to-text (where, models, loaded, keep recordings), taught sentences, and "try a sentence" |
-| **More › Settings** | The agent's player, highest resolution and bitrate, link check, binge mode, auto skip, audio / native / subtitle languages (ordered), Twitch favourites, history on/off, each saved live |
+| **More › Settings** | The agent's player, highest resolution and bitrate, link check, binge mode, auto skip, audio / native / subtitle languages (ordered), Twitch favourites, history on/off, the episode check (by subtitles), the agent's updates (by themselves, check and tell, or off), each saved live |
 | **More › Agents** | Every computer this phone is paired with: switch, edit its addresses (e.g. LAN then Tailscale), forget (here and on the agent) |
 | **More › This app** | Theme (system, light, dark), colours from the wallpaper, vibration on remote presses |
 | **More › About** | Versions (this app, the agent, the TV app), licence and links; checks GitHub for a newer release and installs it, by itself every 12 hours if you leave *Update automatically* on |

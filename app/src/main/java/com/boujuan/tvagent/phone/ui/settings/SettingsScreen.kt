@@ -88,6 +88,9 @@ fun SettingsScreen() {
             Toggle(stringResource(R.string.probe_streams), s.probeStreams) { vm.set("probe_streams", JsonPrimitive(it)) }
             Toggle(stringResource(R.string.binge), s.binge) { vm.set("binge", JsonPrimitive(it)) }
             Toggle(stringResource(R.string.auto_skip), s.autoSkip) { vm.set("auto_skip", JsonPrimitive(it)) }
+            Toggle(stringResource(R.string.check_episodes), s.checkEpisodes) { vm.set("check_episodes", JsonPrimitive(it)) }
+            Text(stringResource(R.string.check_episodes_hint), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         SectionCard(stringResource(R.string.languages)) {
             Text(stringResource(R.string.languages_hint), style = MaterialTheme.typography.bodySmall,
@@ -106,6 +109,15 @@ fun SettingsScreen() {
                 vm.setList("twitch_favorites", text.split(',').map { it.trim() }.filter { it.isNotEmpty() })
             }
             Toggle(stringResource(R.string.keep_history), s.logTranscripts) { vm.set("log_transcripts", JsonPrimitive(it)) }
+        }
+        SectionCard(stringResource(R.string.updates)) {
+            Choice(stringResource(R.string.updates_mode), listOf(
+                "auto" to stringResource(R.string.updates_mode_auto),
+                "notify" to stringResource(R.string.updates_mode_notify),
+                "off" to stringResource(R.string.updates_mode_off),
+            ), s.updates) { vm.set("updates", JsonPrimitive(it)) }
+            Text(stringResource(R.string.updates_mode_hint), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

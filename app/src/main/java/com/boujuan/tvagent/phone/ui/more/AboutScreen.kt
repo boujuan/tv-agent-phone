@@ -79,13 +79,16 @@ class AboutViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val about = MutableStateFlow<About?>(null)
     val me = MutableStateFlow<Me?>(null)
     val tvApp = MutableStateFlow<String?>(null)
+    val tvPlayer = MutableStateFlow<String?>(null)
     val updates = MutableStateFlow<UpdatesInfo?>(null)
 
     fun load() = call {
         about.value = it.about()
         me.value = it.me()
         val packages = it.tvPackages()                  // {"error"} when the TV can't be reached
-        tvApp.value = (packages["tvagent"] as? JsonObject)?.get("version")?.jsonPrimitive?.contentOrNull
+        fun version(key: String) = (packages[key] as? JsonObject)?.get("version")?.jsonPrimitive?.contentOrNull
+        tvApp.value = version("tvagent")
+        tvPlayer.value = version("tvplayer")
         updates.value = runCatching { it.updates() }.getOrNull()      // an extra: its shape mustn't break the rest
     }
 
@@ -117,6 +120,7 @@ fun AboutScreen() {
     val about by vm.about.collectAsStateWithLifecycle()
     val me by vm.me.collectAsStateWithLifecycle()
     val tvApp by vm.tvApp.collectAsStateWithLifecycle()
+    val tvPlayer by vm.tvPlayer.collectAsStateWithLifecycle()
     val updates by vm.updates.collectAsStateWithLifecycle()
     val conn by context.app.repo.current.collectAsStateWithLifecycle()
     val prefs by context.app.repo.prefs.collectAsStateWithLifecycle()
@@ -168,6 +172,7 @@ fun AboutScreen() {
             LabeledValue(stringResource(R.string.computer), conn?.agent?.name.orEmpty())
             LabeledValue(stringResource(R.string.server_version), about?.version ?: "–")
             LabeledValue(stringResource(R.string.tv_app), tvApp ?: "–")
+            LabeledValue(stringResource(R.string.tv_player), tvPlayer ?: "–")
             me?.device?.let { d -> LabeledValue(stringResource(R.string.this_phone_there), d.name + (d.appVersion?.let { " · $it" } ?: "")) }
             updates?.let { AgentUpdates(it) }
         }
@@ -256,11 +261,11 @@ private fun AnnotatedString.Builder.inline(text: String) {
     append(text.substring(at))
 }
 
-/** What the agent found of newer releases (its own update check): the server, the panel, the TV app. */
+/** What the agent found of newer releases (its own update check): the server, the panel, the TV app, the player. */
 @Composable
 private fun AgentUpdates(u: UpdatesInfo) {
-    val labels = mapOf("server" to R.string.server_version, "tv" to R.string.tv_app, "android" to R.string.tv_app,
-        "panel" to R.string.panel)
+    val labels = mapOf("server" to R.string.server_version, "panel" to R.string.panel, "tv" to R.string.tv_app,
+        "tvplayer" to R.string.tv_player, "phone" to R.string.about_app)
     for ((key, c) in u.components) {
         if (c.newer == true && c.latest != null) {
             val label = labels[key]?.let { stringResource(it) } ?: key

@@ -16,7 +16,7 @@
     <string name="decisions">Decisiones</string>
     <string name="decisions_detail">Cómo se decide una orden: pasos, modelos, voz a texto</string>
     <string name="agent_settings">Ajustes</string>
-    <string name="agent_settings_detail">Reproductor, calidad, idiomas, modo maratón, historial</string>
+    <string name="agent_settings_detail">Reproductor, calidad, idiomas, modo maratón, historial, actualizaciones</string>
     <string name="agents">Agentes</string>
     <string name="agents_detail">Los ordenadores con los que está emparejado este móvil</string>
     <string name="app_settings">Esta app</string>
@@ -216,6 +216,14 @@
     <string name="probe_streams">Comprobar que un enlace responde antes de reproducirlo</string>
     <string name="binge">Modo maratón: el siguiente capítulo empieza solo</string>
     <string name="auto_skip">Saltar intros y resúmenes solos</string>
+    <string name="check_episodes">Comprobar por sus subtítulos que cada capítulo es el pedido</string>
+    <string name="check_episodes_hint">La copia de un servicio puede numerarse a su manera (la temporada 2 de Community en Netflix se salta un capítulo retirado). Un archivo equivocado deja paso al bueno en el mismo punto: unos segundos la primera vez, nada después.</string>
+    <string name="updates_mode">Actualizaciones del agente</string>
+    <string name="updates_mode_auto">Instalarlas solas</string>
+    <string name="updates_mode_notify">Comprobar y avisarme</string>
+    <string name="updates_mode_off">No comprobar</string>
+    <string name="updates_mode_hint">Solas: el agente instala las nuevas versiones de la app de la tele y de TV Agent Player cuando la tele no está escuchando, y el ordenador pasa a la nueva versión. Esta app se actualiza aparte (Más › Acerca de).</string>
+    <string name="tv_player">TV Agent Player</string>
     <string name="languages">Idiomas</string>
     <string name="languages_hint">Los títulos hechos donde se habla el idioma nativo se ven en él sin subtítulos; el resto usa este audio y los primeros subtítulos disponibles de abajo.</string>
     <string name="native_language">Idioma nativo</string>

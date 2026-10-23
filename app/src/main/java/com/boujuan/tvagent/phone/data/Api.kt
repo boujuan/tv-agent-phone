@@ -140,7 +140,7 @@ class AgentApi(
     suspend fun setSettings(change: JsonObject): SettingsResponse = post("/v1/settings", change, SettingsResponse.serializer())
 
     suspend fun about(): About = get("/v1/about", About.serializer())
-    /** The TV app and the players on the TV ({"tvagent": {"installed", "version"}, "kodi": …, "just": …}). */
+    /** The TV app and the players on the TV ({"tvagent": {"installed", "version"}, "tvplayer": …, "kodi": …, "just": …}). */
     suspend fun tvPackages(): JsonObject = get("/v1/tv/packages", JsonObject.serializer(), slow = true, okCodes = setOf(503))
     /** What the agent knows of newer releases of each part; null from an agent without it. */
     suspend fun updates(): UpdatesInfo? = try {
