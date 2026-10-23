@@ -33,7 +33,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -208,9 +215,45 @@ private fun UpdateStatus(state: UpdateState) {
 private fun Notes(body: String?) {
     if (body.isNullOrBlank()) return
     var all by rememberSaveable { mutableStateOf(false) }
-    val text = body.replace("\r", "").trim()
-    Text(if (all) text else text.lines().take(8).joinToString("\n"), style = MaterialTheme.typography.bodySmall)
-    if (!all && text.lines().size > 8) TextButton(onClick = { all = true }) { Text(stringResource(R.string.show_all)) }
+    var more by remember { mutableStateOf(false) }
+    val text = remember(body) { notes(body) }
+    Text(text, style = MaterialTheme.typography.bodySmall, maxLines = if (all) Int.MAX_VALUE else 6,
+        overflow = TextOverflow.Ellipsis, onTextLayout = { more = it.hasVisualOverflow })
+    if (!all && more) TextButton(onClick = { all = true }) { Text(stringResource(R.string.show_all)) }
+}
+
+/** The CHANGELOG's Markdown as text: its wrapped lines joined, "###" headings and **bold** in bold, "-" as bullets. */
+internal fun notes(markdown: String): AnnotatedString {
+    val lines = mutableListOf<String>()
+    for (line in markdown.replace("\r", "").trim().lines()) {
+        val continues = line.startsWith(" ") && line.isNotBlank() && lines.isNotEmpty() && lines.last().isNotBlank()
+        if (continues) lines[lines.size - 1] = lines.last() + " " + line.trim() else lines += line.trimEnd()
+    }
+    return buildAnnotatedString {
+        lines.forEachIndexed { i, line ->
+            if (i > 0) append("\n")
+            when {
+                line.startsWith("#") -> withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) { append(line.trimStart('#', ' ')) }
+                line.startsWith("- ") -> { append("• "); inline(line.removePrefix("- ")) }
+                else -> inline(line)
+            }
+        }
+    }
+}
+
+private fun AnnotatedString.Builder.inline(text: String) {
+    var at = 0
+    for (m in Regex("""\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`""").findAll(text)) {
+        append(text.substring(at, m.range.first))
+        val (bold, italic, code) = m.destructured
+        when {
+            bold.isNotEmpty() -> withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) { append(bold) }
+            italic.isNotEmpty() -> withStyle(SpanStyle(fontStyle = FontStyle.Italic)) { append(italic) }
+            else -> withStyle(SpanStyle(fontFamily = FontFamily.Monospace)) { append(code) }
+        }
+        at = m.range.last + 1
+    }
+    append(text.substring(at))
 }
 
 /** What the agent found of newer releases (its own update check): the server, the panel, the TV app. */
