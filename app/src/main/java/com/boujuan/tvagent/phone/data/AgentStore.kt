@@ -7,8 +7,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import java.security.KeyStore
@@ -98,7 +100,7 @@ class AgentStore(private val data: DataStore<Preferences>, private val sealer: S
 
     /** A newly paired agent (replacing an earlier pairing with the same computer and certificate), selected. */
     suspend fun add(agent: SavedAgent, token: String): SavedAgent {
-        val saved = agent.copy(sealedToken = sealer.seal(token))
+        val saved = agent.copy(sealedToken = withContext(Dispatchers.IO) { sealer.seal(token) })   // the Keystore can be slow
         data.edit { p ->
             val kept = decode(p).filterNot { it.pin == agent.pin && it.name == agent.name }
             p[agentsKey] = json.encodeToString(agentList, kept + saved)

@@ -1,6 +1,11 @@
 package com.boujuan.tvagent.phone.data
 
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
+import okhttp3.Call
+import okhttp3.EventListener
+import okhttp3.OkHttpClient
+import java.util.concurrent.Executors
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import okhttp3.Headers.Companion.headersOf
@@ -114,6 +119,23 @@ class AgentApiTest {
         val text = server.takeRequest()
         assertEquals("""{"text":"pause","source":"phone"}""", text.body?.utf8())
         assertNull(text.headers["Transfer-Encoding"])
+    }
+
+    @Test
+    fun `answers are read off the caller's thread (Android's main thread forbids it)`() {
+        server.enqueue(json("""{"ok": true, "say": "Paused"}"""))
+        val readers = mutableListOf<String>()
+        val watched = OkHttpClient.Builder().eventListener(object : EventListener() {
+            override fun responseBodyEnd(call: Call, byteCount: Long) {
+                synchronized(readers) { readers += Thread.currentThread().name }
+            }
+        }).build()
+        val main = Executors.newSingleThreadExecutor { Thread(it, "fake-main") }.asCoroutineDispatcher()
+        main.use {
+            runBlocking(it) { assertEquals("Paused", AgentApi(listOf(url), pin, "tvp_secret", watched).action(Actions.home()).say) }
+        }
+        assertEquals(1, readers.size)
+        assertTrue(readers.single(), !readers.single().startsWith("fake-main"))    // "fake-main @coroutine#1" in tests
     }
 
     @Test

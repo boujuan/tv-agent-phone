@@ -1,6 +1,8 @@
 package com.boujuan.tvagent.phone.data
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -161,11 +163,13 @@ class AgentApi(
     private suspend fun <T> send(path: String, body: RequestBody, de: KSerializer<T>, slow: Boolean = false, okCodes: Set<Int> = emptySet()): T =
         call(Request.Builder().post(body), path, slow, okCodes) { json.decodeFromString(de, it) }
 
-    private suspend fun bytes(builder: Request.Builder, path: String): ByteArray =
+    // Off the main thread from the request to the last byte of the answer (Android forbids network reads there).
+    private suspend fun bytes(builder: Request.Builder, path: String): ByteArray = withContext(Dispatchers.IO) {
         execute(builder, path, slow = true, okCodes = emptySet()).use { it.body.bytes() }
+    }
 
     private suspend fun <T> call(builder: Request.Builder, path: String, slow: Boolean, okCodes: Set<Int>, parse: (String) -> T): T =
-        execute(builder, path, slow, okCodes).use { parse(it.body.string()) }
+        withContext(Dispatchers.IO) { execute(builder, path, slow, okCodes).use { parse(it.body.string()) } }
 
     private suspend fun execute(builder: Request.Builder, path: String, slow: Boolean, okCodes: Set<Int>): Response {
         if (token != null) builder.header("Authorization", "Bearer $token")
