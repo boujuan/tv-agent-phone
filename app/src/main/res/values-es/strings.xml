@@ -293,10 +293,13 @@
     <string name="vocabulary_edit">Editar (%1$d)</string>
     <string name="vocabulary_intro">Nombres que la voz a texto en la nube debe oír tal como se escriben (los usan los modelos de AssemblyAI). Cada cambio se guarda en el ordenador al momento.</string>
     <string name="vocabulary_add">Añade un nombre (o búscalo)</string>
-    <string name="vocabulary_count">%1$d nombres aquí · %2$d enviados con cada orden</string>
-    <string name="vocabulary_plus_library">(con los títulos de tu biblioteca)</string>
     <string name="vocabulary_empty">Aún no hay nombres.</string>
     <string name="vocabulary_none_match">Aún no hay ninguno así: añádelo.</string>
     <string name="key_gear">Ajustes de la tele (el engranaje del mando)</string>
     <string name="key_input">Entradas</string>
+    <string name="vocabulary_yours">Tuyos (%1$d): se editan aquí</string>
+    <string name="vocabulary_also">También se envían, de tus favoritos de Twitch y tu biblioteca (%1$d)</string>
+    <string name="vocabulary_also_unknown">Este agente aún no los lista: actualiza tv-agent.</string>
+    <string name="vocabulary_also_none">Ninguno todavía: la biblioteca se lee un momento después de activarlo.</string>
+    <string name="vocabulary_count">%1$d tuyos · %2$d enviados con cada orden</string>
 </resources>

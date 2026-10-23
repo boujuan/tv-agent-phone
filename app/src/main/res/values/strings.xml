@@ -298,10 +298,13 @@
     <string name="vocabulary_edit">Edit (%1$d)</string>
     <string name="vocabulary_intro">Names the hosted speech-to-text should hear as written (AssemblyAI models use them). Each change is saved on the computer at once.</string>
     <string name="vocabulary_add">Add a name (or find one)</string>
-    <string name="vocabulary_count">%1$d names here · %2$d sent with each command</string>
-    <string name="vocabulary_plus_library">(with your library’s titles)</string>
     <string name="vocabulary_empty">No names yet.</string>
     <string name="vocabulary_none_match">None like that yet: add it.</string>
     <string name="key_gear">TV settings (the remote’s gear)</string>
     <string name="key_input">Inputs</string>
+    <string name="vocabulary_yours">Yours (%1$d): edited here</string>
+    <string name="vocabulary_also">Also sent, from Twitch favourites and your library (%1$d)</string>
+    <string name="vocabulary_also_unknown">This agent doesn’t list them yet: update tv-agent.</string>
+    <string name="vocabulary_also_none">None yet: the library is read a moment after this is switched on.</string>
+    <string name="vocabulary_count">%1$d yours · %2$d sent with each command</string>
 </resources>

@@ -192,6 +192,8 @@ data class Pipeline(
     @SerialName("stt_vocabulary") val sttVocabulary: List<String> = emptyList(),
     @SerialName("stt_vocabulary_library") val sttVocabularyLibrary: Boolean = false,
     @SerialName("stt_vocabulary_count") val sttVocabularyCount: Int = 0,
+    /** Every name sent with a command (yours, then Twitch favourites and library titles); null from an older agent. */
+    @SerialName("stt_vocabulary_sent") val sttVocabularySent: List<String>? = null,
 )
 
 @Serializable
