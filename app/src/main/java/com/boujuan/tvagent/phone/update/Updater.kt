@@ -45,7 +45,8 @@ sealed interface UpdateState {
     data class Available(val release: Release) : UpdateState
     data class Downloading(val release: Release, val progress: Float) : UpdateState
     data class Installing(val release: Release) : UpdateState
-    /** Android's "Install unknown apps" isn't allowed for this app yet: the user has to switch it on once. */
+    /** This app may not install apps without asking yet ("Install apps › Always allow" on Android 17, "Install unknown
+     * apps" before): the background check waits for the user. */
     data class NeedsPermission(val release: Release) : UpdateState
     data class Failed(val message: String) : UpdateState
 }
@@ -54,7 +55,7 @@ sealed interface UpdateState {
  * Updates from GitHub: checks the latest release, downloads its APK (SHA-256 against the asset's digest), checks it's
  * this app, newer, and signed with the release key, then installs it with a PackageInstaller session that asks for no
  * user action: on Android 12+ an app updating itself (with UPDATE_PACKAGES_WITHOUT_USER_ACTION) installs silently once
- * "Install unknown apps" is allowed. Otherwise Android asks, and the user confirms.
+ * it may install apps ("Always allow"). Otherwise Android asks, and the user confirms.
  */
 class Updater(private val context: Context, http: OkHttpClient) {
     private val releases = Releases(http)
@@ -78,9 +79,12 @@ class Updater(private val context: Context, http: OkHttpClient) {
         }
     }
 
-    /** Download, check and hand to the installer. False when it can't start (no permission yet, or it failed). */
-    suspend fun install(release: Release): Boolean {
-        if (!canInstall()) {
+    /**
+     * Download, check and hand to the installer. [asking]: the user is here (Update now), so Android may ask them to
+     * confirm; from the background it waits until this app may install without asking. False when it didn't start.
+     */
+    suspend fun install(release: Release, asking: Boolean = false): Boolean {
+        if (!asking && !canInstall()) {
             _state.value = UpdateState.NeedsPermission(release)
             return false
         }

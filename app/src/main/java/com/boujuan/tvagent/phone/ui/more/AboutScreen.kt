@@ -98,7 +98,7 @@ class AboutViewModel(repo: AgentRepository) : AgentViewModel(repo) {
             is UpdateState.NeedsPermission -> s.release
             else -> updater.check()
         } ?: return@launch
-        updater.install(release)
+        updater.install(release, asking = true)
     }
 }
 
@@ -126,7 +126,7 @@ fun AboutScreen() {
     var canInstall by remember { mutableStateOf(context.app.updater.canInstall()) }
     val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     WhileVisible(60_000) {
-        canInstall = context.app.updater.canInstall()          // back from the "Install unknown apps" setting
+        canInstall = context.app.updater.canInstall()          // back from the "Install apps" setting
         vm.load()
     }
     fun open(url: String) = context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
@@ -149,7 +149,7 @@ fun AboutScreen() {
                 val busy = state is UpdateState.Checking || state is UpdateState.Downloading || state is UpdateState.Installing
                 OutlinedButton(onClick = { vm.check(context) }, enabled = !busy) { Text(stringResource(R.string.update_check)) }
                 if (state is UpdateState.Available || state is UpdateState.NeedsPermission) {
-                    Button(onClick = { vm.install(context) }, enabled = canInstall) { Text(stringResource(R.string.update_now)) }
+                    Button(onClick = { vm.install(context) }) { Text(stringResource(R.string.update_now)) }
                 }
             }
             Toggle(stringResource(R.string.update_auto), prefs.autoUpdate) { on ->

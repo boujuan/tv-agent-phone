@@ -326,7 +326,7 @@
     <string name="update_check">Check for updates</string>
     <string name="update_now">Update now</string>
     <string name="update_allow">Allow installing updates</string>
-    <string name="update_permission_hint">Android asks once: allow “Install unknown apps” for TV Agent, so it can install its own updates.</string>
+    <string name="update_permission_hint">To install updates without asking, let TV Agent install apps: “Always allow” (“Install unknown apps” before Android 17). Until then Android asks each time, and the automatic check only tells you.</string>
     <string name="update_auto">Update automatically</string>
     <string name="update_auto_hint">Every 12 hours it looks for a newer release on GitHub and installs it by itself, once its SHA-256 and the release key’s signature check out. Never an older version.</string>
     <string name="update_needs_you">An update is ready: tap to install it.</string>

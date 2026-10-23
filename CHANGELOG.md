@@ -13,9 +13,9 @@ Works with any tv-agent server 0.3.0 or newer; one that reads it shows each phon
 - **Updates from GitHub Releases**: *Check for updates* shows the latest release against this one, with its notes;
   *Update now* downloads the APK, checks its SHA-256 against the digest GitHub records and that it's this app, newer,
   and signed with the release key only, then installs it. *Update automatically* (on by default) does the same every
-  12 hours. Never an older version. Android asks once to allow "Install unknown apps" for TV Agent; after that, on
-  Android 12 and newer, updates install without asking. Notifications say an update was installed, is waiting or
-  failed.
+  12 hours. Never an older version. Once TV Agent may install apps (Android 17: Install apps › Always allow; before:
+  Install unknown apps), updates install without asking (Android 12 and newer); until then Android asks on *Update
+  now*, and the automatic check only notifies. Notifications say an update was installed, is waiting or failed.
 - The app sends its version with every call (`X-App-Version`) and in the voice stream's first line (`app_version`),
   so the agent can list each phone's version; About shows what the agent knows of its own updates when it has
   `GET /v1/updates`.
