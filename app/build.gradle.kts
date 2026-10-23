@@ -59,7 +59,10 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
         // LiveAgentTest runs against a real agent only when given its pairing link (-PtvAgentPairLink=…).
-        unitTests.all { it.systemProperty("tvAgentPairLink", findProperty("tvAgentPairLink") ?: "") }
+        unitTests.all {
+            it.systemProperty("tvAgentPairLink", findProperty("tvAgentPairLink") ?: "")
+            it.systemProperty("tvAgentVoice", findProperty("tvAgentVoice") ?: "")
+        }
     }
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"

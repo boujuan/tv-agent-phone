@@ -230,6 +230,8 @@
     <string name="this_phone_name">Nombre de este móvil (lo verás en el panel)</string>
     <string name="pair_link_found">¿Emparejar con %1$s en %2$s?</string>
     <string name="fingerprint_is">Huella del certificado: %1$s</string>
+    <string name="pair_link_already">Este móvil ya está emparejado con %1$s. Vuelve a emparejarlo solo con un código que el panel acabe de mostrar.</string>
+    <string name="pair_again">Emparejar de nuevo</string>
     <string name="pair">Emparejar</string>
     <string name="scan_qr">Escanear el QR</string>
     <string name="type_code">Escribir el código</string>

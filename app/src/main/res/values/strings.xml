@@ -235,6 +235,8 @@
     <string name="this_phone_name">This phone’s name (shown in the panel)</string>
     <string name="pair_link_found">Pair with %1$s at %2$s?</string>
     <string name="fingerprint_is">Certificate fingerprint: %1$s</string>
+    <string name="pair_link_already">This phone is already paired with %1$s. Pair again only for a code the panel has just shown.</string>
+    <string name="pair_again">Pair again</string>
     <string name="pair">Pair</string>
     <string name="scan_qr">Scan the QR code</string>
     <string name="type_code">Type the code</string>

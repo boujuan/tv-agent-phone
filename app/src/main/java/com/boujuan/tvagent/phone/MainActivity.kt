@@ -21,7 +21,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        link = linkOf(intent)
+        // A link only when it's just been opened: Android re-creates the activity from the same intent later (from
+        // recents, after an update), and that code is used up by then.
+        val fresh = savedInstanceState == null && intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == 0
+        link = if (fresh) linkOf(intent) else null
+        intent.data = null
         setContent {
             val prefs by app.repo.prefs.collectAsStateWithLifecycle()
             TvAgentTheme(prefs.theme, prefs.dynamicColor) {
@@ -33,6 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         linkOf(intent)?.let { link = it }
+        intent.data = null
     }
 
     private fun linkOf(intent: Intent?): PairingLink? = intent?.dataString?.let { Pairing.parse(it) }

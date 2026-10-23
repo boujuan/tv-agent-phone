@@ -47,6 +47,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.boujuan.tvagent.phone.R
+import com.boujuan.tvagent.phone.app
 import com.boujuan.tvagent.phone.data.AgentRepository
 import com.boujuan.tvagent.phone.data.Pairing
 import com.boujuan.tvagent.phone.data.PairingLink
@@ -134,10 +135,15 @@ fun PairScreen(modifier: Modifier = Modifier, link: PairingLink?, onDone: () -> 
         OutlinedTextField(name, { name = it }, singleLine = true, modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.this_phone_name)) })
         if (link != null) {
+            val agents by context.app.repo.agents.collectAsStateWithLifecycle()
+            val already = agents.orEmpty().firstOrNull { it.pin == link.pin }
             Text(stringResource(R.string.pair_link_found, link.name, link.urls.joinToString(", ")))
             Text(stringResource(R.string.fingerprint_is, Pairing.grouped(link.pin)), fontFamily = FontFamily.Monospace)
+            if (already != null) Text(stringResource(R.string.pair_link_already, already.name), color = MaterialTheme.colorScheme.tertiary)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { vm.pair(link, name) }, enabled = state != PairState.Working) { Text(stringResource(R.string.pair)) }
+                Button(onClick = { vm.pair(link, name) }, enabled = state != PairState.Working) {
+                    Text(stringResource(if (already != null) R.string.pair_again else R.string.pair))
+                }
                 onCancel?.let { TextButton(onClick = it) { Text(stringResource(R.string.cancel)) } }
             }
         } else {
