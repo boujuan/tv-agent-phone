@@ -37,7 +37,7 @@ import com.boujuan.tvagent.phone.data.Learned
 import com.boujuan.tvagent.phone.data.Pipeline
 import com.boujuan.tvagent.phone.ui.AgentViewModel
 import com.boujuan.tvagent.phone.ui.Choice
-import com.boujuan.tvagent.phone.ui.Editable
+import com.boujuan.tvagent.phone.ui.ModelPicker
 import com.boujuan.tvagent.phone.ui.Toggle
 import com.boujuan.tvagent.phone.ui.Waiting
 import com.boujuan.tvagent.phone.ui.LabeledValue
@@ -105,7 +105,7 @@ private fun stepName(step: String) = stringResource(
 )
 
 @Composable
-fun DecisionsScreen() {
+fun DecisionsScreen(onVocabulary: () -> Unit) {
     val vm = appViewModel { DecisionsViewModel(it.repo) }
     Messages(vm)
     val p by vm.pipeline.collectAsStateWithLifecycle()
@@ -132,7 +132,7 @@ fun DecisionsScreen() {
         }
         SectionCard(stringResource(R.string.step_llm)) {
             KeyState(pipe.keys.openrouter, "OpenRouter")
-            Editable(stringResource(R.string.model), pipe.llmModel) { vm.change(buildJsonObject { put("llm_model", it) }) }
+            ModelPicker(stringResource(R.string.model), pipe.llmModel, LLM_MODELS) { vm.change(buildJsonObject { put("llm_model", it) }) }
             Choice(stringResource(R.string.reasoning), REASONING.map { it to it }, pipe.llmReasoning.ifEmpty { "none" }) {
                 vm.change(buildJsonObject { put("llm_reasoning", it) })
             }
@@ -143,14 +143,18 @@ fun DecisionsScreen() {
             Choice(stringResource(R.string.where_runs), WHERE.map { it.first to stringResource(it.second) }, pipe.d1Where) {
                 vm.change(buildJsonObject { put("d1_where", it) })
             }
-            Editable(stringResource(R.string.hosted_model), pipe.hostedD1Model) { vm.change(buildJsonObject { put("hosted_d1_model", it) }) }
+            ModelPicker(stringResource(R.string.hosted_model), pipe.hostedD1Model, DECISION_MODELS) {
+                vm.change(buildJsonObject { put("hosted_d1_model", it) })
+            }
             LabeledValue(stringResource(R.string.local_model), pipe.d1Model.substringAfterLast('/'))
         }
         SectionCard(stringResource(R.string.speech_to_text)) {
             Choice(stringResource(R.string.where_runs), WHERE.map { it.first to stringResource(it.second) }, pipe.sttWhere) {
                 vm.change(buildJsonObject { put("stt_where", it) })
             }
-            Editable(stringResource(R.string.hosted_model), pipe.sttHostedModel) { vm.change(buildJsonObject { put("stt_hosted_model", it) }) }
+            ModelPicker(stringResource(R.string.hosted_model), pipe.sttHostedModel, STT_MODELS) {
+                vm.change(buildJsonObject { put("stt_hosted_model", it) })
+            }
             LabeledValue(stringResource(R.string.local_model), pipe.sttModel)     // a laptop path: the agent refuses it from phones
             Toggle(stringResource(R.string.stt_loaded), pipe.sttLoaded) { vm.change(buildJsonObject { put("stt_loaded", it) }) }
             Toggle(stringResource(R.string.keep_recordings), pipe.keepRecordings) { vm.change(buildJsonObject { put("keep_recordings", it) }) }
@@ -159,12 +163,13 @@ fun DecisionsScreen() {
                 "es" to "Español (es)", "en" to "English (en)"), pipe.sttLanguage) {
                 vm.change(buildJsonObject { put("stt_language", it) })
             }
-            Editable(stringResource(R.string.stt_vocabulary), pipe.sttVocabulary.joinToString(", ")) { text ->
-                vm.change(buildJsonObject {
-                    put("stt_vocabulary", buildJsonArray {
-                        text.split(',', '\n').map { it.trim() }.filter { it.isNotEmpty() }.forEach { add(JsonPrimitive(it)) }
-                    })
-                })
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.stt_vocabulary))
+                    Text(pipe.sttVocabulary.take(4).joinToString(", ") + if (pipe.sttVocabulary.size > 4) "…" else "",
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
+                }
+                OutlinedButton(onClick = onVocabulary) { Text(stringResource(R.string.vocabulary_edit, pipe.sttVocabulary.size)) }
             }
             Toggle(stringResource(R.string.stt_vocabulary_library), pipe.sttVocabularyLibrary) {
                 vm.change(buildJsonObject { put("stt_vocabulary_library", it) })

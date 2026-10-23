@@ -31,12 +31,12 @@ import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.Forward30
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.automirrored.filled.Input
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Replay10
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -127,8 +127,10 @@ fun RemoteScreen() {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             Key(Icons.Filled.Bedtime, R.string.key_sleep) { press("sleep") }
             Key(Icons.Filled.PowerSettingsNew, R.string.key_wake) { press("wake") }
-            Key(Icons.Filled.Info, R.string.key_info) { press("info") }
-            Key(Icons.Filled.Menu, R.string.key_menu) { press("menu") }
+            // The remote's gear and input buttons (KEYCODE_NOTIFICATION, KEYCODE_TV_INPUT): the launcher answers
+            // these, and ignores INFO, MENU and SETTINGS.
+            Key(Icons.Filled.Settings, R.string.key_gear) { press("gear") }
+            Key(Icons.AutoMirrored.Filled.Input, R.string.key_input) { press("input") }
             Key(Icons.Filled.Dialpad, R.string.key_numbers) { tap(); numbers = !numbers }
         }
         DPad(onKey = { k, long -> press(k, long) })

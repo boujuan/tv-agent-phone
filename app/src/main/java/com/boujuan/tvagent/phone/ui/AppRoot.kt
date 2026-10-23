@@ -2,7 +2,9 @@ package com.boujuan.tvagent.phone.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -62,6 +64,7 @@ import com.boujuan.tvagent.phone.ui.agents.AgentsScreen
 import com.boujuan.tvagent.phone.ui.agents.AppPrefsScreen
 import com.boujuan.tvagent.phone.ui.agents.PairScreen
 import com.boujuan.tvagent.phone.ui.decisions.DecisionsScreen
+import com.boujuan.tvagent.phone.ui.decisions.VocabularyScreen
 import com.boujuan.tvagent.phone.ui.more.MoreScreen
 import com.boujuan.tvagent.phone.ui.overview.OverviewScreen
 import com.boujuan.tvagent.phone.ui.playing.NowPlayingScreen
@@ -86,6 +89,7 @@ private val TABS = listOf(
 private val SUB = mapOf(
     "overview" to R.string.overview, "decisions" to R.string.decisions, "settings" to R.string.agent_settings,
     "agents" to R.string.agents, "app" to R.string.app_settings, "pair" to R.string.pair_title,
+    "vocabulary" to R.string.vocabulary_title,
 )
 
 @Composable
@@ -97,7 +101,7 @@ fun AppRoot(pairingLink: PairingLink?, onLinkUsed: () -> Unit) {
         when {
             agents == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             agents!!.isEmpty() || pairingLink != null -> Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { pad ->
-                Column(Modifier.padding(pad)) {
+                Column(Modifier.padding(pad).consumeWindowInsets(pad).imePadding()) {
                     LocalNetworkNotice()
                     PairScreen(link = pairingLink, onDone = onLinkUsed, onCancel = if (agents!!.isEmpty()) null else onLinkUsed)
                 }
@@ -151,7 +155,7 @@ private fun Main(snackbar: SnackbarHostState) {
         floatingActionButton = { if (route in setOf("remote", "playing", "search")) VoiceButton() },
         snackbarHost = { SnackbarHost(snackbar) },
     ) { pad ->
-        Box(Modifier.padding(pad).fillMaxSize()) {
+        Box(Modifier.padding(pad).consumeWindowInsets(pad).imePadding().fillMaxSize()) {   // fields stay above the keyboard
             NavHost(nav, startDestination = "remote") {
                 composable("remote") { RemoteScreen() }
                 composable("playing") { NowPlayingScreen() }
@@ -159,7 +163,8 @@ private fun Main(snackbar: SnackbarHostState) {
                 composable("activity") { ActivityScreen() }
                 composable("more") { MoreScreen(open = { nav.navigate(it) }) }
                 composable("overview") { OverviewScreen() }
-                composable("decisions") { DecisionsScreen() }
+                composable("decisions") { DecisionsScreen(onVocabulary = { nav.navigate("vocabulary") }) }
+                composable("vocabulary") { VocabularyScreen() }
                 composable("settings") { SettingsScreen() }
                 composable("agents") { AgentsScreen(onAdd = { nav.navigate("pair") }) }
                 composable("app") { AppPrefsScreen() }

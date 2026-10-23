@@ -52,8 +52,6 @@
     <!-- Remote -->
     <string name="key_sleep">Sleep</string>
     <string name="key_wake">Wake</string>
-    <string name="key_info">Info</string>
-    <string name="key_menu">Menu</string>
     <string name="key_numbers">Numbers</string>
     <string name="key_back">Back</string>
     <string name="key_home">Home</string>
@@ -186,7 +184,7 @@
     <string name="step_phrases">Fixed phrases</string>
     <string name="step_patterns">Pattern rules</string>
     <string name="step_llm">The LLM</string>
-    <string name="step_d1">d1</string>
+    <string name="step_d1">Decision model</string>
     <string name="move_up">Move up</string>
     <string name="move_down">Move down</string>
     <string name="rules_counts">Rules</string>
@@ -286,4 +284,24 @@
     <string name="laptop_only">The local models (files on the laptop) are chosen in the laptop’s panel.</string>
     <string name="stt_on_laptop">%1$s on the laptop</string>
     <string name="stt_hosted">%1$s, hosted</string>
+
+    <!-- Model pickers, vocabulary, remote keys -->
+    <string name="change">Change</string>
+    <string name="add">Add</string>
+    <string name="model_other">Another model</string>
+    <string name="model_other_hint">Any OpenRouter model id; the agent checks it before using it.</string>
+    <string name="model_note_llm_default">the default: the most accurate, ~0.4 s</string>
+    <string name="model_note_d1">recommended: the fastest, ~0.17 s</string>
+    <string name="model_note_hint_vocabulary">uses the language hint and the vocabulary</string>
+    <string name="model_note_hint">uses the language hint</string>
+    <string name="vocabulary_title">Vocabulary</string>
+    <string name="vocabulary_edit">Edit (%1$d)</string>
+    <string name="vocabulary_intro">Names the hosted speech-to-text should hear as written (AssemblyAI models use them). Each change is saved on the computer at once.</string>
+    <string name="vocabulary_add">Add a name (or find one)</string>
+    <string name="vocabulary_count">%1$d names here · %2$d sent with each command</string>
+    <string name="vocabulary_plus_library">(with your library’s titles)</string>
+    <string name="vocabulary_empty">No names yet.</string>
+    <string name="vocabulary_none_match">None like that yet: add it.</string>
+    <string name="key_gear">TV settings (the remote’s gear)</string>
+    <string name="key_input">Inputs</string>
 </resources>

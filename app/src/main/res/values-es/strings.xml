@@ -52,8 +52,6 @@
     <!-- Mando -->
     <string name="key_sleep">Reposo</string>
     <string name="key_wake">Encender</string>
-    <string name="key_info">Info</string>
-    <string name="key_menu">Menú</string>
     <string name="key_numbers">Números</string>
     <string name="key_back">Atrás</string>
     <string name="key_home">Inicio</string>
@@ -181,7 +179,7 @@
     <string name="step_phrases">Frases fijas</string>
     <string name="step_patterns">Reglas de patrones</string>
     <string name="step_llm">El LLM</string>
-    <string name="step_d1">d1</string>
+    <string name="step_d1">Modelo de decisión</string>
     <string name="move_up">Subir</string>
     <string name="move_down">Bajar</string>
     <string name="rules_counts">Reglas</string>
@@ -281,4 +279,24 @@
     <string name="laptop_only">Los modelos locales (archivos del portátil) se eligen en el panel del portátil.</string>
     <string name="stt_on_laptop">%1$s en el portátil</string>
     <string name="stt_hosted">%1$s, en la nube</string>
+
+    <!-- Model pickers, vocabulary, remote keys -->
+    <string name="change">Cambiar</string>
+    <string name="add">Añadir</string>
+    <string name="model_other">Otro modelo</string>
+    <string name="model_other_hint">Cualquier id de modelo de OpenRouter; el agente lo comprueba antes de usarlo.</string>
+    <string name="model_note_llm_default">el predeterminado: el más preciso, ~0,4 s</string>
+    <string name="model_note_d1">recomendado: el más rápido, ~0,17 s</string>
+    <string name="model_note_hint_vocabulary">usa la pista de idioma y el vocabulario</string>
+    <string name="model_note_hint">usa la pista de idioma</string>
+    <string name="vocabulary_title">Vocabulario</string>
+    <string name="vocabulary_edit">Editar (%1$d)</string>
+    <string name="vocabulary_intro">Nombres que la voz a texto en la nube debe oír tal como se escriben (los usan los modelos de AssemblyAI). Cada cambio se guarda en el ordenador al momento.</string>
+    <string name="vocabulary_add">Añade un nombre (o búscalo)</string>
+    <string name="vocabulary_count">%1$d nombres aquí · %2$d enviados con cada orden</string>
+    <string name="vocabulary_plus_library">(con los títulos de tu biblioteca)</string>
+    <string name="vocabulary_empty">Aún no hay nombres.</string>
+    <string name="vocabulary_none_match">Aún no hay ninguno así: añádelo.</string>
+    <string name="key_gear">Ajustes de la tele (el engranaje del mando)</string>
+    <string name="key_input">Entradas</string>
 </resources>
