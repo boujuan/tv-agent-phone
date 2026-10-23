@@ -318,7 +318,7 @@
     <string name="updates">Updates</string>
     <string name="updates_channel">Updates</string>
     <string name="update_idle">Not checked yet.</string>
-    <string name="update_none">Up to date: %1$s is the latest.</string>
+    <string name="update_none">Up to date (the latest release is %1$s).</string>
     <string name="update_available">%1$s is out (this is %2$s).</string>
     <string name="update_downloading">Downloading %1$s…</string>
     <string name="update_installing">Installing %1$s…</string>

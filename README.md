@@ -42,7 +42,9 @@ English and Spanish (from the phone's language). Android 10 (API 29) or newer; b
 
    Or install a release APK from GitHub Releases (signed with the project's release key, see
    [RELEASING.md](RELEASING.md)). A release install updates itself from then on (More › About): let TV Agent
-   install apps without asking (Android 17: Install apps › Always allow; before: Install unknown apps).
+   install apps without asking (Android 17: Install apps › Always allow; before: Install unknown apps). Google Play
+   Protect may stop an update the first time ("hasn't seen an app from this developer"): allowing it there lets it
+   install.
 2. On the computer: the panel's **Settings › Phones › Pair a phone…** shows a QR code and a code (5 minutes, one use).
 3. On the phone: open TV Agent, **Scan the QR code**. Or **Type the code** with the computer's address: the app
    then shows the certificate's fingerprint, which must be the one under the code in the panel.

@@ -313,7 +313,7 @@
     <string name="updates">Actualizaciones</string>
     <string name="updates_channel">Actualizaciones</string>
     <string name="update_idle">Aún no se ha comprobado.</string>
-    <string name="update_none">Al día: la %1$s es la última.</string>
+    <string name="update_none">Al día (la última versión publicada es la %1$s).</string>
     <string name="update_available">Ya está la %1$s (esta es la %2$s).</string>
     <string name="update_downloading">Descargando la %1$s…</string>
     <string name="update_installing">Instalando la %1$s…</string>
