@@ -187,6 +187,11 @@ data class Pipeline(
     @SerialName("stt_loaded") val sttLoaded: Boolean = false,
     @SerialName("keep_recordings") val keepRecordings: Boolean = false,
     @SerialName("d1_model") val d1Model: String = "",
+    @SerialName("stt_language") val sttLanguage: String = "native",      // "native", "" (the model guesses) or "es", "en"…
+    @SerialName("stt_language_now") val sttLanguageNow: String = "",     // what "native" means now
+    @SerialName("stt_vocabulary") val sttVocabulary: List<String> = emptyList(),
+    @SerialName("stt_vocabulary_library") val sttVocabularyLibrary: Boolean = false,
+    @SerialName("stt_vocabulary_count") val sttVocabularyCount: Int = 0,
 )
 
 @Serializable

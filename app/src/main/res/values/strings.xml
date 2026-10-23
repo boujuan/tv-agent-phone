@@ -273,4 +273,15 @@
     <string name="local_network_why">TV Agent talks to the agent on your computer over your home network; Android 17 asks first. Without it, only an address outside the local network (e.g. Tailscale) works.</string>
     <string name="allow">Allow</string>
     <string name="open_settings">Open the app’s settings</string>
+
+    <!-- Speech-to-text hints (server 0.3) -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="stt_language">Language hint</string>
+    <string name="stt_language_native">Native language (%1$s)</string>
+    <string name="stt_language_guess">The model guesses</string>
+    <string name="stt_vocabulary">Vocabulary (comma separated)</string>
+    <string name="stt_vocabulary_library">Plus my library’s titles and Twitch favourites</string>
+    <string name="stt_vocabulary_hint">Names the hosted model should hear as written (AssemblyAI models): %1$d in all now.</string>
+    <string name="laptop_only">The local models and the private-providers choice are changed in the laptop’s panel.</string>
 </resources>

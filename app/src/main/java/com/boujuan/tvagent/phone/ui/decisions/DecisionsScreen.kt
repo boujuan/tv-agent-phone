@@ -135,7 +135,8 @@ fun DecisionsScreen() {
             Choice(stringResource(R.string.reasoning), REASONING.map { it to it }, pipe.llmReasoning.ifEmpty { "none" }) {
                 vm.change(buildJsonObject { put("llm_reasoning", it) })
             }
-            Toggle(stringResource(R.string.llm_private), pipe.llmPrivate) { vm.change(buildJsonObject { put("llm_private", it) }) }
+            // The privacy choice, like the laptop's file paths below, is the panel's: the agent refuses it from a phone.
+            LabeledValue(stringResource(R.string.llm_private), stringResource(if (pipe.llmPrivate) R.string.yes else R.string.no))
         }
         SectionCard(stringResource(R.string.step_d1)) {
             KeyState(pipe.keys.liquid || pipe.keys.hostedD1, "Liquid / OpenRouter")
@@ -150,9 +151,28 @@ fun DecisionsScreen() {
                 vm.change(buildJsonObject { put("stt_where", it) })
             }
             Editable(stringResource(R.string.hosted_model), pipe.sttHostedModel) { vm.change(buildJsonObject { put("stt_hosted_model", it) }) }
-            Editable(stringResource(R.string.local_model), pipe.sttModel) { vm.change(buildJsonObject { put("stt_model", it) }) }
+            LabeledValue(stringResource(R.string.local_model), pipe.sttModel)
             Toggle(stringResource(R.string.stt_loaded), pipe.sttLoaded) { vm.change(buildJsonObject { put("stt_loaded", it) }) }
             Toggle(stringResource(R.string.keep_recordings), pipe.keepRecordings) { vm.change(buildJsonObject { put("keep_recordings", it) }) }
+            val native = stringResource(R.string.stt_language_native, pipe.sttLanguageNow)
+            Choice(stringResource(R.string.stt_language), listOf("native" to native, "" to stringResource(R.string.stt_language_guess),
+                "es" to "Español (es)", "en" to "English (en)"), pipe.sttLanguage) {
+                vm.change(buildJsonObject { put("stt_language", it) })
+            }
+            Editable(stringResource(R.string.stt_vocabulary), pipe.sttVocabulary.joinToString(", ")) { text ->
+                vm.change(buildJsonObject {
+                    put("stt_vocabulary", buildJsonArray {
+                        text.split(',', '\n').map { it.trim() }.filter { it.isNotEmpty() }.forEach { add(JsonPrimitive(it)) }
+                    })
+                })
+            }
+            Toggle(stringResource(R.string.stt_vocabulary_library), pipe.sttVocabularyLibrary) {
+                vm.change(buildJsonObject { put("stt_vocabulary_library", it) })
+            }
+            Text(stringResource(R.string.stt_vocabulary_hint, pipe.sttVocabularyCount), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.laptop_only), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         SectionCard(stringResource(R.string.try_sentence)) {
             var text by rememberSaveable { mutableStateOf("") }
