@@ -83,6 +83,19 @@ class OverviewViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     }
 }
 
+/** The speech model that runs, by where: this laptop's, the hosted one, or one then the other. */
+@Composable
+private fun sttLine(a: About): String {
+    val local = stringResource(R.string.stt_on_laptop, a.sttModel)
+    val hosted = stringResource(R.string.stt_hosted, a.sttHostedModel.substringAfterLast('/'))
+    return when (a.sttWhere) {
+        "hosted" -> hosted
+        "local-first" -> "$local → $hosted"
+        "hosted-first" -> "$hosted → $local"
+        else -> local
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OverviewScreen() {
@@ -105,7 +118,7 @@ fun OverviewScreen() {
                 LabeledValue(stringResource(R.string.version), a.version)
                 LabeledValue(stringResource(R.string.running_since),
                     android.text.format.DateUtils.getRelativeTimeSpanString((a.started * 1000).toLong()).toString())
-                LabeledValue(stringResource(R.string.speech_to_text), "${a.sttModel} (${a.sttWhere})")
+                LabeledValue(stringResource(R.string.speech_to_text), sttLine(a))
                 LabeledValue(stringResource(R.string.llm), a.llmModel)
                 LabeledValue(stringResource(R.string.player), a.player)
             } ?: Waiting(vm) { vm.refresh() }

@@ -127,14 +127,19 @@ private fun Main(snackbar: SnackbarHostState) {
         },
         bottomBar = {
             NavigationBar {
+                val tabNow = if (isTab) route else "more"             // the screens under More belong to it
                 TABS.forEach { tab ->
                     NavigationBarItem(
-                        selected = route == tab.route,
+                        selected = tabNow == tab.route,
                         onClick = {
-                            nav.navigate(tab.route) {
-                                popUpTo("remote") { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
+                            if (tab.route == tabNow) {
+                                nav.popBackStack(tab.route, inclusive = false)   // again: back to the tab's own screen
+                            } else {
+                                nav.navigate(tab.route) {
+                                    popUpTo("remote") { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         },
                         icon = { Icon(tab.icon, contentDescription = null) },

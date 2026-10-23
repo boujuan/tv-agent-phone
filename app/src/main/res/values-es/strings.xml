@@ -279,4 +279,6 @@
     <string name="stt_vocabulary_library">Más los títulos de mi biblioteca y mis favoritos de Twitch</string>
     <string name="stt_vocabulary_hint">Nombres que el modelo en la nube debe oír tal como se escriben (modelos de AssemblyAI): %1$d en total ahora.</string>
     <string name="laptop_only">Los modelos locales (archivos del portátil) se eligen en el panel del portátil.</string>
+    <string name="stt_on_laptop">%1$s en el portátil</string>
+    <string name="stt_hosted">%1$s, en la nube</string>
 </resources>

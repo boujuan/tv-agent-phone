@@ -284,4 +284,6 @@
     <string name="stt_vocabulary_library">Plus my library’s titles and Twitch favourites</string>
     <string name="stt_vocabulary_hint">Names the hosted model should hear as written (AssemblyAI models): %1$d in all now.</string>
     <string name="laptop_only">The local models (files on the laptop) are chosen in the laptop’s panel.</string>
+    <string name="stt_on_laptop">%1$s on the laptop</string>
+    <string name="stt_hosted">%1$s, hosted</string>
 </resources>

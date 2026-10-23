@@ -230,6 +230,7 @@ data class About(
     val started: Double = 0.0,
     @SerialName("stt_model") val sttModel: String = "",
     @SerialName("stt_where") val sttWhere: String = "",
+    @SerialName("stt_hosted_model") val sttHostedModel: String = "",
     @SerialName("d1_where") val d1Where: String = "",
     @SerialName("llm_model") val llmModel: String = "",
     val player: String = "",
