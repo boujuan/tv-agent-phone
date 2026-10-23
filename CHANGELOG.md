@@ -3,7 +3,7 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
-## 0.1.0 — unreleased
+## 0.1.0 — 2026-10-23
 
 Needs tv-agent server 0.3.0 or newer (paired phones, the full vocabulary list, the remote's gear and input keys)
 and panel 0.3.0 to pair. Built for Android 17 (API 37; Gradle 9.8.2, AGP 9.4.1, Kotlin 2.4.21), runs on Android 10
