@@ -328,6 +328,8 @@
     <string name="updates">Updates</string>
     <string name="updates_channel">Updates</string>
     <string name="update_idle">Not checked yet.</string>
+    <string name="update_checked_none">Checked GitHub: no newer version.</string>
+    <string name="update_checked_at">Checked at %1$s</string>
     <string name="update_none">Up to date (the latest release is %1$s).</string>
     <string name="update_available">%1$s is out (this is %2$s).</string>
     <string name="update_downloading">Downloading %1$s…</string>

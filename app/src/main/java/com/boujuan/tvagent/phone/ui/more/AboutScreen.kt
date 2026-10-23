@@ -61,12 +61,14 @@ import com.boujuan.tvagent.phone.ui.SectionCard
 import com.boujuan.tvagent.phone.ui.Toggle
 import com.boujuan.tvagent.phone.ui.WhileVisible
 import com.boujuan.tvagent.phone.ui.appViewModel
+import com.boujuan.tvagent.phone.ui.describe
 import com.boujuan.tvagent.phone.ui.theme.Amber
 import com.boujuan.tvagent.phone.ui.theme.Green
 import com.boujuan.tvagent.phone.ui.theme.Red
 import com.boujuan.tvagent.phone.update.RELEASE_CERT_SHA256
 import com.boujuan.tvagent.phone.update.UpdateState
 import com.boujuan.tvagent.phone.update.UpdateWork
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
@@ -81,18 +83,33 @@ class AboutViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val tvApp = MutableStateFlow<String?>(null)
     val tvPlayer = MutableStateFlow<String?>(null)
     val updates = MutableStateFlow<UpdatesInfo?>(null)
+    /** Why the agent's details couldn't be read: shown in its card, not as a message over the screen, since the rest
+     * of About (this app, its updates from GitHub) doesn't need the agent. */
+    val agentError = MutableStateFlow<Throwable?>(null)
 
-    fun load() = call {
-        about.value = it.about()
-        me.value = it.me()
-        val packages = it.tvPackages()                  // {"error"} when the TV can't be reached
-        fun version(key: String) = (packages[key] as? JsonObject)?.get("version")?.jsonPrimitive?.contentOrNull
-        tvApp.value = version("tvagent")
-        tvPlayer.value = version("tvplayer")
-        updates.value = runCatching { it.updates() }.getOrNull()      // an extra: its shape mustn't break the rest
+    fun load() = viewModelScope.launch {
+        val api = api ?: return@launch
+        try {
+            about.value = api.about()
+            me.value = api.me()
+            val packages = api.tvPackages()                 // {"error"} when the TV can't be reached
+            fun version(key: String) = (packages[key] as? JsonObject)?.get("version")?.jsonPrimitive?.contentOrNull
+            tvApp.value = version("tvagent")
+            tvPlayer.value = version("tvplayer")
+            updates.value = runCatching { api.updates() }.getOrNull()      // an extra: its shape mustn't break the rest
+            agentError.value = null
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            agentError.value = e
+        }
     }
 
-    fun check(context: Context) = viewModelScope.launch { context.app.updater.check() }
+    /** Asks GitHub (never the agent); says so when there's nothing newer, as the status alone wouldn't change. */
+    fun check(context: Context) = viewModelScope.launch {
+        context.app.updater.check()
+        if (context.app.updater.state.value is UpdateState.UpToDate) tell(R.string.update_checked_none)
+    }
 
     fun install(context: Context) = viewModelScope.launch {
         val updater = context.app.updater
@@ -122,6 +139,7 @@ fun AboutScreen() {
     val tvApp by vm.tvApp.collectAsStateWithLifecycle()
     val tvPlayer by vm.tvPlayer.collectAsStateWithLifecycle()
     val updates by vm.updates.collectAsStateWithLifecycle()
+    val agentError by vm.agentError.collectAsStateWithLifecycle()
     val conn by context.app.repo.current.collectAsStateWithLifecycle()
     val prefs by context.app.repo.prefs.collectAsStateWithLifecycle()
     val state by context.app.updater.state.collectAsStateWithLifecycle()
@@ -169,6 +187,7 @@ fun AboutScreen() {
         }
 
         SectionCard(stringResource(R.string.voice_agent)) {
+            agentError?.let { Text(describe(context, it), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
             LabeledValue(stringResource(R.string.computer), conn?.agent?.name.orEmpty())
             LabeledValue(stringResource(R.string.server_version), about?.version ?: "–")
             LabeledValue(stringResource(R.string.tv_app), tvApp ?: "–")
@@ -194,7 +213,11 @@ private fun UpdateStatus(state: UpdateState) {
     when (state) {
         UpdateState.Idle -> Text(stringResource(R.string.update_idle), color = MaterialTheme.colorScheme.onSurfaceVariant)
         UpdateState.Checking -> LinearProgressIndicator(Modifier.fillMaxWidth())
-        is UpdateState.UpToDate -> Text(stringResource(R.string.update_none, state.latest.version), color = Green)
+        is UpdateState.UpToDate -> {
+            Text(stringResource(R.string.update_none, state.latest.version), color = Green)
+            Text(stringResource(R.string.update_checked_at, DateUtils.formatDateTime(LocalContext.current, state.at, DateUtils.FORMAT_SHOW_TIME)),
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
         is UpdateState.Available -> {
             Text(stringResource(R.string.update_available, state.release.version, BuildConfig.VERSION_NAME), fontWeight = FontWeight.SemiBold)
             Notes(state.release.body)

@@ -41,7 +41,7 @@ const val RELEASE_CERT_SHA256 = "bd934e07d6784766bbfb3948bf3467ef9b2cb0c9c1146fd
 sealed interface UpdateState {
     data object Idle : UpdateState
     data object Checking : UpdateState
-    data class UpToDate(val latest: Release) : UpdateState
+    data class UpToDate(val latest: Release, val at: Long = System.currentTimeMillis()) : UpdateState
     data class Available(val release: Release) : UpdateState
     data class Downloading(val release: Release, val progress: Float) : UpdateState
     data class Installing(val release: Release) : UpdateState

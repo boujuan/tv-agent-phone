@@ -14,6 +14,11 @@ One section per release, newest first; each `## X.Y.Z` section becomes that tag'
 - **More › About** shows TV Agent Player's version on the TV, and says when the agent has found a newer release of
   it (`components.tvplayer` in `GET /v1/updates`), as for the TV app and the agent.
 
+### Fixed
+- About without the agent (the computer off, or at a new address): its error shows in the agent's card instead of
+  over the screen, so it no longer looks as if *Check for updates* needed the agent (it asks GitHub only). A check
+  that finds nothing newer now says so, and the status shows when it last checked.
+
 ## 0.2.0 — 2026-10-23
 
 Works with any tv-agent server 0.3.0 or newer; one that reads it shows each phone's app version in the panel.
