@@ -113,7 +113,10 @@ fun RemoteScreen() {
     val volume by vm.volume.collectAsStateWithLifecycle()
     val tap = rememberTap()
     var numbers by rememberSaveable { mutableStateOf(false) }
-    WhileVisible(30_000) { vm.refreshVolume() }
+    WhileVisible(30_000) {
+        vm.refreshVolume()
+        if (vm.apps.value.isEmpty()) vm.loadApps()
+    }
     fun press(key: String, long: Boolean = false) { tap(); vm.key(key, long) }
 
     Column(

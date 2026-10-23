@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -53,10 +55,12 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Request
+import java.io.IOException
 
 /** What a screen tells the user in the snackbar. */
 sealed interface UiMessage {
@@ -74,21 +78,43 @@ abstract class AgentViewModel(protected val repo: AgentRepository) : ViewModel()
 
     protected val api: AgentApi? get() = repo.current.value?.api
 
+    /** Why the agent couldn't be reached on the last call (cleared by the next that works): a screen still waiting
+     * for its first answer shows it instead of "Loading…". */
+    val unreachable = MutableStateFlow<Throwable?>(null)
+
     protected fun tell(text: String) = _messages.tryEmit(UiMessage.Text(text))
     protected fun tell(id: Int) = _messages.tryEmit(UiMessage.Res(id))
-    protected fun fail(e: Throwable) = _messages.tryEmit(UiMessage.Error(e))
+    protected fun fail(e: Throwable) {
+        if (e is IOException && e !is ApiException) unreachable.value = e
+        _messages.tryEmit(UiMessage.Error(e))
+    }
 
     /** Runs a call to the agent; touch: it changes the TV, so screens showing it refresh. */
     protected fun call(touch: Boolean = false, block: suspend (AgentApi) -> Unit) = viewModelScope.launch {
         val api = api ?: return@launch
         try {
             block(api)
+            unreachable.value = null
             if (touch) repo.touched()
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             fail(e)
         }
+    }
+}
+
+/** "Loading…" while a screen waits for its first answer; why not and a retry when the agent can't be reached. */
+@Composable
+fun Waiting(vm: AgentViewModel, retry: () -> Unit) {
+    val error by vm.unreachable.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val e = error
+    if (e == null) {
+        Text(stringResource(R.string.loading), color = MaterialTheme.colorScheme.onSurfaceVariant)
+    } else {
+        Text(describe(context, e), color = MaterialTheme.colorScheme.error)
+        TextButton(onClick = retry) { Text(stringResource(R.string.try_again)) }
     }
 }
 

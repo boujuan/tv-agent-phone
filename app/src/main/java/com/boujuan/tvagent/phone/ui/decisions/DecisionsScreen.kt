@@ -39,6 +39,7 @@ import com.boujuan.tvagent.phone.ui.AgentViewModel
 import com.boujuan.tvagent.phone.ui.Choice
 import com.boujuan.tvagent.phone.ui.Editable
 import com.boujuan.tvagent.phone.ui.Toggle
+import com.boujuan.tvagent.phone.ui.Waiting
 import com.boujuan.tvagent.phone.ui.LabeledValue
 import com.boujuan.tvagent.phone.ui.Messages
 import com.boujuan.tvagent.phone.ui.SectionCard
@@ -111,7 +112,7 @@ fun DecisionsScreen() {
     val learned by vm.learned.collectAsStateWithLifecycle()
     val tried by vm.tried.collectAsStateWithLifecycle()
     Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        val pipe = p ?: run { Text(stringResource(R.string.loading)); return@Column }
+        val pipe = p ?: run { Waiting(vm) { vm.load() }; return@Column }
         SectionCard(stringResource(R.string.steps)) {
             Text(stringResource(R.string.steps_hint), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)

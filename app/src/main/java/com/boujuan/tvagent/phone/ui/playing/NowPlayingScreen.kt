@@ -55,10 +55,12 @@ import com.boujuan.tvagent.phone.ui.AgentViewModel
 import com.boujuan.tvagent.phone.ui.Messages
 import com.boujuan.tvagent.phone.ui.RemoteImage
 import com.boujuan.tvagent.phone.ui.SectionCard
+import com.boujuan.tvagent.phone.ui.Waiting
 import com.boujuan.tvagent.phone.ui.WhileVisible
 import com.boujuan.tvagent.phone.ui.appViewModel
 import com.boujuan.tvagent.phone.ui.clock
 import com.boujuan.tvagent.phone.ui.rememberTap
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
@@ -74,7 +76,16 @@ class NowPlayingViewModel(repo: AgentRepository) : AgentViewModel(repo) {
 
     fun refresh() = viewModelScope.launch {
         val api = api ?: return@launch
-        runCatching { api.nowPlaying() }.onSuccess { state.value = it; loaded.value = true }
+        try {
+            state.value = api.nowPlaying()
+            loaded.value = true
+            unreachable.value = null
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            if (unreachable.value == null) fail(e)        // said once, not every 2 s
+            unreachable.value = e
+        }
     }
 
     fun action(a: JsonObject) = call(touch = true) { val o = it.action(a); tell(o.say) }
@@ -100,8 +111,8 @@ fun NowPlayingScreen() {
         val player = np?.player
         if (item == null && player == null) {
             SectionCard {
-                Text(stringResource(if (loaded) R.string.nothing_playing else R.string.loading),
-                    style = MaterialTheme.typography.titleMedium)
+                if (loaded) Text(stringResource(R.string.nothing_playing), style = MaterialTheme.typography.titleMedium)
+                else Waiting(vm) { vm.refresh() }
                 if (loaded) {
                     Text(stringResource(R.string.nothing_playing_hint), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Button(onClick = { act(Actions.continueWatching()) }) { Text(stringResource(R.string.continue_watching)) }

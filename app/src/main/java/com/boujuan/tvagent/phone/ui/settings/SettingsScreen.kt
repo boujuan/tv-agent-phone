@@ -36,6 +36,7 @@ import com.boujuan.tvagent.phone.ui.Editable
 import com.boujuan.tvagent.phone.ui.Messages
 import com.boujuan.tvagent.phone.ui.SectionCard
 import com.boujuan.tvagent.phone.ui.Toggle
+import com.boujuan.tvagent.phone.ui.Waiting
 import com.boujuan.tvagent.phone.ui.appViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -68,7 +69,7 @@ fun SettingsScreen() {
     Messages(vm)
     val state by vm.settings.collectAsStateWithLifecycle()
     Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        val r = state ?: run { Text(stringResource(R.string.loading)); return@Column }
+        val r = state ?: run { Waiting(vm) { vm.load() }; return@Column }
         val s = r.settings
         Text(stringResource(R.string.settings_hint), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant)

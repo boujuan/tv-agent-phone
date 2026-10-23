@@ -35,6 +35,7 @@ import com.boujuan.tvagent.phone.ui.AgentViewModel
 import com.boujuan.tvagent.phone.ui.LabeledValue
 import com.boujuan.tvagent.phone.ui.Messages
 import com.boujuan.tvagent.phone.ui.SectionCard
+import com.boujuan.tvagent.phone.ui.Waiting
 import com.boujuan.tvagent.phone.ui.WhileVisible
 import com.boujuan.tvagent.phone.ui.appViewModel
 import com.boujuan.tvagent.phone.ui.theme.Amber
@@ -107,12 +108,12 @@ fun OverviewScreen() {
                 LabeledValue(stringResource(R.string.speech_to_text), "${a.sttModel} (${a.sttWhere})")
                 LabeledValue(stringResource(R.string.llm), a.llmModel)
                 LabeledValue(stringResource(R.string.player), a.player)
-            } ?: Text(stringResource(R.string.loading), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            } ?: Waiting(vm) { vm.refresh() }
         }
         SectionCard(stringResource(R.string.tv)) {
             val t = tv
             when {
-                t == null -> Text(stringResource(R.string.loading), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                t == null -> Waiting(vm) { vm.refresh() }
                 t.error != null -> Text(stringResource(R.string.tv_unreachable, t.error), color = Red)
                 else -> {
                     LabeledValue(stringResource(R.string.model), "${t.model} · Android ${t.android}")
