@@ -5,8 +5,9 @@ One section per release, newest first; each `## X.Y.Z` section becomes that tag'
 
 ## 0.1.0 — unreleased
 
-Needs tv-agent's server with paired phones (its `clients.py`, after server 0.2.0) and its panel to pair. Built for
-Android 17 (API 37; Gradle 9.8.2, AGP 9.4.1, Kotlin 2.4.21), runs on Android 10 and newer.
+Needs tv-agent server 0.3.0 or newer (paired phones, the full vocabulary list, the remote's gear and input keys)
+and panel 0.3.0 to pair. Built for Android 17 (API 37; Gradle 9.8.2, AGP 9.4.1, Kotlin 2.4.21), runs on Android 10
+and newer.
 
 ### Added
 - Pairing with an agent from the panel's QR code (CameraX + ZXing, no Google Play services) or a typed code with

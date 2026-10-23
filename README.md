@@ -23,7 +23,7 @@ English and Spanish (from the phone's language). Android 10 (API 29) or newer; b
 
 ## What it needs
 
-- **tv-agent** with paired phones (the server's `clients.py`, after server 0.2.0): its phones' listener runs by
+- **tv-agent** server 0.3.0 or newer (paired phones): its phones' listener runs by
   default (`phones = true`) on this computer's LAN address, HTTPS on port 8768 and voice on 8769. Add
   `phone_hosts = ["<Tailscale address>"]` to `~/.config/tv-agent/config.toml` to reach it away from home too.
 - **The TV Agent panel** on that computer, to pair (Settings › Phones › Pair a phone…). `qrencode` installed gives
