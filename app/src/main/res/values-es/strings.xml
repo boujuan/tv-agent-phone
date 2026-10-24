@@ -97,7 +97,7 @@
     <string name="segment_recap">resumen</string>
     <string name="segment_credits">créditos</string>
     <string name="tracks">Audio y subtítulos</string>
-    <string name="tracks_kodi_only">Elegir pista funciona en TV Agent Player y Kodi; aquí, subtítulos sí o no.</string>
+    <string name="tracks_player_only">Elegir pista funciona en TV Agent Player y Kodi; aquí, subtítulos sí o no.</string>
     <string name="audio">Audio</string>
     <string name="subtitles">Subtítulos</string>
     <string name="subtitles_on">Subtítulos sí</string>
@@ -233,7 +233,7 @@
     <string name="subtitles_when_off">Nunca</string>
     <string name="audio_in">Audio en…</string>
     <string name="subtitles_in">Subtítulos en…</string>
-    <string name="language_hint">Cambia la pista, o sigue desde el mismo punto con otra copia que tenga ese idioma, como al decirlo.</string>
+    <string name="language_hint">Cambia la pista, o sigue desde el mismo punto con otra copia que tenga ese idioma, como al decirlo. Vale para este título (y sus siguientes capítulos) 12 horas.</string>
     <string name="native_language">Idioma nativo</string>
     <string name="subtitles_order">Subtítulos, en orden</string>
     <string name="other">Otros</string>
@@ -364,4 +364,19 @@
     <string name="shown_hint">La lista de la tele: toca una, como al decir su número.</string>
     <string name="shown_gone">La tele ya muestra otra cosa.</string>
     <string name="voice_cancelled">Cancelado: no se ha hecho nada</string>
+
+    <!-- Playing: replay, cancel, sleep timer, scenes -->
+    <string name="replay">Repetir con subtítulos</string>
+    <string name="cancel_hint">Cancelar para lo que se está poniendo y lo que falte de una cadena.</string>
+    <string name="timer">Temporizador</string>
+    <string name="timer_after">Parar después de este</string>
+    <string name="timer_30">Parar en 30 min</string>
+    <string name="timer_60">Parar en 1 hora</string>
+    <string name="timer_off">Apagar la tele después de este</string>
+    <string name="timer_cancel">Quitar el temporizador</string>
+    <string name="scene_title">Buscar un momento</string>
+    <string name="scene_label">Ve a la parte en la que…</string>
+    <string name="scene_prefix">ve a la parte en la que </string>
+    <string name="scene_hint">Di lo que pasa en pocas palabras: se busca en los subtítulos, en el idioma en que escribas.</string>
+    <string name="go">Ir</string>
 </resources>

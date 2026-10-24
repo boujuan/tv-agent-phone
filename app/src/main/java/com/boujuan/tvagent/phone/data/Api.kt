@@ -265,6 +265,16 @@ object Actions {
         if (subtitles != null) put("subtitles", subtitles)
     }
     fun binge(on: Boolean) = buildJsonObject { put("type", "binge"); put("on", on) }
+    /** "What did they say?": back a little, subtitles on for a moment. */
+    fun replay(seconds: Int = 10) = buildJsonObject { put("type", "replay"); put("seconds", seconds) }
+    /** Stop (or turn the TV off) after [minutes], or when what's playing ends (null); or the timer cancelled. */
+    fun timer(minutes: Int? = null, then: String = "stop", cancel: Boolean = false) = buildJsonObject {
+        put("type", "timer"); put("then", then)
+        if (minutes != null) put("minutes", minutes)
+        if (cancel) put("cancel", true)
+    }
+    /** A start on its way, and what's left of a chain, stopped. */
+    fun cancel() = buildJsonObject { put("type", "cancel") }
     fun play(title: String) = buildJsonObject { put("type", "play_title"); put("title", title) }
     fun continueWatching() = buildJsonObject { put("type", "continue_watching") }
     fun showList(list: String) = buildJsonObject { put("type", "show_list"); put("list", list) }

@@ -97,7 +97,7 @@
     <string name="segment_recap">recap</string>
     <string name="segment_credits">credits</string>
     <string name="tracks">Audio and subtitles</string>
-    <string name="tracks_kodi_only">Choosing a track works in TV Agent Player and Kodi; here, subtitles on or off.</string>
+    <string name="tracks_player_only">Choosing a track works in TV Agent Player and Kodi; here, subtitles on or off.</string>
     <string name="audio">Audio</string>
     <string name="subtitles">Subtitles</string>
     <string name="subtitles_on">Subtitles on</string>
@@ -238,7 +238,7 @@
     <string name="subtitles_when_off">Never</string>
     <string name="audio_in">Audio in…</string>
     <string name="subtitles_in">Subtitles in…</string>
-    <string name="language_hint">Switches the track, or carries on from the same moment with another copy that has the language, as saying it does.</string>
+    <string name="language_hint">Switches the track, or carries on from the same moment with another copy that has the language, as saying it does. Holds for this title (and its next episodes) for 12 hours.</string>
     <string name="native_language">Native language</string>
     <string name="subtitles_order">Subtitles, in order</string>
     <string name="other">Other</string>
@@ -369,4 +369,19 @@
     <string name="shown_hint">The list on the TV: tap one, as saying its number does.</string>
     <string name="shown_gone">The TV shows something else now.</string>
     <string name="voice_cancelled">Cancelled: nothing was done</string>
+
+    <!-- Playing: replay, cancel, sleep timer, scenes -->
+    <string name="replay">Replay with subtitles</string>
+    <string name="cancel_hint">Cancel stops what’s starting, and what’s left of a chain.</string>
+    <string name="timer">Sleep timer</string>
+    <string name="timer_after">Stop after this one</string>
+    <string name="timer_30">Stop in 30 min</string>
+    <string name="timer_60">Stop in 1 hour</string>
+    <string name="timer_off">Turn the TV off after this one</string>
+    <string name="timer_cancel">Cancel the timer</string>
+    <string name="scene_title">Find a moment</string>
+    <string name="scene_label">Go to the part where…</string>
+    <string name="scene_prefix">go to the part where </string>
+    <string name="scene_hint">Say what happens in a few words: it’s looked for in the subtitles, in the language you write in.</string>
+    <string name="go">Go</string>
 </resources>

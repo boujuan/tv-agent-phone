@@ -65,6 +65,17 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.ClosedCaption
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.text.input.ImeAction
 
 class NowPlayingViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val state = MutableStateFlow<NowPlayingResponse?>(null)
@@ -92,6 +103,8 @@ class NowPlayingViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     }
 
     fun action(a: JsonObject) = call(touch = true) { val o = it.action(a); tell(o.say) }
+    /** A sentence, as if said ("go to the part where they kiss"). */
+    fun say(text: String) = call(touch = true) { tell(it.text(text).say) }
     fun loadLanguages() = viewModelScope.launch {
         if (languages.value == null) languages.value = runCatching { api?.settings()?.choices }.getOrNull()
     }
@@ -151,14 +164,15 @@ fun NowPlayingScreen() {
         if (player != null) {
             Position(player.positionS, player.durationS) { act(Actions.transport("seek_to", seconds = it.toInt())) }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
-                FilledTonalIconButton(onClick = { act(Actions.next(-1)) }) { Icon(Icons.Filled.SkipPrevious, stringResource(R.string.previous_episode)) }
+                val series = item?.season != null
+                if (series) FilledTonalIconButton(onClick = { act(Actions.next(-1)) }) { Icon(Icons.Filled.SkipPrevious, stringResource(R.string.previous_episode)) }
                 FilledTonalIconButton(onClick = { act(Actions.transport("back", seconds = 10)) }) { Icon(Icons.Filled.Replay10, stringResource(R.string.key_back10)) }
                 FilledIconButton(onClick = { act(Actions.transport(if (player.playing) "pause" else "resume")) }, modifier = Modifier.size(64.dp)) {
                     Icon(if (player.playing) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                         stringResource(if (player.playing) R.string.pause else R.string.resume), Modifier.size(36.dp))
                 }
                 FilledTonalIconButton(onClick = { act(Actions.transport("forward", seconds = 30)) }) { Icon(Icons.Filled.Forward30, stringResource(R.string.key_forward30)) }
-                FilledTonalIconButton(onClick = { act(Actions.next(1)) }) { Icon(Icons.Filled.SkipNext, stringResource(R.string.next_episode)) }
+                if (series) FilledTonalIconButton(onClick = { act(Actions.next(1)) }) { Icon(Icons.Filled.SkipNext, stringResource(R.string.next_episode)) }
             }
         }
         SectionCard(stringResource(R.string.skip)) {
@@ -176,12 +190,28 @@ fun NowPlayingScreen() {
                     }
                 }
             }
-            OutlinedButton(onClick = { act(Actions.transport("stop")) }, modifier = Modifier.fillMaxWidth()) {
-                Icon(Icons.Filled.Stop, contentDescription = null)
-                Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.stop))
+            if (player != null) {
+                OutlinedButton(onClick = { act(Actions.replay()) }, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.ClosedCaption, contentDescription = null)
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.replay))
+                }
             }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { act(Actions.transport("stop")) }, modifier = Modifier.weight(1f)) {
+                    Icon(Icons.Filled.Stop, contentDescription = null)
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.stop))
+                }
+                OutlinedButton(onClick = { act(Actions.cancel()) }, modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.cancel))
+                }
+                SleepTimer { act(it) }
+            }
+            Text(stringResource(R.string.cancel_hint), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        if (player != null) SceneSearch { tap(); vm.say(it) }
         TracksCard(np, languages, onAudio = { tap(); vm.audio(it) }, onSubtitle = { tap(); vm.subtitle(it) }, onAction = { act(it) })
     }
 }
@@ -221,9 +251,9 @@ private fun TracksCard(np: NowPlayingResponse?, languages: SettingsChoices?, onA
                        onSubtitle: (Track?) -> Unit, onAction: (JsonObject) -> Unit) {
     val tracks = np?.tracks
     SectionCard(stringResource(R.string.tracks)) {
-        if (np?.nowPlaying != null && languages != null) Languages(languages, onAction)
+        if (np?.nowPlaying != null && languages != null) Languages(languages, audio = np.player?.app != "just", onAction)
         if (tracks == null) {
-            Text(stringResource(R.string.tracks_kodi_only), color = MaterialTheme.colorScheme.onSurfaceVariant,
+            Text(stringResource(R.string.tracks_player_only), color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilledTonalButton(onClick = { onAction(Actions.subtitles("on")) }) { Text(stringResource(R.string.subtitles_on)) }
@@ -238,13 +268,53 @@ private fun TracksCard(np: NowPlayingResponse?, languages: SettingsChoices?, onA
     }
 }
 
+/** A sleep timer: after this one (episode or film), in 30 min or an hour; or the TV off after this one. */
+@Composable
+private fun SleepTimer(onAction: (JsonObject) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    Box {
+        OutlinedIconButton(onClick = { open = true }) { Icon(Icons.Filled.Bedtime, stringResource(R.string.timer)) }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            for ((label, action) in listOf(
+                R.string.timer_after to Actions.timer(),
+                R.string.timer_30 to Actions.timer(minutes = 30),
+                R.string.timer_60 to Actions.timer(minutes = 60),
+                R.string.timer_off to Actions.timer(then = "off"),
+                R.string.timer_cancel to Actions.timer(cancel = true),
+            )) {
+                DropdownMenuItem(text = { Text(stringResource(label)) }, onClick = { open = false; onAction(action) })
+            }
+        }
+    }
+}
+
+/** "Go to the part where…": looked for in the subtitles, in the language it's written in (the prefix follows it). */
+@Composable
+private fun SceneSearch(onSay: (String) -> Unit) {
+    var text by rememberSaveable { mutableStateOf("") }
+    val prefix = stringResource(R.string.scene_prefix)
+    fun go() {
+        if (text.isNotBlank()) onSay(prefix.trim() + " " + text.trim())     // resources lose a trailing space
+        text = ""
+    }
+    SectionCard(stringResource(R.string.scene_title)) {
+        OutlinedTextField(text, { text = it }, Modifier.fillMaxWidth(), singleLine = true,
+            label = { Text(stringResource(R.string.scene_label)) },
+            trailingIcon = { IconButton(onClick = { go() }, enabled = text.isNotBlank()) { Icon(Icons.Filled.Search, stringResource(R.string.go)) } },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go), keyboardActions = KeyboardActions(onGo = { go() }))
+        Text(stringResource(R.string.scene_hint), style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
 /** Audio or subtitles in a language, as saying "ponlo en español" does: the track, or another copy that has it. */
 @Composable
-private fun Languages(choices: SettingsChoices, onAction: (JsonObject) -> Unit) {
+private fun Languages(choices: SettingsChoices, audio: Boolean, onAction: (JsonObject) -> Unit) {
     val original = stringResource(R.string.original_language)
-    val audio = choices.audioLanguage.ifEmpty { choices.audio }.map { it.code to if (it.code == "original") original else it.label }
+    val audios = choices.audioLanguage.ifEmpty { choices.audio }.map { it.code to if (it.code == "original") original else it.label }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        LanguageMenu(stringResource(R.string.audio_in), audio) { onAction(Actions.language(audio = it)) }
+        // Just Player: only subtitles can be asked for (the agent changes its audio in TV Agent Player and Kodi)
+        if (audio) LanguageMenu(stringResource(R.string.audio_in), audios) { onAction(Actions.language(audio = it)) }
         LanguageMenu(stringResource(R.string.subtitles_in), choices.subtitles.map { it.code to it.label } +
             ("off" to stringResource(R.string.off))) { onAction(Actions.language(subtitles = it)) }
     }
