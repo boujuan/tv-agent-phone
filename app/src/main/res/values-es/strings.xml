@@ -105,12 +105,11 @@
 
     <!-- Buscar -->
     <string name="search_label">Reproducir o hacer</string>
-    <string name="search_placeholder">the bear temporada 3 · dune · lofi en youtube</string>
-    <string name="list_recent">Viendo</string>
+    <string name="search_placeholder">the bear temporada 3 · pon dune y ve al minuto 12 · busca lofi en youtube</string>
+    <string name="list_recent">Seguir viendo</string>
     <string name="list_new">Capítulos nuevos</string>
     <string name="list_movies">Películas nuevas</string>
     <string name="list_empty">Aquí no hay nada</string>
-    <string name="decided_by">Decidido por %1$s (%2$s)</string>
 
     <!-- Actividad -->
     <string name="filter_all">Todo</string>
@@ -379,4 +378,70 @@
     <string name="scene_prefix">ve a la parte en la que </string>
     <string name="scene_hint">Di lo que pasa en pocas palabras: se busca en los subtítulos, en el idioma en que escribas.</string>
     <string name="go">Ir</string>
+
+    <!-- Etiquetas de los códigos del agente; atajos de Buscar; Actividad -->
+    <string name="suggest_continue">seguir viendo</string>
+    <string name="suggest_next">siguiente capítulo</string>
+    <string name="suggest_whats_new">¿qué hay de nuevo?</string>
+    <string name="suggest_new_films">películas nuevas</string>
+    <string name="suggest_skip_intro">salta la intro</string>
+    <string name="suggest_replay">¿qué ha dicho?</string>
+    <string name="suggest_recommend">recomiéndame algo</string>
+    <string name="suggest_cancel">cancela</string>
+    <string name="act_play_title">Poner un título</string>
+    <string name="act_find_episode">Buscar un capítulo</string>
+    <string name="act_stremio">Abrir en Stremio</string>
+    <string name="act_open_app">Abrir una app</string>
+    <string name="act_transport">Reproducción</string>
+    <string name="act_binge">Modo maratón</string>
+    <string name="act_language_settings">Ajustes de idioma</string>
+    <string name="act_show_list">Una lista en la tele</string>
+    <string name="act_recommend">Sugerencias</string>
+    <string name="act_pick">Elegir de la lista</string>
+    <string name="act_library">Tu biblioteca</string>
+    <string name="act_auto_skip">Salto automático</string>
+    <string name="act_help">Lo que puedes decir</string>
+    <string name="act_find_scene">Buscar una escena</string>
+    <string name="act_info">Qué estás viendo</string>
+    <string name="act_wrong">Eso está mal</string>
+    <string name="act_none">No lo entendió</string>
+    <string name="act_sequence">Varias de una vez: %1$s</string>
+    <string name="via_phrase">Frase fija</string>
+    <string name="via_pattern">Regla de patrón</string>
+    <string name="via_llm">El LLM</string>
+    <string name="via_chain">Cadena</string>
+    <string name="via_remote">Elegido de una lista</string>
+    <string name="via_none">Nada</string>
+    <string name="decided_by_only">Decidido por: %1$s</string>
+    <string name="stage_endpoint">Tu pausa</string>
+    <string name="stage_decide">Decidir: %1$s</string>
+    <string name="stage_execute">Hacer: %1$s</string>
+    <string name="stage_start_title">Arranque: buscar el título</string>
+    <string name="stage_start_first_frame">Arranque: primer fotograma</string>
+    <string name="stage_start">Arranque: %1$s</string>
+    <string name="lang_eng">Inglés</string>
+    <string name="lang_spa">Español</string>
+    <string name="lang_fre">Francés</string>
+    <string name="lang_ita">Italiano</string>
+    <string name="lang_ger">Alemán</string>
+    <string name="lang_por">Portugués</string>
+    <string name="lang_jpn">Japonés</string>
+    <string name="lang_kor">Coreano</string>
+    <string name="lang_chi">Chino</string>
+    <string name="lang_chs">Chino (simplificado)</string>
+    <string name="lang_cht">Chino (tradicional)</string>
+    <string name="method_rule">regla</string>
+    <string name="method_stt">voz</string>
+    <string name="method_addon">addon</string>
+    <string name="method_cache">guardado</string>
+    <string name="method_player">reproductor</string>
+    <string name="trace_title">Qué pasó</string>
+    <string name="trace_sure">seguro %1$.2f, pide %2$.2f</string>
+    <string name="settings_then">Ajustes en ese momento</string>
+    <string name="details">Detalles</string>
+    <string name="details_hide">Ocultar detalles</string>
+    <string name="taught_chip">Enseñado</string>
+    <string name="stt_hint_used">pista %1$s</string>
+    <string name="stt_names_used">%1$d nombres</string>
+    <string name="decided_by">Decidido por: %1$s · %2$s</string>
 </resources>

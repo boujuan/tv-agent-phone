@@ -58,6 +58,8 @@ import com.boujuan.tvagent.phone.ui.theme.Green
 import com.boujuan.tvagent.phone.ui.theme.Red
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import com.boujuan.tvagent.phone.data.Actions
+import com.boujuan.tvagent.phone.ui.decidedBy
 
 class SearchViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val result = MutableStateFlow<CommandResult?>(null)
@@ -92,6 +94,7 @@ class SearchViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     }
 
     fun pick(list: String, item: ListItem) = call(touch = true) { tell(it.pick(list, item).say) }
+    fun action(a: kotlinx.serialization.json.JsonObject) = call(touch = true) { tell(it.action(a).say) }
 }
 
 private val LISTS = listOf("recent" to R.string.list_recent, "new" to R.string.list_new, "movies" to R.string.list_movies)
@@ -128,8 +131,11 @@ fun SearchScreen() {
         }
         item {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                for (s in listOf(R.string.suggest_continue, R.string.suggest_next, R.string.suggest_whats_new,
-                    R.string.suggest_new_films, R.string.suggest_skip_intro)) {
+                // "seguir viendo" isn't a phrase the rules know (it reads as a title): that one is the action itself
+                val continuing = stringResource(R.string.suggest_continue)
+                SuggestionChip(onClick = { tap(); vm.action(Actions.continueWatching()) }, label = { Text(continuing) })
+                for (s in listOf(R.string.suggest_next, R.string.suggest_whats_new, R.string.suggest_new_films,
+                    R.string.suggest_skip_intro, R.string.suggest_replay, R.string.suggest_recommend, R.string.suggest_cancel)) {
                     val phrase = stringResource(s)
                     SuggestionChip(onClick = { text = phrase; tap(); vm.send(phrase) }, label = { Text(phrase) })
                 }
@@ -165,7 +171,7 @@ private fun ResultCard(r: CommandResult) {
             Text(r.describe.ifEmpty { r.heard }, style = MaterialTheme.typography.titleMedium)
             Text(r.say, color = if (r.ok) Green else Red, fontWeight = FontWeight.Medium)
             if (r.via.isNotEmpty()) {
-                Text(stringResource(R.string.decided_by, r.via, r.rule), style = MaterialTheme.typography.bodySmall,
+                Text(decidedBy(r.via, r.rule), style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }

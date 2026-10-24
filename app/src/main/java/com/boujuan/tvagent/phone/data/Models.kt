@@ -173,7 +173,18 @@ data class ActivityEntry(
     val recording: String? = null,
     val wrong: Boolean? = null,
     val taught: String? = null,
-)
+    @SerialName("stt_model") val sttModel: String? = null,
+    @SerialName("stt_where") val sttWhere: String? = null,
+    @SerialName("stt_language") val sttLanguage: String? = null,
+    @SerialName("stt_vocabulary") val sttVocabulary: Int? = null,
+    /** What it did, step by step (tracing.py): label, at/ms, method {kind, id}, confidence/threshold, verdict, why. */
+    val trace: JsonArray? = null,
+    /** What the agent was set to when it ran (versions, speech, deciding, languages, playback). */
+    val settings: JsonObject? = null,
+) {
+    /** Said (to the TV, the panel's or this phone's microphone), not typed or picked: it has a recording's length. */
+    val spoken: Boolean get() = audioS != null
+}
 
 @Serializable
 data class ActivityPage(val entries: List<ActivityEntry> = emptyList(), val more: Boolean = false, val enabled: Boolean = true)

@@ -59,6 +59,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import com.boujuan.tvagent.phone.ui.actionLabel
+import com.boujuan.tvagent.phone.ui.viaLabel
+import com.boujuan.tvagent.phone.ui.methodLabel
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 class ActivityViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val entries = MutableStateFlow<List<ActivityEntry>>(emptyList())
@@ -143,7 +151,7 @@ fun ActivityScreen() {
     val shown = entries.filter {
         when (filter) {
             "wrong" -> it.wrong == true || it.ok == false
-            "voice" -> it.source in setOf("tv", "laptop", "phone")
+            "voice" -> it.spoken
             else -> true
         }
     }
@@ -183,7 +191,7 @@ private fun responseMs(e: ActivityEntry): Double? =
 
 @Composable
 private fun Summary(entries: List<ActivityEntry>) {
-    val voice = entries.filter { it.source in setOf("tv", "laptop", "phone") }.take(40)
+    val voice = entries.filter { it.spoken }.take(40)
     val times = voice.mapNotNull { responseMs(it) }.reversed()
     fun median(xs: List<Double>) = xs.sorted().let { if (it.isEmpty()) null else it[it.size / 2] }
     SectionCard(stringResource(R.string.response_times)) {
@@ -219,6 +227,8 @@ private fun EntryRow(e: ActivityEntry, onOpen: () -> Unit) {
                 Text(DateUtils.getRelativeTimeSpanString((e.t * 1000).toLong()).toString(),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            if (e.taught != null) Text(stringResource(R.string.taught_chip), style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary)
             if (e.say.isNotEmpty()) Text(e.say, color = when (e.ok) { true -> Green; false -> Red; null -> MaterialTheme.colorScheme.onSurface },
                 style = MaterialTheme.typography.bodyMedium)
             Text(timesLine(e), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -231,7 +241,7 @@ private fun timesLine(e: ActivityEntry): String {
     val parts = mutableListOf<String>()
     e.afterSpeechMs?.let { parts += stringResource(R.string.t_after_speech, it.toInt()) }
     e.sttMs?.let { parts += stringResource(R.string.t_stt, it.toInt()) }
-    e.decideMs?.let { parts += stringResource(R.string.t_decide, e.via, if (it < 1) "%.2f".format(it) else "%.0f".format(it)) }
+    e.decideMs?.let { parts += stringResource(R.string.t_decide, viaLabel(e.via), if (it < 1) "%.2f".format(it) else "%.0f".format(it)) }
     e.ms?.let { parts += stringResource(R.string.t_done, it.toInt()) }
     return parts.joinToString(" · ")
 }
@@ -245,16 +255,33 @@ private fun EntrySheet(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> U
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(if (e.heard.isNotEmpty()) "“${e.heard}”" else stringResource(R.string.heard_nothing),
                 style = MaterialTheme.typography.titleLarge)
-            Text(e.say, color = if (e.ok == false) Red else Green, fontWeight = FontWeight.Medium)
-            LabeledValue(stringResource(R.string.action), e.type)
-            LabeledValue(stringResource(R.string.decided_via), listOf(e.via, e.rule).filter { it.isNotEmpty() }.joinToString(" · "))
+            Text(e.say, color = when (e.ok) { true -> Green; false -> Red; null -> MaterialTheme.colorScheme.onSurface },
+                fontWeight = FontWeight.Medium)
+            LabeledValue(stringResource(R.string.action), actionLabel(e.action, e.type))
+            LabeledValue(stringResource(R.string.decided_via), listOf(viaLabel(e.via), e.rule).filter { it.isNotEmpty() }.joinToString(" · "))
             e.confidence?.let { LabeledValue(stringResource(R.string.confidence), "%.2f".format(it)) }
-            e.stt?.let { LabeledValue(stringResource(R.string.speech_to_text), it) }
+            (e.sttModel ?: e.stt)?.let { model ->
+                val where = when (e.sttWhere) { "hosted" -> stringResource(R.string.where_hosted); "local" -> stringResource(R.string.where_local); else -> null }
+                val hint = listOfNotNull(e.sttLanguage?.let { stringResource(R.string.stt_hint_used, it) },
+                    e.sttVocabulary?.let { stringResource(R.string.stt_names_used, it) })
+                LabeledValue(stringResource(R.string.speech_to_text), (listOfNotNull(model, where) + hint).joinToString(" · "))
+            }
             e.audioS?.let { LabeledValue(stringResource(R.string.audio_length), "%.1f s".format(it)) }
             val cost = (e.cost ?: 0.0) + (e.sttCost ?: 0.0)
             if (cost > 0) LabeledValue(stringResource(R.string.cost), "$%.5f".format(cost))
             Text(timesLine(e), style = MaterialTheme.typography.bodySmall)
-            e.action?.let { Text(it.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            e.trace?.takeIf { it.isNotEmpty() }?.let { Trace(it) }
+            var details by remember { mutableStateOf(false) }
+            if (e.action != null || e.settings != null) {
+                TextButton(onClick = { details = !details }) { Text(stringResource(if (details) R.string.details_hide else R.string.details)) }
+            }
+            if (details) {
+                e.action?.let { Text(it.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                e.settings?.let {
+                    Text(stringResource(R.string.settings_then), style = MaterialTheme.typography.titleSmall)
+                    Text(it.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = { vm.mark(e, e.wrong != true) }) {
                     Text(stringResource(if (e.wrong == true) R.string.not_wrong else R.string.mark_wrong))
@@ -299,4 +326,35 @@ private fun TeachDialog(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> 
         },
         dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) } },
     )
+}
+
+/** What a command did, step by step (the agent's trace): when, how long, how it was done, how sure, what came of it. */
+@Composable
+fun Trace(steps: JsonArray) {
+    Text(stringResource(R.string.trace_title), style = MaterialTheme.typography.titleSmall)
+    steps.forEach { el ->
+        val s = el as? JsonObject ?: return@forEach
+        fun str(k: String) = runCatching { s[k]?.jsonPrimitive?.contentOrNull }.getOrNull()
+        fun num(k: String) = runCatching { s[k]?.jsonPrimitive?.doubleOrNull }.getOrNull()
+        val label = str("label") ?: listOfNotNull(str("stage"), str("step")).joinToString(" · ")
+        val method = (s["method"] as? JsonObject)?.let { m ->
+            val kind = runCatching { m["kind"]?.jsonPrimitive?.contentOrNull }.getOrNull().orEmpty()
+            val id = runCatching { m["id"]?.jsonPrimitive?.contentOrNull }.getOrNull()
+            listOfNotNull(methodLabel(kind).takeIf { kind.isNotEmpty() }, id).joinToString(" ")
+        }
+        val sure = num("confidence")?.let { c -> num("threshold")?.let { t -> c to t } }
+        val time = listOfNotNull(num("at")?.let { "%.0f ms".format(it) }, num("ms")?.let { "(%.0f)".format(it) }).joinToString(" ")
+        Column(Modifier.padding(vertical = 2.dp)) {
+            Row {
+                Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                Text(time, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            val line = listOfNotNull(method, str("verdict"),
+                sure?.let { (c, t) -> stringResource(R.string.trace_sure, c, t) }, str("why")).filter { it.isNotEmpty() }
+            if (line.isNotEmpty()) {
+                Text(line.joinToString(" · "), style = MaterialTheme.typography.bodySmall,
+                    color = if (sure != null && sure.first < sure.second) Red else MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
 }

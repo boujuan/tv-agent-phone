@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">TV Agent</string>
     <string name="about_line">TV Agent for phones %1$s · MIT · github.com/boujuan/tv-agent-phone</string>
     <string name="tile_label">TV command</string>
@@ -105,17 +105,17 @@
 
     <!-- Search -->
     <string name="search_label">Play or do</string>
-    <string name="search_placeholder">the bear season 3 · dune · lofi on youtube</string>
-    <string name="suggest_continue" translatable="false">continue watching</string>
-    <string name="suggest_next" translatable="false">next episode</string>
-    <string name="suggest_whats_new" translatable="false">what\'s new</string>
-    <string name="suggest_new_films" translatable="false">new films</string>
-    <string name="suggest_skip_intro" translatable="false">skip the intro</string>
-    <string name="list_recent">Watching</string>
+    <string name="search_placeholder">the bear season 3 · play dune and go to minute 12 · lofi on youtube</string>
+    <string name="suggest_continue">continue watching</string>
+    <string name="suggest_next">next episode</string>
+    <string name="suggest_whats_new">what’s new</string>
+    <string name="suggest_new_films">new films</string>
+    <string name="suggest_skip_intro">skip the intro</string>
+    <string name="list_recent">Continue watching</string>
     <string name="list_new">New episodes</string>
     <string name="list_movies">New films</string>
     <string name="list_empty">Nothing here</string>
-    <string name="decided_by">Decided by %1$s (%2$s)</string>
+    <string name="decided_by">Decided by: %1$s · %2$s</string>
 
     <!-- Activity -->
     <string name="filter_all">All</string>
@@ -384,4 +384,64 @@
     <string name="scene_prefix">go to the part where </string>
     <string name="scene_hint">Say what happens in a few words: it’s looked for in the subtitles, in the language you write in.</string>
     <string name="go">Go</string>
+
+    <!-- Labels for the agent's codes; Search chips; Activity -->
+    <string name="suggest_replay">what did they say?</string>
+    <string name="suggest_recommend">recommend something</string>
+    <string name="suggest_cancel" tools:ignore="ButtonCase">cancel</string>     <!-- said to the agent, not a button -->
+    <string name="act_play_title">Play a title</string>
+    <string name="act_find_episode">Find an episode</string>
+    <string name="act_stremio">Open in Stremio</string>
+    <string name="act_open_app">Open an app</string>
+    <string name="act_transport">Playback</string>
+    <string name="act_binge">Binge mode</string>
+    <string name="act_language_settings">Language settings</string>
+    <string name="act_show_list">A list on the TV</string>
+    <string name="act_recommend">Suggestions</string>
+    <string name="act_pick">Pick from the list</string>
+    <string name="act_library">Your library</string>
+    <string name="act_auto_skip">Auto skip</string>
+    <string name="act_help">What you can say</string>
+    <string name="act_find_scene">Find a scene</string>
+    <string name="act_info">What’s on</string>
+    <string name="act_wrong">That’s wrong</string>
+    <string name="act_none">Didn’t get it</string>
+    <string name="act_sequence">A few in one go: %1$s</string>
+    <string name="via_phrase">Fixed phrase</string>
+    <string name="via_pattern">Pattern rule</string>
+    <string name="via_llm">The LLM</string>
+    <string name="via_chain">Chain</string>
+    <string name="via_remote">Picked from a list</string>
+    <string name="via_none">Nothing</string>
+    <string name="decided_by_only">Decided by: %1$s</string>
+    <string name="stage_endpoint">Your pause</string>
+    <string name="stage_decide">Deciding: %1$s</string>
+    <string name="stage_execute">Doing: %1$s</string>
+    <string name="stage_start_title">Start: finding the title</string>
+    <string name="stage_start_first_frame">Start: first frame</string>
+    <string name="stage_start">Start: %1$s</string>
+    <string name="lang_eng">English</string>
+    <string name="lang_spa">Spanish</string>
+    <string name="lang_fre">French</string>
+    <string name="lang_ita">Italian</string>
+    <string name="lang_ger">German</string>
+    <string name="lang_por">Portuguese</string>
+    <string name="lang_jpn">Japanese</string>
+    <string name="lang_kor">Korean</string>
+    <string name="lang_chi">Chinese</string>
+    <string name="lang_chs">Chinese (Simplified)</string>
+    <string name="lang_cht">Chinese (Traditional)</string>
+    <string name="method_rule">rule</string>
+    <string name="method_stt">speech</string>
+    <string name="method_addon">add-on</string>
+    <string name="method_cache">kept</string>
+    <string name="method_player">player</string>
+    <string name="trace_title">What happened</string>
+    <string name="trace_sure">sure %1$.2f, needs %2$.2f</string>
+    <string name="settings_then">Settings at the time</string>
+    <string name="details">Details</string>
+    <string name="details_hide">Hide details</string>
+    <string name="taught_chip">Taught</string>
+    <string name="stt_hint_used">hint %1$s</string>
+    <string name="stt_names_used">%1$d names</string>
 </resources>
