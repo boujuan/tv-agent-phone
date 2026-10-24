@@ -34,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.boujuan.tvagent.phone.data.VoiceState
+import com.boujuan.tvagent.phone.ui.ShownSheet
+import com.boujuan.tvagent.phone.ui.ShownViewModel
+import com.boujuan.tvagent.phone.ui.appViewModel
 import com.boujuan.tvagent.phone.ui.theme.TvAgentTheme
 import com.boujuan.tvagent.phone.ui.voice.VoiceButton
 import com.boujuan.tvagent.phone.ui.voice.VoicePanel
@@ -54,7 +57,12 @@ class VoiceActivity : ComponentActivity() {
             val state by app.voice.state.collectAsStateWithLifecycle()
             TvAgentTheme(prefs.theme, prefs.dynamicColor) {
                 var active by remember { mutableStateOf(false) }
-                LaunchedEffect(state) { if (state != VoiceState.Idle) active = true else if (active) finish() }
+                // a numbered list the command opened on the TV keeps the panel open, to be picked here too
+                val shown by appViewModel { ShownViewModel(it.repo) }.list.collectAsStateWithLifecycle()
+                LaunchedEffect(state, shown) {
+                    if (state != VoiceState.Idle) active = true else if (active && shown == null) finish()
+                }
+                ShownSheet()
                 Box(Modifier.fillMaxSize().clickable(remember { MutableInteractionSource() }, null) { app.voice.cancel(); finish() },
                     contentAlignment = Alignment.BottomCenter) {
                     Column(Modifier.navigationBarsPadding().padding(bottom = 24.dp), horizontalAlignment = Alignment.CenterHorizontally,

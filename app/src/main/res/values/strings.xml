@@ -368,4 +368,5 @@
     <string name="shown_title">On the TV</string>
     <string name="shown_hint">The list on the TV: tap one, as saying its number does.</string>
     <string name="shown_gone">The TV shows something else now.</string>
+    <string name="voice_cancelled">Cancelled: nothing was done</string>
 </resources>

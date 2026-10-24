@@ -24,18 +24,22 @@ sealed interface StreamEvent {
     data class Result(val transcript: String, val say: String, val ok: Boolean) : StreamEvent
     /** "unauthorized" (revoked), "busy" (another command is being decided). */
     data class Error(val reason: String) : StreamEvent
+    /** The command was cancelled before it was decided: nothing was done. */
+    data object Cancelled : StreamEvent
 }
 
 /**
  * The agent's audio stream (tv-agent's server.py, the TV app's protocol), over TLS to the phone stream port:
  *  phone → agent  a JSON line {"token", "rate": 16000}, then frames: a 2-byte big-endian length and PCM16 LE audio;
- *                 a frame of length 0 ends the audio
+ *                 a frame of length 0 ends the audio, a length of 0xFFFF cancels it (nothing is decided; closing
+ *                 instead would end it, and the agent would act on what it heard)
  *  agent → phone  JSON lines: {"heard"} as it understands, {"stop": true} when it has decided, then
- *                 {"transcript", "say", "ok"}; or {"error"}; then it closes
+ *                 {"transcript", "say", "ok"}; or {"cancelled": true}, or {"error"}; then it closes
  */
 object StreamProtocol {
     const val RATE = 16000
     const val MAX_FRAME = 8192
+    const val CANCEL = 0xFFFF
 
     fun hello(token: String, appVersion: String = BuildConfig.VERSION_NAME): ByteArray =
         (buildJsonObject { put("token", token); put("rate", RATE); put("app_version", appVersion) }.toString() + "\n").toByteArray()
@@ -45,6 +49,7 @@ object StreamProtocol {
         fun str(key: String) = o[key]?.jsonPrimitive?.content.orEmpty()
         return when {
             "error" in o -> StreamEvent.Error(str("error"))
+            "cancelled" in o -> StreamEvent.Cancelled
             "transcript" in o -> StreamEvent.Result(str("transcript"), str("say"), o["ok"]?.jsonPrimitive?.booleanOrNull == true)
             "stop" in o -> StreamEvent.Stop
             "heard" in o -> StreamEvent.Heard(str("heard"))
@@ -77,6 +82,13 @@ class VoiceStream(private val socket: Socket, token: String) : Closeable {
     @Synchronized
     fun end() {
         out.writeShort(0)
+        out.flush()
+    }
+
+    /** Cancels what was said: the agent decides nothing and answers {"cancelled": true}. */
+    @Synchronized
+    fun cancel() {
+        out.writeShort(StreamProtocol.CANCEL)
         out.flush()
     }
 

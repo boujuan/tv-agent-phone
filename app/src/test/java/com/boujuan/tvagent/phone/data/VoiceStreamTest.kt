@@ -25,6 +25,27 @@ class VoiceStreamTest {
     }
 
     @Test
+    fun `cancelling sends the agent's cancel frame and reads its answer`() {
+        ServerSocket(0).use { listener ->
+            var frame = -1
+            val agent = thread {
+                listener.accept().use { s ->
+                    val input = DataInputStream(s.getInputStream())
+                    while (input.read() != '\n'.code) { /* the hello */ }
+                    frame = input.readUnsignedShort()
+                    s.getOutputStream().apply { write("{\"cancelled\": true}\n".toByteArray()); flush() }
+                }
+            }
+            VoiceStream(Socket("127.0.0.1", listener.localPort), "tvp_secret").use { stream ->
+                stream.cancel()
+                assertEquals(StreamEvent.Cancelled, stream.next())
+            }
+            agent.join(5000)
+            assertEquals(0xFFFF, frame)
+        }
+    }
+
+    @Test
     fun `audio goes out in length-prefixed frames, then the end marker`() {
         ServerSocket(0).use { listener ->
             val got = mutableListOf<ByteArray>()

@@ -23,6 +23,8 @@ sealed interface VoiceState {
     data class Deciding(val heard: String) : VoiceState
     data class Done(val heard: String, val say: String, val ok: Boolean) : VoiceState
     data class Failed(val reason: Reason, val detail: String = "") : VoiceState
+    /** Closed before the agent decided: nothing was done. */
+    data object Cancelled : VoiceState
 
     enum class Reason { NO_AGENT, MICROPHONE, BUSY, REVOKED, UNREACHABLE, OTHER }
 }
@@ -31,14 +33,18 @@ sealed interface VoiceState {
  * One spoken command at a time, from any screen, the Quick Settings tile or the widget.
  *
  * Streamed (the agent's stream port, like the TV remote's mic): the agent hears it as you speak and decides in your
- * pause, then says stop. Holding the button ends it when released; a tap leaves the end to the agent (or 12 s).
- * When the stream can't be had, the recording goes to /v1/audio in one piece: on release, or after a pause.
+ * pause, then says stop. Holding the button ends it when released; a tap leaves the end to the agent (or 15 s).
+ * When the stream can't be had, the recording goes to /v1/audio in one piece: on release, or after a pause (12 s at
+ * most). Closing the panel before the agent decided cancels it (its cancel frame), so nothing is done.
  */
 class VoiceController(private val repo: AgentRepository, private val scope: CoroutineScope) {
     private val _state = MutableStateFlow<VoiceState>(VoiceState.Idle)
     val state: StateFlow<VoiceState> = _state
     private var job: Job? = null
     private val ending = AtomicBoolean(false)
+    /** The stream while the agent hasn't decided yet: cancelling then tells it to decide nothing. */
+    private val undecided = AtomicReference<VoiceStream?>(null)
+    private val cancelling = AtomicBoolean(false)
 
     val busy: Boolean get() = job?.isActive == true
 
@@ -46,6 +52,7 @@ class VoiceController(private val repo: AgentRepository, private val scope: Coro
         if (busy) return
         val conn = repo.current.value ?: run { _state.value = VoiceState.Failed(VoiceState.Reason.NO_AGENT); return }
         ending.set(false)
+        cancelling.set(false)
         _state.value = VoiceState.Connecting
         job = scope.launch { run(conn) }
     }
@@ -53,13 +60,22 @@ class VoiceController(private val repo: AgentRepository, private val scope: Coro
     /** Stop listening now (the button released, or tapped again); the agent decides on what it has. */
     fun finish() = ending.set(true)
 
+    /**
+     * Closed by the user. Before the agent decided, its cancel frame first (closing alone would end what was said, and
+     * it would act on it); after, the command goes on and only the panel closes.
+     */
     fun cancel() {
+        if (undecided.get() != null) {
+            cancelling.set(true)                 // the streaming job sends the frame before it closes (streamed())
+            _state.value = VoiceState.Cancelled
+            return
+        }
         job?.cancel()
         _state.value = VoiceState.Idle
     }
 
     fun dismiss() {
-        if (!busy) _state.value = VoiceState.Idle
+        if (!busy || _state.value == VoiceState.Cancelled) _state.value = VoiceState.Idle
     }
 
     /**
@@ -73,20 +89,23 @@ class VoiceController(private val repo: AgentRepository, private val scope: Coro
             _state.value = VoiceState.Failed(VoiceState.Reason.MICROPHONE, e.message.orEmpty())
             return@withContext
         }
-        val until = System.currentTimeMillis() + MAX_MS
+        val started = System.currentTimeMillis()
         var stream: VoiceStream? = null
         try {
             val opening = async { runCatching { VoiceStream.open(conn.api, conn.agent, conn.token) }.getOrNull() }
             val early = ArrayList<ByteArray>()
             _state.value = VoiceState.Listening("", 0f, true)
-            while (opening.isActive && !ending.get() && System.currentTimeMillis() < until) {
+            while (opening.isActive && !ending.get() && System.currentTimeMillis() < started + MAX_MS) {
                 val pcm = mic.read() ?: break
                 early += pcm
                 _state.value = VoiceState.Listening("", Recorder.level(pcm), true)
             }
             stream = opening.await()
-            if (stream != null) streamed(conn, stream, mic, early, until) else whole(conn, mic, early, until)
+            undecided.set(stream)
+            if (stream != null) streamed(conn, stream, mic, early, started + MAX_MS)
+            else whole(conn, mic, early, started + MAX_WHOLE_MS)
         } finally {
+            undecided.set(null)
             mic.close()
             stream?.close()
             repo.touched()
@@ -103,18 +122,26 @@ class VoiceController(private val repo: AgentRepository, private val scope: Coro
                     val e = try { stream.next() } catch (_: IOException) { null } ?: break
                     when (e) {
                         is StreamEvent.Heard -> heard.set(e.text)
-                        is StreamEvent.Stop -> stop.set(true)
-                        is StreamEvent.Result, is StreamEvent.Error -> { result.set(e); stop.set(true); break }
+                        is StreamEvent.Stop -> { undecided.set(null); stop.set(true) }
+                        is StreamEvent.Result, is StreamEvent.Error, StreamEvent.Cancelled -> {
+                            undecided.set(null); result.set(e); stop.set(true); break
+                        }
                     }
                 }
                 stop.set(true)
             }
             try {
                 early.forEach { stream.send(it, it.size) }
-                while (isActive && !stop.get() && !ending.get() && System.currentTimeMillis() < until) {
+                while (isActive && !stop.get() && !ending.get() && !cancelling.get() && System.currentTimeMillis() < until) {
                     val pcm = mic.read() ?: break
                     stream.send(pcm, pcm.size)
                     _state.value = VoiceState.Listening(heard.get(), Recorder.level(pcm), true)
+                }
+                if (cancelling.get() && !stop.get()) {
+                    stream.cancel()
+                    withTimeoutOrNull(2_000) { reader.join() } ?: reader.cancel()
+                    _state.value = VoiceState.Cancelled
+                    return@withContext
                 }
                 _state.value = VoiceState.Deciding(heard.get())
                 stream.end()
@@ -126,6 +153,7 @@ class VoiceController(private val repo: AgentRepository, private val scope: Coro
                 is StreamEvent.Result -> VoiceState.Done(r.transcript, r.say, r.ok)
                 is StreamEvent.Error -> VoiceState.Failed(
                     if (r.reason == "busy") VoiceState.Reason.BUSY else VoiceState.Reason.REVOKED, r.reason)
+                StreamEvent.Cancelled -> VoiceState.Cancelled
                 else -> VoiceState.Failed(VoiceState.Reason.UNREACHABLE, conn.agent.name)
             }
         }
@@ -167,8 +195,9 @@ class VoiceController(private val repo: AgentRepository, private val scope: Coro
         }
 
     companion object {
-        const val MAX_MS = 12_000L          // the agent takes 12 s at most
+        const val MAX_MS = 15_000L          // streamed: the agent takes 16 s (the TV app stops at 15 s too)
+        const val MAX_WHOLE_MS = 12_000L    // in one piece: what an agent before server 0.12 takes from a phone
         const val SPEECH = 0.06f
-        const val QUIET_MS = 800
+        const val QUIET_MS = 1_200          // the agent waits up to 1.5 s when the words so far can't end a command
     }
 }

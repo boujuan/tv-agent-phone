@@ -121,8 +121,8 @@ fun VoicePanel(modifier: Modifier = Modifier, onClose: (() -> Unit)? = null) {
     val voice = LocalContext.current.app.voice
     val state by voice.state.collectAsStateWithLifecycle()
     LaunchedEffect(state) {
-        if (state is VoiceState.Done || state is VoiceState.Failed) {
-            delay(if (state is VoiceState.Done) 5000 else 7000)
+        if (state is VoiceState.Done || state is VoiceState.Failed || state == VoiceState.Cancelled) {
+            delay(when (state) { is VoiceState.Done -> 5000L; VoiceState.Cancelled -> 2500L; else -> 7000L })
             voice.dismiss()
             onClose?.invoke()
         }
@@ -177,6 +177,7 @@ private fun VoiceContent(state: VoiceState) {
                 Text(state.say, fontWeight = FontWeight.Medium)
             }
         }
+        VoiceState.Cancelled -> Text(stringResource(R.string.voice_cancelled), color = MaterialTheme.colorScheme.onSurfaceVariant)
         is VoiceState.Failed -> Text(
             when (state.reason) {
                 VoiceState.Reason.NO_AGENT -> stringResource(R.string.voice_no_agent)

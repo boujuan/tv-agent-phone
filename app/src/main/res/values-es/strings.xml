@@ -363,4 +363,5 @@
     <string name="shown_title">En la tele</string>
     <string name="shown_hint">La lista de la tele: toca una, como al decir su número.</string>
     <string name="shown_gone">La tele ya muestra otra cosa.</string>
+    <string name="voice_cancelled">Cancelado: no se ha hecho nada</string>
 </resources>
