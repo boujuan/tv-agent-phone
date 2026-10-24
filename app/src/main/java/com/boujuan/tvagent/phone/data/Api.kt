@@ -252,6 +252,12 @@ object Actions {
     fun next(offset: Int = 1) = buildJsonObject { put("type", "next_episode"); put("offset", offset) }
     fun skip(what: String) = buildJsonObject { put("type", "skip"); put("what", what) }
     fun subtitles(value: String) = buildJsonObject { put("type", "tracks"); put("subtitles", value) }
+    /** Audio or subtitles in a language ("original" for audio): the track, or another copy with it at the same moment. */
+    fun language(audio: String? = null, subtitles: String? = null) = buildJsonObject {
+        put("type", "tracks")
+        if (audio != null) put("audio", audio)
+        if (subtitles != null) put("subtitles", subtitles)
+    }
     fun binge(on: Boolean) = buildJsonObject { put("type", "binge"); put("on", on) }
     fun play(title: String) = buildJsonObject { put("type", "play_title"); put("title", title) }
     fun continueWatching() = buildJsonObject { put("type", "continue_watching") }

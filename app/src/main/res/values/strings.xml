@@ -230,7 +230,15 @@
     <string name="updates_mode_hint">By themselves: the agent installs the TV app’s and TV Agent Player’s new releases when the TV isn’t listening, and the computer moves to a new release. This app updates itself apart (More › About).</string>
     <string name="tv_player">TV Agent Player</string>
     <string name="languages">Languages</string>
-    <string name="languages_hint">Titles made where the native language is spoken play in it without subtitles; everything else uses this audio and the first available subtitles below.</string>
+    <string name="languages_hint">Audio: a language, or each title’s original one. Subtitles show when the audio isn’t your native language (or always, or never), in the first available language below. Saying “from now on, audio in Spanish” changes these too.</string>
+    <string name="original_language">Original language</string>
+    <string name="subtitles_when">Subtitles show</string>
+    <string name="subtitles_when_foreign">Only when the audio isn’t %1$s</string>
+    <string name="subtitles_when_always">Always</string>
+    <string name="subtitles_when_off">Never</string>
+    <string name="audio_in">Audio in…</string>
+    <string name="subtitles_in">Subtitles in…</string>
+    <string name="language_hint">Switches the track, or carries on from the same moment with another copy that has the language, as saying it does.</string>
     <string name="native_language">Native language</string>
     <string name="subtitles_order">Subtitles, in order</string>
     <string name="other">Other</string>

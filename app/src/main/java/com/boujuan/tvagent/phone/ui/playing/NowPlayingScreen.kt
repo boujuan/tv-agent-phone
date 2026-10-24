@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.boujuan.tvagent.phone.R
 import com.boujuan.tvagent.phone.data.Actions
+import com.boujuan.tvagent.phone.data.SettingsChoices
 import com.boujuan.tvagent.phone.data.AgentRepository
 import com.boujuan.tvagent.phone.data.NowPlayingResponse
 import com.boujuan.tvagent.phone.data.Track
@@ -68,6 +69,8 @@ import kotlinx.serialization.json.JsonObject
 class NowPlayingViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val state = MutableStateFlow<NowPlayingResponse?>(null)
     val loaded = MutableStateFlow(false)
+    /** The languages to ask for (the agent's settings choices); null until read, or from an agent without them. */
+    val languages = MutableStateFlow<SettingsChoices?>(null)
 
     init {
         viewModelScope.launch { repo.changed.collect { refresh() } }
@@ -89,6 +92,9 @@ class NowPlayingViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     }
 
     fun action(a: JsonObject) = call(touch = true) { val o = it.action(a); tell(o.say) }
+    fun loadLanguages() = viewModelScope.launch {
+        if (languages.value == null) languages.value = runCatching { api?.settings()?.choices }.getOrNull()
+    }
     fun audio(t: Track) = call(touch = true) { it.setAudioTrack(t.index) }
     fun subtitle(t: Track?) = call(touch = true) { it.setSubtitleTrack(t?.index) }
 }
@@ -101,6 +107,8 @@ fun NowPlayingScreen() {
     val loaded by vm.loaded.collectAsStateWithLifecycle()
     val tap = rememberTap()
     WhileVisible(2_000) { vm.refresh() }
+    LaunchedEffect(vm) { vm.loadLanguages() }
+    val languages by vm.languages.collectAsStateWithLifecycle()
     fun act(a: JsonObject) { tap(); vm.action(a) }
 
     Column(
@@ -174,7 +182,7 @@ fun NowPlayingScreen() {
                 Text(stringResource(R.string.stop))
             }
         }
-        TracksCard(np, onAudio = { tap(); vm.audio(it) }, onSubtitle = { tap(); vm.subtitle(it) }, onAction = { act(it) })
+        TracksCard(np, languages, onAudio = { tap(); vm.audio(it) }, onSubtitle = { tap(); vm.subtitle(it) }, onAction = { act(it) })
     }
 }
 
@@ -209,9 +217,11 @@ private fun Position(position: Long, duration: Long, onSeek: (Long) -> Unit) {
 }
 
 @Composable
-private fun TracksCard(np: NowPlayingResponse?, onAudio: (Track) -> Unit, onSubtitle: (Track?) -> Unit, onAction: (JsonObject) -> Unit) {
+private fun TracksCard(np: NowPlayingResponse?, languages: SettingsChoices?, onAudio: (Track) -> Unit,
+                       onSubtitle: (Track?) -> Unit, onAction: (JsonObject) -> Unit) {
     val tracks = np?.tracks
     SectionCard(stringResource(R.string.tracks)) {
+        if (np?.nowPlaying != null && languages != null) Languages(languages, onAction)
         if (tracks == null) {
             Text(stringResource(R.string.tracks_kodi_only), color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall)
@@ -225,6 +235,33 @@ private fun TracksCard(np: NowPlayingResponse?, onAudio: (Track) -> Unit, onSubt
             allowOff = false) { it?.let(onAudio) }
         TrackPicker(stringResource(R.string.subtitles), tracks.subtitles,
             tracks.subtitles.firstOrNull { it.index == tracks.subtitleCurrent }, allowOff = true, onPick = onSubtitle)
+    }
+}
+
+/** Audio or subtitles in a language, as saying "ponlo en español" does: the track, or another copy that has it. */
+@Composable
+private fun Languages(choices: SettingsChoices, onAction: (JsonObject) -> Unit) {
+    val original = stringResource(R.string.original_language)
+    val audio = choices.audioLanguage.ifEmpty { choices.audio }.map { it.code to if (it.code == "original") original else it.label }
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        LanguageMenu(stringResource(R.string.audio_in), audio) { onAction(Actions.language(audio = it)) }
+        LanguageMenu(stringResource(R.string.subtitles_in), choices.subtitles.map { it.code to it.label } +
+            ("off" to stringResource(R.string.off))) { onAction(Actions.language(subtitles = it)) }
+    }
+    Text(stringResource(R.string.language_hint), color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodySmall)
+}
+
+@Composable
+private fun LanguageMenu(label: String, options: List<Pair<String, String>>, onPick: (String) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    Column {
+        OutlinedButton(onClick = { open = true }, enabled = options.isNotEmpty()) { Text(label, maxLines = 1) }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            options.forEach { (code, name) ->
+                DropdownMenuItem(text = { Text(name) }, onClick = { open = false; onPick(code) })
+            }
+        }
     }
 }
 

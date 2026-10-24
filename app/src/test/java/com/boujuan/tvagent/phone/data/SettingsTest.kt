@@ -26,4 +26,27 @@ class SettingsTest {
         assertEquals("notify", r.settings.updates)
         assertEquals(true, r.settings.checkEpisodes)
     }
+
+    @Test
+    fun `the language settings, audio in the original and when subtitles show`() {
+        val r = json.decodeFromString(SettingsResponse.serializer(), """{"settings": {"audio_language": "original",
+            "subtitles": "always", "subtitle_languages": ["eng", "spa"], "native_language": "spa"},
+            "choices": {"audio": [{"code": "eng", "label": "English"}, {"code": "spa", "label": "Spanish"}],
+            "audio_language": [{"code": "original", "label": "Original language"}, {"code": "eng", "label": "English"}],
+            "subtitles_when": [{"code": "foreign", "label": "Only when the audio isn't Spanish"},
+                               {"code": "always", "label": "Always"}, {"code": "off", "label": "Off"}]}}""")
+        assertEquals("original", r.settings.audioLanguage)
+        assertEquals("always", r.settings.subtitles)
+        assertEquals(listOf("original", "eng"), r.choices.audioLanguage.map { it.code })
+        assertEquals(listOf("foreign", "always", "off"), r.choices.subtitlesWhen.map { it.code })
+        val older = json.decodeFromString(SettingsResponse.serializer(), """{"settings": {}, "choices": {}}""")
+        assertEquals("foreign", older.settings.subtitles)
+        assertEquals(emptyList<LangChoice>(), older.choices.subtitlesWhen)      // the row isn't shown
+    }
+
+    @Test
+    fun `a language asked for on Playing is a tracks action`() {
+        assertEquals("""{"type":"tracks","audio":"spa"}""", Actions.language(audio = "spa").toString())
+        assertEquals("""{"type":"tracks","subtitles":"off"}""", Actions.language(subtitles = "off").toString())
+    }
 }

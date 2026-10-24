@@ -3,6 +3,16 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
+## Unreleased
+
+### Added
+- **More › Settings › Languages**: Audio can be **Original language** (each title's own), and **Subtitles show**
+  only when the audio isn't your native language, always, or never (`audio_language`, `subtitles` in
+  `/v1/settings`, tv-agent with them). The screen reads the settings again each time it opens or comes back, since
+  voice can change them now ("a partir de ahora, audio en español").
+- **Playing**: *Audio in…* and *Subtitles in…* ask for a language as saying it does (`tracks` action): the track,
+  or another copy that has it from the same moment.
+
 ## 0.2.2 — 2026-10-24
 
 ### Added

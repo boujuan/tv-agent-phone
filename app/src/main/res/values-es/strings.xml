@@ -225,7 +225,15 @@
     <string name="updates_mode_hint">Solas: el agente instala las nuevas versiones de la app de la tele y de TV Agent Player cuando la tele no está escuchando, y el ordenador pasa a la nueva versión. Esta app se actualiza aparte (Más › Acerca de).</string>
     <string name="tv_player">TV Agent Player</string>
     <string name="languages">Idiomas</string>
-    <string name="languages_hint">Los títulos hechos donde se habla el idioma nativo se ven en él sin subtítulos; el resto usa este audio y los primeros subtítulos disponibles de abajo.</string>
+    <string name="languages_hint">Audio: un idioma, o el original de cada título. Los subtítulos salen cuando el audio no está en tu idioma nativo (o siempre, o nunca), en el primer idioma disponible de abajo. Decir «a partir de ahora, audio en español» también los cambia.</string>
+    <string name="original_language">Idioma original</string>
+    <string name="subtitles_when">Mostrar subtítulos</string>
+    <string name="subtitles_when_foreign">Solo cuando el audio no está en %1$s</string>
+    <string name="subtitles_when_always">Siempre</string>
+    <string name="subtitles_when_off">Nunca</string>
+    <string name="audio_in">Audio en…</string>
+    <string name="subtitles_in">Subtítulos en…</string>
+    <string name="language_hint">Cambia la pista, o sigue desde el mismo punto con otra copia que tenga ese idioma, como al decirlo.</string>
     <string name="native_language">Idioma nativo</string>
     <string name="subtitles_order">Subtítulos, en orden</string>
     <string name="other">Otros</string>

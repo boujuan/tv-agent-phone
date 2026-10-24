@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.boujuan.tvagent.phone.R
@@ -39,6 +40,9 @@ import com.boujuan.tvagent.phone.ui.Toggle
 import com.boujuan.tvagent.phone.ui.Waiting
 import com.boujuan.tvagent.phone.ui.appViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
@@ -48,8 +52,10 @@ import kotlinx.serialization.json.buildJsonObject
 class SettingsViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val settings = MutableStateFlow<SettingsResponse?>(null)
 
-    init {
-        viewModelScope.launch { repo.current.collect { settings.value = null; load() } }
+    init {           // another agent: its settings (each visit re-reads them too: voice can change them)
+        viewModelScope.launch {
+            repo.current.map { it?.agent?.id }.distinctUntilChanged().drop(1).collect { settings.value = null; load() }
+        }
     }
 
     fun load() = call { settings.value = it.settings() }
@@ -68,6 +74,10 @@ fun SettingsScreen() {
     val vm = appViewModel { SettingsViewModel(it.repo) }
     Messages(vm)
     val state by vm.settings.collectAsStateWithLifecycle()
+    LifecycleResumeEffect(vm) {              // on opening and on coming back: "from now on, audio in Spanish" said meanwhile
+        vm.load()
+        onPauseOrDispose { }
+    }
     Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         val r = state ?: run { Waiting(vm) { vm.load() }; return@Column }
         val s = r.settings
@@ -95,11 +105,23 @@ fun SettingsScreen() {
         SectionCard(stringResource(R.string.languages)) {
             Text(stringResource(R.string.languages_hint), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Choice(stringResource(R.string.audio), r.choices.audio.map { it.code to it.label }, s.audioLanguage) {
-                vm.set("audio_language", JsonPrimitive(it))
-            }
+            val original = stringResource(R.string.original_language)
+            Choice(stringResource(R.string.audio), r.choices.audioLanguage.ifEmpty { r.choices.audio }.map {
+                it.code to if (it.code == "original") original else it.label
+            }, s.audioLanguage) { vm.set("audio_language", JsonPrimitive(it)) }
             Choice(stringResource(R.string.native_language), r.choices.audio.map { it.code to it.label }, s.nativeLanguage) {
                 vm.set("native_language", JsonPrimitive(it))
+            }
+            if (r.choices.subtitlesWhen.isNotEmpty()) {
+                val native = r.choices.audio.firstOrNull { it.code == s.nativeLanguage }?.label ?: s.nativeLanguage
+                Choice(stringResource(R.string.subtitles_when), r.choices.subtitlesWhen.map {
+                    it.code to when (it.code) {
+                        "foreign" -> stringResource(R.string.subtitles_when_foreign, native)
+                        "always" -> stringResource(R.string.subtitles_when_always)
+                        "off" -> stringResource(R.string.subtitles_when_off)
+                        else -> it.label
+                    }
+                }, s.subtitles) { vm.set("subtitles", JsonPrimitive(it)) }
             }
             Text(stringResource(R.string.subtitles_order), style = MaterialTheme.typography.titleSmall)
             OrderedLanguages(r.choices.subtitles, s.subtitleLanguages) { vm.setList("subtitle_languages", it) }

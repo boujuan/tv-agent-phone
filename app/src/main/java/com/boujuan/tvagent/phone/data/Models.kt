@@ -211,7 +211,7 @@ data class SettingsValues(
     @SerialName("probe_streams") val probeStreams: Boolean = true,
     val binge: Boolean = true,
     @SerialName("auto_skip") val autoSkip: Boolean = false,
-    @SerialName("audio_language") val audioLanguage: String = "eng",
+    @SerialName("audio_language") val audioLanguage: String = "eng",     // a language, or "original"
     @SerialName("subtitle_languages") val subtitleLanguages: List<String> = listOf("eng"),
     @SerialName("native_language") val nativeLanguage: String = "spa",
     @SerialName("twitch_favorites") val twitchFavorites: List<String> = emptyList(),
@@ -219,6 +219,8 @@ data class SettingsValues(
     /** The agent's own updates: "auto" (installs them by themselves), "notify" or "off". */
     val updates: String = "notify",
     @SerialName("check_episodes") val checkEpisodes: Boolean = true,
+    /** When subtitles show: "foreign" (only when the audio isn't the native language), "always", "off". */
+    val subtitles: String = "foreign",
 )
 
 @Serializable
@@ -228,8 +230,12 @@ data class LangChoice(val code: String, val label: String)
 data class SettingsChoices(
     val player: List<String> = listOf("tvplayer", "kodi", "just"),
     @SerialName("max_height") val maxHeight: List<Int> = listOf(2160, 1440, 1080, 720),
-    val audio: List<LangChoice> = emptyList(),
+    val audio: List<LangChoice> = emptyList(),                  // the languages (native_language's too)
     val subtitles: List<LangChoice> = emptyList(),
+    /** audio_language's: "original" first, then the languages; empty from an older agent (then `audio`). */
+    @SerialName("audio_language") val audioLanguage: List<LangChoice> = emptyList(),
+    /** The `subtitles` setting's: foreign, always, off; empty from an older agent (no such setting). */
+    @SerialName("subtitles_when") val subtitlesWhen: List<LangChoice> = emptyList(),
 )
 
 @Serializable
