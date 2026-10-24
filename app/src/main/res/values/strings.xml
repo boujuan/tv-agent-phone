@@ -181,7 +181,7 @@
 
     <!-- Decisions -->
     <string name="steps">Decision steps</string>
-    <string name="steps_hint">After the clean-up, these decide a command in this order; one that can’t be reached passes to the next.</string>
+    <string name="steps_hint">After the clean-up, these decide a command in this order; one that can’t be reached passes to the next. A few commands in one go (“play X and go to minute 12”) are read first.</string>
     <string name="step_phrases">Fixed phrases</string>
     <string name="step_patterns">Pattern rules</string>
     <string name="step_llm">The LLM</string>
@@ -201,7 +201,7 @@
     <string name="hosted_model">Hosted model</string>
     <string name="local_model">Local model</string>
     <string name="stt_loaded">Local model loaded</string>
-    <string name="keep_recordings">Keep recordings (Activity)</string>
+    <string name="keep_recordings">Keep recordings (the last 300, in Activity)</string>
     <string name="try_sentence">Try a sentence</string>
     <string name="sentence">Sentence</string>
     <string name="decide_only">Decide (doesn’t run it)</string>
@@ -298,9 +298,9 @@
     <string name="stt_language_guess">The model guesses</string>
     <string name="stt_vocabulary">Vocabulary</string>
     <string name="stt_vocabulary_library">Plus my library’s titles and Twitch favourites</string>
-    <string name="stt_vocabulary_hint">Names the hosted model should hear as written (AssemblyAI models): %1$d in all now.</string>
-    <string name="laptop_only">The local models (files on the laptop) are chosen in the laptop’s panel.</string>
-    <string name="stt_on_laptop">%1$s on the laptop</string>
+    <string name="stt_vocabulary_hint">Names the hosted model should hear as written (AssemblyAI only): %1$d sent with each command, 100 at most.</string>
+    <string name="laptop_only">The local models (files on the computer) are chosen in its panel.</string>
+    <string name="stt_on_laptop">%1$s on the computer</string>
     <string name="stt_hosted">%1$s, hosted</string>
 
     <!-- Model pickers, vocabulary, remote keys -->
@@ -314,17 +314,16 @@
     <string name="model_note_hint">uses the language hint</string>
     <string name="vocabulary_title">Vocabulary</string>
     <string name="vocabulary_edit">Edit (%1$d)</string>
-    <string name="vocabulary_intro">Names the hosted speech-to-text should hear as written (AssemblyAI models use them). Each change is saved on the computer at once.</string>
+    <string name="vocabulary_intro">Names the hosted speech-to-text should hear as written (only AssemblyAI uses them). Each language hint has its own list: this is the one in use now. Each change is saved on the computer at once.</string>
     <string name="vocabulary_add">Add a name (or find one)</string>
     <string name="vocabulary_empty">No names yet.</string>
     <string name="vocabulary_none_match">None like that yet: add it.</string>
     <string name="key_gear">TV settings (the remote’s gear)</string>
     <string name="key_input">Inputs</string>
-    <string name="vocabulary_yours">Yours (%1$d): edited here</string>
-    <string name="vocabulary_also">Also sent, from Twitch favourites and your library (%1$d)</string>
+    <string name="vocabulary_also">Also sent: what’s on, Continue Watching, Twitch favourites and your library (%1$d)</string>
     <string name="vocabulary_also_unknown">This agent doesn’t list them yet: update tv-agent.</string>
     <string name="vocabulary_also_none">None yet: the library is read a moment after this is switched on.</string>
-    <string name="vocabulary_count">%1$d yours · %2$d sent with each command</string>
+    <string name="vocabulary_count">%1$d yours · %2$d sent with each command (100 at most)</string>
 
     <!-- About, updates -->
     <string name="about">About</string>
@@ -444,4 +443,20 @@
     <string name="taught_chip">Taught</string>
     <string name="stt_hint_used">hint %1$s</string>
     <string name="stt_names_used">%1$d names</string>
+
+    <!-- Overview, Decisions, vocabulary per hint -->
+    <string name="running">Running: %1$s</string>
+    <string name="reasoning_none">Off</string>
+    <string name="reasoning_minimal">Minimal</string>
+    <string name="reasoning_low">Low</string>
+    <string name="reasoning_medium">Medium</string>
+    <string name="reasoning_high">High</string>
+    <string name="reasoning_unset">Don’t send a setting</string>
+    <string name="rules_counts_line">%1$d phrases, %2$d patterns, %3$d intents, %4$d apps</string>
+    <string name="would_play">Would play: %1$s</string>
+    <string name="no_title_found">No title found for it</string>
+    <string name="vocabulary_unused">Only AssemblyAI uses the vocabulary: the chosen model ignores it.</string>
+    <string name="vocabulary_for_hint">Names for the %1$s hint (%2$d)</string>
+    <string name="vocabulary_no_hint">Names for no hint (%1$d)</string>
+    <string name="vocabulary_hint_shared">The %1$s hint uses the no-hint names until you change them here.</string>
 </resources>

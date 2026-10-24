@@ -68,6 +68,8 @@ data class CommandResult(
     val confidence: Double = 0.0,
     val describe: String = "",
     val trace: JsonArray? = null,
+    /** /v1/decide with "title": the title a start would find (null: none found). */
+    val title: FoundTitle? = null,
     val ok: Boolean = false,
     val say: String = "",
 )
@@ -193,7 +195,14 @@ data class ActivityPage(val entries: List<ActivityEntry> = emptyList(), val more
 data class MarkResult(val ok: Boolean = false, val entry: ActivityEntry? = null)
 
 @Serializable
+data class FoundTitle(val imdb: String = "", val type: String = "", val name: String = "")
+
+@Serializable
 data class Learned(val say: String, val `do`: JsonObject)
+
+/** The names that go with each command now: the hint's own list when it has one, else the no-hint list. */
+val Pipeline.ownVocabulary: List<String>
+    get() = sttVocabularyLanguage?.takeIf { it.isNotEmpty() }?.let { sttVocabularies[it] } ?: sttVocabulary
 
 @Serializable
 data class LearnedList(val learned: List<Learned> = emptyList())
@@ -223,6 +232,10 @@ data class Pipeline(
     @SerialName("stt_language") val sttLanguage: String = "native",      // "native", "" (the model guesses) or "es", "en"…
     @SerialName("stt_language_now") val sttLanguageNow: String = "",     // what "native" means now
     @SerialName("stt_vocabulary") val sttVocabulary: List<String> = emptyList(),
+    /** Each language hint's own list, used instead of stt_vocabulary while that hint is on ({"es": [...]}). */
+    @SerialName("stt_vocabularies") val sttVocabularies: Map<String, List<String>> = emptyMap(),
+    /** The hint in use now ("es"; "" for none): whose list goes with each command. */
+    @SerialName("stt_vocabulary_language") val sttVocabularyLanguage: String? = null,
     @SerialName("stt_vocabulary_library") val sttVocabularyLibrary: Boolean = false,
     @SerialName("stt_vocabulary_count") val sttVocabularyCount: Int = 0,
     /** Every name sent with a command (yours, then Twitch favourites and library titles); null from an older agent. */
@@ -276,6 +289,7 @@ data class About(
     @SerialName("stt_where") val sttWhere: String = "",
     @SerialName("stt_hosted_model") val sttHostedModel: String = "",
     @SerialName("d1_where") val d1Where: String = "",
+    @SerialName("hosted_d1_model") val hostedD1Model: String = "",
     @SerialName("llm_model") val llmModel: String = "",
     val player: String = "",
 )
@@ -313,7 +327,12 @@ data class TvStatus(
     val screen: String? = null,
     @SerialName("ping_ms") val pingMs: Double? = null,
     val error: String? = null,
+    /** The project's apps and players running on the TV now, with their CPU share and memory. */
+    val apps: List<TvRunningApp> = emptyList(),
 )
+
+@Serializable
+data class TvRunningApp(val key: String = "", val name: String = "", val cpu: Double = 0.0, @SerialName("rss_kb") val rssKb: Int = 0)
 
 @Serializable
 data class DiagnoseStep(val step: String, val ok: Boolean? = null, val detail: String = "", val hint: String = "")

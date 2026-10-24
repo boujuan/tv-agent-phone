@@ -111,8 +111,9 @@ class AgentApi(
     suspend fun audio(pcm: ByteArray): CommandResult =
         send("/v1/audio", pcm.toRequestBody(AUDIO_TYPE), CommandResult.serializer(), slow = true)
     /** Decide only (teaching: what would this sentence do?). */
-    suspend fun decide(text: String): CommandResult =
-        post("/v1/decide", buildJsonObject { put("text", text) }, CommandResult.serializer())
+    suspend fun decide(text: String, title: Boolean = false): CommandResult =
+        post("/v1/decide", buildJsonObject { put("text", text); if (title) put("title", true) }, CommandResult.serializer(),
+            slow = title)                       // finding the title can take a few seconds
 
     /** The numbered list on the TV now, null when there's none (ApiException 404 from an agent without it). */
     suspend fun shown(): ShownList? = get("/v1/shown", ShownResponse.serializer()).shown

@@ -57,6 +57,10 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import com.boujuan.tvagent.phone.data.ownVocabulary
+import com.boujuan.tvagent.phone.ui.actionLabel
+import com.boujuan.tvagent.phone.ui.decidedBy
+import com.boujuan.tvagent.phone.ui.activity.Trace
 
 class DecisionsViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val pipeline = MutableStateFlow<Pipeline?>(null)
@@ -91,12 +95,15 @@ class DecisionsViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     }
 
     fun unlearn(l: Learned) = call { it.unlearn(l.say); learned.value = it.learned() }
-    fun tryOut(text: String) = call { tried.value = it.decide(text) }
+    /** What it would do, with a play request's title found as a start would (nothing on the TV). */
+    fun tryOut(text: String) = call { tried.value = it.decide(text, title = true) }
 }
 
 private val WHERE = listOf("local" to R.string.where_local, "hosted" to R.string.where_hosted,
     "local-first" to R.string.where_local_first, "hosted-first" to R.string.where_hosted_first)
-private val REASONING = listOf("none", "minimal", "low", "medium", "high")
+private val REASONING = listOf("none" to R.string.reasoning_none, "minimal" to R.string.reasoning_minimal,
+    "low" to R.string.reasoning_low, "medium" to R.string.reasoning_medium, "high" to R.string.reasoning_high,
+    "" to R.string.reasoning_unset)
 
 @Composable
 private fun stepName(step: String) = stringResource(
@@ -132,12 +139,13 @@ fun DecisionsScreen(onVocabulary: () -> Unit) {
                     Switch(checked = step !in pipe.off, onCheckedChange = { vm.toggle(step, it) })
                 }
             }
-            LabeledValue(stringResource(R.string.rules_counts), pipe.counts.entries.joinToString(", ") { "${it.value} ${it.key}" })
+            LabeledValue(stringResource(R.string.rules_counts), stringResource(R.string.rules_counts_line,
+                pipe.counts["phrases"] ?: 0, pipe.counts["patterns"] ?: 0, pipe.counts["intents"] ?: 0, pipe.counts["apps"] ?: 0))
         }
         SectionCard(stringResource(R.string.step_llm)) {
             KeyState(pipe.keys.openrouter, "OpenRouter")
             ModelPicker(stringResource(R.string.model), pipe.llmModel, LLM_MODELS) { vm.change(buildJsonObject { put("llm_model", it) }) }
-            Choice(stringResource(R.string.reasoning), REASONING.map { it to it }, pipe.llmReasoning.ifEmpty { "none" }) {
+            Choice(stringResource(R.string.reasoning), REASONING.map { it.first to stringResource(it.second) }, pipe.llmReasoning) {
                 vm.change(buildJsonObject { put("llm_reasoning", it) })
             }
             Toggle(stringResource(R.string.llm_private), pipe.llmPrivate) { vm.change(buildJsonObject { put("llm_private", it) }) }
@@ -170,16 +178,20 @@ fun DecisionsScreen(onVocabulary: () -> Unit) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(stringResource(R.string.stt_vocabulary))
-                    Text(pipe.sttVocabulary.take(4).joinToString(", ") + if (pipe.sttVocabulary.size > 4) "…" else "",
+                    val own = pipe.ownVocabulary
+                    Text(own.take(4).joinToString(", ") + if (own.size > 4) "…" else "",
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                 }
-                OutlinedButton(onClick = onVocabulary) { Text(stringResource(R.string.vocabulary_edit, pipe.sttVocabulary.size)) }
+                OutlinedButton(onClick = onVocabulary) { Text(stringResource(R.string.vocabulary_edit, pipe.ownVocabulary.size)) }
             }
             Toggle(stringResource(R.string.stt_vocabulary_library), pipe.sttVocabularyLibrary) {
                 vm.change(buildJsonObject { put("stt_vocabulary_library", it) })
             }
             Text(stringResource(R.string.stt_vocabulary_hint, pipe.sttVocabularyCount), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (STT_MODELS.firstOrNull { it.id == pipe.sttHostedModel }?.note != R.string.model_note_hint_vocabulary) {
+                Text(stringResource(R.string.vocabulary_unused), style = MaterialTheme.typography.bodySmall, color = Amber)
+            }
             Text(stringResource(R.string.laptop_only), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -192,9 +204,14 @@ fun DecisionsScreen(onVocabulary: () -> Unit) {
                 keyboardActions = KeyboardActions(onGo = { if (text.isNotBlank()) { keyboard?.hide(); vm.tryOut(text) } }))
             OutlinedButton(onClick = { vm.tryOut(text) }, enabled = text.isNotBlank()) { Text(stringResource(R.string.decide_only)) }
             tried?.let { t ->
-                Text(t.describe, fontWeight = FontWeight.Medium)
-                Text(stringResource(R.string.decided_by, t.via, t.rule) + " · %.2f".format(t.confidence),
-                    style = MaterialTheme.typography.bodySmall)
+                Text(actionLabel(t.action), fontWeight = FontWeight.Medium)
+                if (t.describe.isNotEmpty()) Text(t.describe)
+                Text(decidedBy(t.via, t.rule) + " · %.2f".format(t.confidence), style = MaterialTheme.typography.bodySmall)
+                if (t.action?.get("type")?.toString()?.contains("play_title") == true) {
+                    Text(t.title?.let { stringResource(R.string.would_play, it.name) } ?: stringResource(R.string.no_title_found),
+                        color = if (t.title != null) Green else Amber)
+                }
+                t.trace?.takeIf { it.isNotEmpty() }?.let { Trace(it) }
                 t.action?.let { Text(it.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }
         }
@@ -204,7 +221,7 @@ fun DecisionsScreen(onVocabulary: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Text("“${l.say}”")
-                        Text(l.`do`.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(actionLabel(l.`do`), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     IconButton(onClick = { vm.unlearn(l) }) { Icon(Icons.Filled.Delete, stringResource(R.string.remove)) }
                 }

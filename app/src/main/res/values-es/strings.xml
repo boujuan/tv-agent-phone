@@ -175,7 +175,7 @@
 
     <!-- Decisiones -->
     <string name="steps">Pasos de decisión</string>
-    <string name="steps_hint">Tras la limpieza, estos deciden una orden en este orden; uno al que no se llega pasa al siguiente.</string>
+    <string name="steps_hint">Tras la limpieza, estos deciden una orden en este orden; uno al que no se llega pasa al siguiente. Varias órdenes de una vez («pon X y ve al minuto 12») se leen antes.</string>
     <string name="step_phrases">Frases fijas</string>
     <string name="step_patterns">Reglas de patrones</string>
     <string name="step_llm">El LLM</string>
@@ -195,7 +195,7 @@
     <string name="hosted_model">Modelo en la nube</string>
     <string name="local_model">Modelo local</string>
     <string name="stt_loaded">Modelo local cargado</string>
-    <string name="keep_recordings">Guardar grabaciones (Actividad)</string>
+    <string name="keep_recordings">Guardar grabaciones (las últimas 300, en Actividad)</string>
     <string name="try_sentence">Probar una frase</string>
     <string name="sentence">Frase</string>
     <string name="decide_only">Decidir (sin hacerlo)</string>
@@ -292,9 +292,9 @@
     <string name="stt_language_guess">Que lo adivine el modelo</string>
     <string name="stt_vocabulary">Vocabulario</string>
     <string name="stt_vocabulary_library">Más los títulos de mi biblioteca y mis favoritos de Twitch</string>
-    <string name="stt_vocabulary_hint">Nombres que el modelo en la nube debe oír tal como se escriben (modelos de AssemblyAI): %1$d en total ahora.</string>
-    <string name="laptop_only">Los modelos locales (archivos del portátil) se eligen en el panel del portátil.</string>
-    <string name="stt_on_laptop">%1$s en el portátil</string>
+    <string name="stt_vocabulary_hint">Nombres que el modelo en la nube debe oír tal como se escriben (solo AssemblyAI): %1$d con cada orden, 100 como mucho.</string>
+    <string name="laptop_only">Los modelos locales (archivos del ordenador) se eligen en su panel.</string>
+    <string name="stt_on_laptop">%1$s en el ordenador</string>
     <string name="stt_hosted">%1$s, en la nube</string>
 
     <!-- Model pickers, vocabulary, remote keys -->
@@ -308,17 +308,16 @@
     <string name="model_note_hint">usa la pista de idioma</string>
     <string name="vocabulary_title">Vocabulario</string>
     <string name="vocabulary_edit">Editar (%1$d)</string>
-    <string name="vocabulary_intro">Nombres que la voz a texto en la nube debe oír tal como se escriben (los usan los modelos de AssemblyAI). Cada cambio se guarda en el ordenador al momento.</string>
+    <string name="vocabulary_intro">Nombres que la voz a texto en la nube debe oír tal como se escriben (solo los usa AssemblyAI). Cada pista de idioma tiene su lista: esta es la que se usa ahora. Cada cambio se guarda en el ordenador al momento.</string>
     <string name="vocabulary_add">Añade un nombre (o búscalo)</string>
     <string name="vocabulary_empty">Aún no hay nombres.</string>
     <string name="vocabulary_none_match">Aún no hay ninguno así: añádelo.</string>
     <string name="key_gear">Ajustes de la tele (el engranaje del mando)</string>
     <string name="key_input">Entradas</string>
-    <string name="vocabulary_yours">Tuyos (%1$d): se editan aquí</string>
-    <string name="vocabulary_also">También se envían, de tus favoritos de Twitch y tu biblioteca (%1$d)</string>
+    <string name="vocabulary_also">También se envían: lo que está puesto, Seguir viendo, tus favoritos de Twitch y tu biblioteca (%1$d)</string>
     <string name="vocabulary_also_unknown">Este agente aún no los lista: actualiza tv-agent.</string>
     <string name="vocabulary_also_none">Ninguno todavía: la biblioteca se lee un momento después de activarlo.</string>
-    <string name="vocabulary_count">%1$d tuyos · %2$d enviados con cada orden</string>
+    <string name="vocabulary_count">%1$d tuyos · %2$d enviados con cada orden (100 como mucho)</string>
 
     <!-- Acerca de, actualizaciones -->
     <string name="about">Acerca de</string>
@@ -444,4 +443,20 @@
     <string name="stt_hint_used">pista %1$s</string>
     <string name="stt_names_used">%1$d nombres</string>
     <string name="decided_by">Decidido por: %1$s · %2$s</string>
+
+    <!-- Resumen, Decisiones, vocabulario por pista -->
+    <string name="running">En marcha: %1$s</string>
+    <string name="reasoning_none">Desactivado</string>
+    <string name="reasoning_minimal">Mínimo</string>
+    <string name="reasoning_low">Bajo</string>
+    <string name="reasoning_medium">Medio</string>
+    <string name="reasoning_high">Alto</string>
+    <string name="reasoning_unset">No enviar ningún ajuste</string>
+    <string name="rules_counts_line">%1$d frases, %2$d patrones, %3$d intenciones, %4$d apps</string>
+    <string name="would_play">Pondría: %1$s</string>
+    <string name="no_title_found">No encuentra ningún título así</string>
+    <string name="vocabulary_unused">Solo AssemblyAI usa el vocabulario: el modelo elegido no lo tiene en cuenta.</string>
+    <string name="vocabulary_for_hint">Nombres para la pista en %1$s (%2$d)</string>
+    <string name="vocabulary_no_hint">Nombres sin pista (%1$d)</string>
+    <string name="vocabulary_hint_shared">La pista en %1$s usa los nombres sin pista hasta que los cambies aquí.</string>
 </resources>

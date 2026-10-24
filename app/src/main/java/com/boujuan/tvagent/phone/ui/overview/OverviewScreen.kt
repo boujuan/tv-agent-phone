@@ -45,11 +45,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.boujuan.tvagent.phone.ui.playerName
+import com.boujuan.tvagent.phone.ui.stageLabel
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 class OverviewViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val about = MutableStateFlow<About?>(null)
     val stats = MutableStateFlow<Map<String, StageStats>>(emptyMap())
     val tv = MutableStateFlow<TvStatus?>(null)
+    val tvPlayer = MutableStateFlow<String?>(null)          // TV Agent Player's version (read once: the TV's packages)
     val steps = MutableStateFlow<List<DiagnoseStep>>(emptyList())
     val screenshot = MutableStateFlow<ImageBitmap?>(null)
     val working = MutableStateFlow(false)
@@ -62,6 +68,10 @@ class OverviewViewModel(repo: AgentRepository) : AgentViewModel(repo) {
         about.value = it.about()
         stats.value = it.stats()
         tv.value = it.tvStatus()
+        if (tvPlayer.value == null) {
+            tvPlayer.value = runCatching { (it.tvPackages()["tvplayer"] as? JsonObject)?.get("version")?.jsonPrimitive?.contentOrNull }
+                .getOrNull()
+        }
     }
 
     private fun busy(block: suspend (com.boujuan.tvagent.phone.data.AgentApi) -> Unit) = call {
@@ -104,6 +114,7 @@ fun OverviewScreen() {
     val about by vm.about.collectAsStateWithLifecycle()
     val stats by vm.stats.collectAsStateWithLifecycle()
     val tv by vm.tv.collectAsStateWithLifecycle()
+    val tvPlayer by vm.tvPlayer.collectAsStateWithLifecycle()
     val steps by vm.steps.collectAsStateWithLifecycle()
     val shot by vm.screenshot.collectAsStateWithLifecycle()
     val working by vm.working.collectAsStateWithLifecycle()
@@ -120,7 +131,9 @@ fun OverviewScreen() {
                     android.text.format.DateUtils.getRelativeTimeSpanString((a.started * 1000).toLong()).toString())
                 LabeledValue(stringResource(R.string.speech_to_text), sttLine(a))
                 LabeledValue(stringResource(R.string.llm), a.llmModel)
-                LabeledValue(stringResource(R.string.player), a.player)
+                if (a.d1Where.isNotEmpty()) LabeledValue(stringResource(R.string.step_d1),
+                    listOf(a.hostedD1Model.ifEmpty { "d1" }, whereName(a.d1Where)).joinToString(" · "))
+                LabeledValue(stringResource(R.string.player), playerName(a.player))
             } ?: Waiting(vm) { vm.refresh() }
         }
         SectionCard(stringResource(R.string.tv)) {
@@ -139,6 +152,10 @@ fun OverviewScreen() {
                     t.memory?.let { LabeledValue(stringResource(R.string.memory), "${it.usedMb} / ${it.totalMb} MB") }
                     t.uptime?.let { LabeledValue(stringResource(R.string.uptime), it) }
                     LabeledValue(stringResource(R.string.tv_app), t.app.version ?: stringResource(R.string.not_installed))
+                    tvPlayer?.let { LabeledValue(stringResource(R.string.tv_player), it) }
+                    t.apps.forEach { a ->
+                        LabeledValue(stringResource(R.string.running, a.name), "%.1f %% · %d MB".format(a.cpu, a.rssKb / 1024))
+                    }
                 }
             }
             if (working) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -161,8 +178,18 @@ fun OverviewScreen() {
             Text(stringResource(R.string.latency_hint), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             stats.entries.sortedBy { it.key }.forEach { (stage, s) ->
-                LabeledValue(stage, "%.1f / %.1f ms · %d".format(s.p50, s.p95, s.n))
+                LabeledValue(stageLabel(stage), "%.1f / %.1f ms · %d".format(s.p50, s.p95, s.n))
             }
         }
     }
+}
+
+/** Where a model runs: on the computer, hosted, or one of them first. */
+@Composable
+private fun whereName(where: String) = when (where) {
+    "local" -> stringResource(R.string.where_local)
+    "hosted" -> stringResource(R.string.where_hosted)
+    "local-first" -> stringResource(R.string.where_local_first)
+    "hosted-first" -> stringResource(R.string.where_hosted_first)
+    else -> where
 }
