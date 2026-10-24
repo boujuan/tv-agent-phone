@@ -363,4 +363,9 @@
     <string name="link_changelog">Changelog</string>
     <string name="link_licence">Licence</string>
     <string name="show_all">Show all</string>
+
+    <!-- The TV's numbered list -->
+    <string name="shown_title">On the TV</string>
+    <string name="shown_hint">The list on the TV: tap one, as saying its number does.</string>
+    <string name="shown_gone">The TV shows something else now.</string>
 </resources>

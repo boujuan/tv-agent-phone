@@ -143,4 +143,32 @@ class AgentApiTest {
         server.enqueue(json("{}"))
         assertEquals(pin, Tls.fingerprintOf("127.0.0.1", server.port))
     }
+
+    @Test
+    fun `the list on the TV, and a tap picking from it by its id`() = runBlocking {
+        server.enqueue(json("""{"shown": {"id": 1792795369041, "title": "Which “the bear”?", "age_s": 4, "items": [
+            {"number": 1, "label": "The Bear (2022)", "detail": "series", "poster": "https://images.example/b.jpg"},
+            {"number": 2, "label": "The Bear (1988)", "detail": "", "poster": null}]}}"""))
+        server.enqueue(json("""{"shown": null}"""))
+        server.enqueue(json("""{"ok": true, "say": "Playing The Bear"}"""))
+        server.enqueue(json("""{"detail": "The TV shows another list now"}""", 409))
+        val api = AgentApi(listOf(url), pin, "tvp_secret")
+        val shown = api.shown()!!
+        assertEquals(1792795369041L, shown.id)
+        assertEquals(listOf(1, 2), shown.items.map { it.number })
+        assertNull(shown.items[1].poster)
+        assertNull(api.shown())
+        assertEquals("Playing The Bear", api.pickShown(1, shown.id).say)
+        assertEquals("/v1/shown", server.takeRequest().target)
+        server.takeRequest()
+        val pick = server.takeRequest()
+        assertEquals("/v1/shown/pick", pick.target)
+        assertEquals("""{"number":1,"id":1792795369041}""", pick.body?.utf8())
+        try {
+            api.pickShown(2, shown.id)
+            fail("a pick from a list the TV no longer shows went through")
+        } catch (e: ApiException) {
+            assertEquals(409, e.code)
+        }
+    }
 }

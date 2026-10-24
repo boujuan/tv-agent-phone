@@ -40,6 +40,21 @@ data class Me(
     val addresses: List<String>? = null,
 )
 
+/** GET /v1/shown: the numbered list on the TV now ("number 2" picks from it), or null. */
+@Serializable
+data class ShownResponse(val shown: ShownList? = null)
+
+@Serializable
+data class ShownList(
+    val id: Long,                   // which list: a pick names it, refused once the TV shows another
+    val title: String = "",
+    @SerialName("age_s") val ageS: Int = 0,
+    val items: List<ShownItem> = emptyList(),
+)
+
+@Serializable
+data class ShownItem(val number: Int, val label: String = "", val detail: String = "", val poster: String? = null)
+
 @Serializable
 data class Outcome(val ok: Boolean = false, val say: String = "")
 

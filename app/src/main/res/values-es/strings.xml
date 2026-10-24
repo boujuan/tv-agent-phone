@@ -358,4 +358,9 @@
     <string name="link_changelog">Cambios</string>
     <string name="link_licence">Licencia</string>
     <string name="show_all">Ver todo</string>
+
+    <!-- The TV's numbered list -->
+    <string name="shown_title">En la tele</string>
+    <string name="shown_hint">La lista de la tele: toca una, como al decir su número.</string>
+    <string name="shown_gone">La tele ya muestra otra cosa.</string>
 </resources>

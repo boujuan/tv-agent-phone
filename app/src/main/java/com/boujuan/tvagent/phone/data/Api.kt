@@ -114,6 +114,12 @@ class AgentApi(
     suspend fun decide(text: String): CommandResult =
         post("/v1/decide", buildJsonObject { put("text", text) }, CommandResult.serializer())
 
+    /** The numbered list on the TV now, null when there's none (ApiException 404 from an agent without it). */
+    suspend fun shown(): ShownList? = get("/v1/shown", ShownResponse.serializer()).shown
+    /** A number of that list, as saying it does; 409 once the TV shows another list, 404 once it shows none. */
+    suspend fun pickShown(number: Int, id: Long): Outcome =
+        post("/v1/shown/pick", buildJsonObject { put("number", number); put("id", id) }, Outcome.serializer(), slow = true)
+
     suspend fun list(name: String): ListResponse = get("/v1/lists?list=$name", ListResponse.serializer(), slow = true)
     suspend fun pick(list: String, item: ListItem): Outcome = post("/v1/lists/pick", buildJsonObject {
         put("list", list); put("imdb", item.imdb); put("video", item.video)

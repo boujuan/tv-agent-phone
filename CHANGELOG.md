@@ -3,6 +3,13 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
+## Unreleased
+
+### Added
+- **The TV's numbered lists on the phone**: suggestions, a title to make sure of, the episodes or moments found and
+  "go there?" open as a sheet over whichever screen is open, with their posters; a tap picks, as saying "number 2"
+  or "sí" does (`GET /v1/shown`, `POST /v1/shown/pick`, tv-agent with them). Gone once the TV plays something else.
+
 ## 0.2.3 — 2026-10-24
 
 ### Added

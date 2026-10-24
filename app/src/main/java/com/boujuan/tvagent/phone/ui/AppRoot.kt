@@ -157,6 +157,7 @@ private fun Main(snackbar: SnackbarHostState, open: String?, onOpened: () -> Uni
         floatingActionButton = { if (route in setOf("remote", "playing", "search")) VoiceButton() },
         snackbarHost = { SnackbarHost(snackbar) },
     ) { pad ->
+        ShownSheet()                         // the TV's numbered list, to tap, on whichever screen is open
         Box(Modifier.padding(pad).consumeWindowInsets(pad).imePadding().fillMaxSize()) {   // fields stay above the keyboard
             NavHost(nav, startDestination = "remote") {
                 composable("remote") { RemoteScreen() }
