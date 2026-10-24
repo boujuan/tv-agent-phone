@@ -48,9 +48,16 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import com.boujuan.tvagent.phone.ui.languageName
+import com.boujuan.tvagent.phone.ui.theme.Amber
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 class SettingsViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val settings = MutableStateFlow<SettingsResponse?>(null)
+    /** Which players are on the TV ({"tvplayer": true…}; empty until read, or the TV can't be reached). */
+    val installed = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
     init {           // another agent: its settings (each visit re-reads them too: voice can change them)
         viewModelScope.launch {
@@ -58,7 +65,14 @@ class SettingsViewModel(repo: AgentRepository) : AgentViewModel(repo) {
         }
     }
 
-    fun load() = call { settings.value = it.settings() }
+    fun load() = call {
+        settings.value = it.settings()
+        if (installed.value.isEmpty()) installed.value = runCatching {
+            it.tvPackages().mapNotNull { (key, v) ->
+                (v as? JsonObject)?.get("installed")?.jsonPrimitive?.booleanOrNull?.let { on -> key to on }
+            }.toMap()
+        }.getOrDefault(emptyMap())
+    }
 
     /** One setting: the agent checks it, saves it in config.toml and uses it from the next command. */
     fun set(key: String, value: JsonElement) = call {
@@ -74,6 +88,7 @@ fun SettingsScreen() {
     val vm = appViewModel { SettingsViewModel(it.repo) }
     Messages(vm)
     val state by vm.settings.collectAsStateWithLifecycle()
+    val installed by vm.installed.collectAsStateWithLifecycle()
     LifecycleResumeEffect(vm) {              // on opening and on coming back: "from now on, audio in Spanish" said meanwhile
         vm.load()
         onPauseOrDispose { }
@@ -91,6 +106,9 @@ fun SettingsScreen() {
                     else -> R.string.player_just_long
                 })
             }, s.player) { vm.set("player", JsonPrimitive(it)) }
+            if (installed[s.player] == false) {
+                Text(stringResource(R.string.player_not_on_tv), style = MaterialTheme.typography.bodySmall, color = Amber)
+            }
             Choice(stringResource(R.string.max_resolution), r.choices.maxHeight.map { it to "${it}p" }, s.maxHeight) {
                 vm.set("max_height", JsonPrimitive(it))
             }
@@ -107,13 +125,13 @@ fun SettingsScreen() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             val original = stringResource(R.string.original_language)
             Choice(stringResource(R.string.audio), r.choices.audioLanguage.ifEmpty { r.choices.audio }.map {
-                it.code to if (it.code == "original") original else it.label
+                it.code to if (it.code == "original") original else languageName(it.code, it.label)
             }, s.audioLanguage) { vm.set("audio_language", JsonPrimitive(it)) }
-            Choice(stringResource(R.string.native_language), r.choices.audio.map { it.code to it.label }, s.nativeLanguage) {
+            Choice(stringResource(R.string.native_language), r.choices.audio.map { it.code to languageName(it.code, it.label) }, s.nativeLanguage) {
                 vm.set("native_language", JsonPrimitive(it))
             }
             if (r.choices.subtitlesWhen.isNotEmpty()) {
-                val native = r.choices.audio.firstOrNull { it.code == s.nativeLanguage }?.label ?: s.nativeLanguage
+                val native = languageName(s.nativeLanguage, r.choices.audio.firstOrNull { it.code == s.nativeLanguage }?.label ?: s.nativeLanguage)
                 Choice(stringResource(R.string.subtitles_when), r.choices.subtitlesWhen.map {
                     it.code to when (it.code) {
                         "foreign" -> stringResource(R.string.subtitles_when_foreign, native)
@@ -149,7 +167,7 @@ private fun Bitrate(mbps: Double, onSet: (Double) -> Unit) {
     var value by remember(mbps) { mutableFloatStateOf(if (mbps <= 0) 0f else mbps.toFloat()) }
     Column {
         Text(if (value <= 0f) stringResource(R.string.bitrate_unlimited) else stringResource(R.string.bitrate_limit, value.toInt()))
-        Slider(value = value, onValueChange = { value = (it / 5).toInt() * 5f }, valueRange = 0f..200f,
+        Slider(value = value, onValueChange = { value = (it / 5).toInt() * 5f }, valueRange = 0f..400f,
             onValueChangeFinished = { onSet(value.toDouble()) })
         Text(stringResource(R.string.bitrate_hint), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -168,7 +186,7 @@ private fun OrderedLanguages(options: List<LangChoice>, chosen: List<String>, on
                 val next = if (tick) chosen + lang.code else chosen - lang.code
                 if (next.isNotEmpty()) onChange(next)
             })
-            Text(lang.label, Modifier.weight(1f))
+            Text(languageName(lang.code, lang.label), Modifier.weight(1f))
             if (on) {
                 IconButton(onClick = { onChange(chosen.toMutableList().apply { add(i - 1, removeAt(i)) }) }, enabled = i > 0) {
                     Icon(Icons.Filled.KeyboardArrowUp, stringResource(R.string.move_up))

@@ -106,6 +106,8 @@ class AboutViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     }
 
     /** Asks GitHub (never the agent); says so when there's nothing newer, as the status alone wouldn't change. */
+    fun agentCheck() = call { updates.value = it.checkUpdates() }
+
     fun check(context: Context) = viewModelScope.launch {
         context.app.updater.check()
         if (context.app.updater.state.value is UpdateState.UpToDate) tell(R.string.update_checked_none)
@@ -193,7 +195,7 @@ fun AboutScreen() {
             LabeledValue(stringResource(R.string.tv_app), tvApp ?: "–")
             LabeledValue(stringResource(R.string.tv_player), tvPlayer ?: "–")
             me?.device?.let { d -> LabeledValue(stringResource(R.string.this_phone_there), d.name + (d.appVersion?.let { " · $it" } ?: "")) }
-            updates?.let { AgentUpdates(it) }
+            updates?.let { AgentUpdates(it) { vm.agentCheck() } }
         }
 
         SectionCard(stringResource(R.string.licence)) {
@@ -286,17 +288,22 @@ private fun AnnotatedString.Builder.inline(text: String) {
 
 /** What the agent found of newer releases (its own update check): the server, the panel, the TV app, the player. */
 @Composable
-private fun AgentUpdates(u: UpdatesInfo) {
-    val labels = mapOf("server" to R.string.server_version, "panel" to R.string.panel, "tv" to R.string.tv_app,
-        "tvplayer" to R.string.tv_player, "phone" to R.string.about_app)
-    for ((key, c) in u.components) {
-        if (c.newer == true && c.latest != null) {
-            val label = labels[key]?.let { stringResource(it) } ?: key
-            Text(stringResource(R.string.agent_update_newer, label, c.latest), color = Amber,
-                style = MaterialTheme.typography.bodySmall)
+private fun AgentUpdates(u: UpdatesInfo, onCheck: () -> Unit) {
+    // the panel's and this app's have no version here to compare (this app checks GitHub itself, above)
+    val labels = mapOf("server" to R.string.server_version, "tv" to R.string.tv_app, "tvplayer" to R.string.tv_player)
+    for ((key, label) in labels) {
+        val c = u.components[key] ?: continue
+        val name = stringResource(label)
+        val line = when {
+            c.installed == false -> stringResource(R.string.agent_update_missing, name)
+            c.ahead == true -> stringResource(R.string.agent_update_ahead, name)
+            c.newer == true && c.latest != null && c.current != null -> stringResource(R.string.agent_update_newer, name, c.latest)
+            else -> null                 // up to date, or not read yet (the TV off since the agent started)
         }
+        line?.let { Text(it, color = Amber, style = MaterialTheme.typography.bodySmall) }
     }
     val checked = u.checked?.let { DateUtils.getRelativeTimeSpanString((it * 1000).toLong()).toString() }
     Text(stringResource(R.string.agent_updates_checked, checked ?: "–") + (u.error?.let { " · $it" } ?: ""),
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    TextButton(onClick = onCheck) { Text(stringResource(R.string.agent_updates_check)) }
 }

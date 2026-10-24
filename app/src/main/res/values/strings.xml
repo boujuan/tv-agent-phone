@@ -220,7 +220,7 @@
     <string name="bitrate_hint">Streams above it are skipped. The TV’s Ethernet tops out at ~94 Mbit/s; Wi-Fi does ~300.</string>
     <string name="probe_streams">Check a link answers before playing it</string>
     <string name="binge">Binge mode: the next episode starts by itself</string>
-    <string name="auto_skip">Skip intros and recaps by themselves</string>
+    <string name="auto_skip">Skip intros and recaps by themselves, when their times are sure</string>
     <string name="check_episodes">Check each episode is the one asked for, by its subtitles</string>
     <string name="check_episodes_hint">A streaming service’s copy can be numbered its own way (Netflix’s Community season 2 skips a pulled episode). A wrong file gives way to a right one at the same moment: a few seconds the first time, nothing after.</string>
     <string name="updates_mode">The agent’s updates</string>
@@ -230,7 +230,7 @@
     <string name="updates_mode_hint">By themselves: the agent installs the TV app’s and TV Agent Player’s new releases when the TV isn’t listening, and the computer moves to a new release. This app updates itself apart (More › About).</string>
     <string name="tv_player">TV Agent Player</string>
     <string name="languages">Languages</string>
-    <string name="languages_hint">Audio: a language, or each title’s original one. Subtitles show when the audio isn’t your native language (or always, or never), in the first available language below. Saying “from now on, audio in Spanish” changes these too.</string>
+    <string name="languages_hint">Titles made in your native language play in it; anything else in this audio when the file has it (Original: the language each was made in). Subtitles: the first available below, as “Subtitles show” says. Saying “from now on, audio in Spanish” changes these too; changing them here ends what was asked by voice for a title.</string>
     <string name="original_language">Original language</string>
     <string name="subtitles_when">Subtitles show</string>
     <string name="subtitles_when_foreign">Only when the audio isn’t %1$s</string>
@@ -270,7 +270,7 @@
     <string name="this_phone_there">This phone there</string>
     <string name="use">Use</string>
     <string name="edit_addresses">Addresses…</string>
-    <string name="addresses_hint">One per line, tried in this order (e.g. the LAN, then Tailscale). The certificate must stay the same.</string>
+    <string name="addresses_hint">The agent’s own addresses are kept up to date by themselves, the one that answered first. Add one here only if the agent can’t know it: it’s tried after the agent’s. The certificate must stay the same.</string>
     <string name="forget">Forget</string>
     <string name="forget_title">Forget %1$s?</string>
     <string name="forget_hint">The agent is told to forget this phone too, when it can be reached.</string>
@@ -352,7 +352,6 @@
     <string name="update_done">Updated to %1$s.</string>
     <string name="update_available_notice">%1$s is out: tap to install it.</string>
     <string name="server_version">Agent version</string>
-    <string name="panel">Panel</string>
     <string name="agent_update_newer">%1$s: %2$s is out</string>
     <string name="agent_updates_checked">The agent last looked for updates %1$s</string>
     <string name="licence">Licence</string>
@@ -459,4 +458,11 @@
     <string name="vocabulary_for_hint">Names for the %1$s hint (%2$d)</string>
     <string name="vocabulary_no_hint">Names for no hint (%1$d)</string>
     <string name="vocabulary_hint_shared">The %1$s hint uses the no-hint names until you change them here.</string>
+
+    <!-- Settings, About, Remote -->
+    <string name="player_not_on_tv">Not on the TV: install it from the panel (Settings › Updates).</string>
+    <string name="agent_update_missing">%1$s: not on the TV (the panel installs it: Settings › Updates)</string>
+    <string name="agent_update_ahead">%1$s: a test build, newer than the latest release</string>
+    <string name="agent_updates_check">Ask GitHub now</string>
+    <string name="numbers_hint">Picks from the TV’s numbered list too, as saying “number 2” does.</string>
 </resources>

@@ -244,14 +244,14 @@ data class Pipeline(
 
 @Serializable
 data class SettingsValues(
-    val player: String = "tvplayer",
+    val player: String = "kodi",                 // the agent's own default (config.py); it always sends the value
     @SerialName("max_height") val maxHeight: Int = 2160,
     @SerialName("max_mbps") val maxMbps: Double = 60.0,
     @SerialName("probe_streams") val probeStreams: Boolean = true,
     val binge: Boolean = true,
     @SerialName("auto_skip") val autoSkip: Boolean = false,
     @SerialName("audio_language") val audioLanguage: String = "eng",     // a language, or "original"
-    @SerialName("subtitle_languages") val subtitleLanguages: List<String> = listOf("eng"),
+    @SerialName("subtitle_languages") val subtitleLanguages: List<String> = listOf("eng", "spa"),
     @SerialName("native_language") val nativeLanguage: String = "spa",
     @SerialName("twitch_favorites") val twitchFavorites: List<String> = emptyList(),
     @SerialName("log_transcripts") val logTranscripts: Boolean = true,
@@ -358,6 +358,10 @@ data class ComponentUpdate(
     val latest: String? = null,
     val newer: Boolean? = null,
     val url: String? = null,
+    /** On the TV at all (the TV app, TV Agent Player); null: not known, or not a TV app. */
+    val installed: Boolean? = null,
+    /** A test build, newer than the latest release. */
+    val ahead: Boolean? = null,
 )
 
 @Serializable

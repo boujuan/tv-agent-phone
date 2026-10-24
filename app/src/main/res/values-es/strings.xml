@@ -214,7 +214,7 @@
     <string name="bitrate_hint">Se saltan los streams por encima. El Ethernet de la tele llega a ~94 Mbit/s; el Wi-Fi a ~300.</string>
     <string name="probe_streams">Comprobar que un enlace responde antes de reproducirlo</string>
     <string name="binge">Modo maratón: el siguiente capítulo empieza solo</string>
-    <string name="auto_skip">Saltar intros y resúmenes solos</string>
+    <string name="auto_skip">Saltar intros y resúmenes solos, si sus tiempos son seguros</string>
     <string name="check_episodes">Comprobar por sus subtítulos que cada capítulo es el pedido</string>
     <string name="check_episodes_hint">La copia de un servicio puede numerarse a su manera (la temporada 2 de Community en Netflix se salta un capítulo retirado). Un archivo equivocado deja paso al bueno en el mismo punto: unos segundos la primera vez, nada después.</string>
     <string name="updates_mode">Actualizaciones del agente</string>
@@ -224,10 +224,10 @@
     <string name="updates_mode_hint">Solas: el agente instala las nuevas versiones de la app de la tele y de TV Agent Player cuando la tele no está escuchando, y el ordenador pasa a la nueva versión. Esta app se actualiza aparte (Más › Acerca de).</string>
     <string name="tv_player">TV Agent Player</string>
     <string name="languages">Idiomas</string>
-    <string name="languages_hint">Audio: un idioma, o el original de cada título. Los subtítulos salen cuando el audio no está en tu idioma nativo (o siempre, o nunca), en el primer idioma disponible de abajo. Decir «a partir de ahora, audio en español» también los cambia.</string>
+    <string name="languages_hint">Lo que está hecho en tu idioma nativo se pone en él; lo demás, con este audio si el archivo lo tiene (Original: el idioma en que se hizo). Subtítulos: el primero disponible de abajo, según «Mostrar subtítulos». Decir «a partir de ahora, audio en español» también los cambia; cambiarlos aquí anula lo pedido por voz para un título.</string>
     <string name="original_language">Idioma original</string>
     <string name="subtitles_when">Mostrar subtítulos</string>
-    <string name="subtitles_when_foreign">Solo cuando el audio no está en %1$s</string>
+    <string name="subtitles_when_foreign">Solo si el audio no está en tu idioma (%1$s)</string>
     <string name="subtitles_when_always">Siempre</string>
     <string name="subtitles_when_off">Nunca</string>
     <string name="audio_in">Audio en…</string>
@@ -264,7 +264,7 @@
     <string name="this_phone_there">Este móvil allí</string>
     <string name="use">Usar</string>
     <string name="edit_addresses">Direcciones…</string>
-    <string name="addresses_hint">Una por línea, probadas en este orden (p. ej. la LAN y luego Tailscale). El certificado tiene que ser el mismo.</string>
+    <string name="addresses_hint">Las direcciones del propio agente se mantienen al día solas, primero la que respondió. Añade aquí una solo si el agente no puede saberla: se prueba después de las suyas. El certificado tiene que ser el mismo.</string>
     <string name="forget">Olvidar</string>
     <string name="forget_title">¿Olvidar %1$s?</string>
     <string name="forget_hint">También se le pide al agente que olvide este móvil, si se le puede alcanzar.</string>
@@ -346,7 +346,6 @@
     <string name="update_done">Actualizada a la %1$s.</string>
     <string name="update_available_notice">Ya está la %1$s: toca para instalarla.</string>
     <string name="server_version">Versión del agente</string>
-    <string name="panel">Panel</string>
     <string name="agent_update_newer">%1$s: ya está la %2$s</string>
     <string name="agent_updates_checked">El agente buscó actualizaciones %1$s</string>
     <string name="licence">Licencia</string>
@@ -359,7 +358,7 @@
 
     <!-- The TV's numbered list -->
     <string name="shown_title">En la tele</string>
-    <string name="shown_hint">La lista de la tele: toca una, como al decir su número.</string>
+    <string name="shown_hint">La lista de la tele: toca una opción, como al decir su número.</string>
     <string name="shown_gone">La tele ya muestra otra cosa.</string>
     <string name="voice_cancelled">Cancelado: no se ha hecho nada</string>
 
@@ -459,4 +458,11 @@
     <string name="vocabulary_for_hint">Nombres para la pista en %1$s (%2$d)</string>
     <string name="vocabulary_no_hint">Nombres sin pista (%1$d)</string>
     <string name="vocabulary_hint_shared">La pista en %1$s usa los nombres sin pista hasta que los cambies aquí.</string>
+
+    <!-- Ajustes, Acerca de, Mando -->
+    <string name="player_not_on_tv">No está en la tele: instálalo desde el panel (Settings › Updates).</string>
+    <string name="agent_update_missing">%1$s: no está en la tele (lo instala el panel: Settings › Updates)</string>
+    <string name="agent_update_ahead">%1$s: una versión de prueba, más nueva que la última publicada</string>
+    <string name="agent_updates_check">Preguntar a GitHub ahora</string>
+    <string name="numbers_hint">También elige de la lista numerada de la tele, como decir «número 2».</string>
 </resources>

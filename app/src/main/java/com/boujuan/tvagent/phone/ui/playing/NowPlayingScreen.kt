@@ -76,6 +76,7 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.input.ImeAction
+import com.boujuan.tvagent.phone.ui.languageName
 
 class NowPlayingViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val state = MutableStateFlow<NowPlayingResponse?>(null)
@@ -311,11 +312,13 @@ private fun SceneSearch(onSay: (String) -> Unit) {
 @Composable
 private fun Languages(choices: SettingsChoices, audio: Boolean, onAction: (JsonObject) -> Unit) {
     val original = stringResource(R.string.original_language)
-    val audios = choices.audioLanguage.ifEmpty { choices.audio }.map { it.code to if (it.code == "original") original else it.label }
+    val audios = choices.audioLanguage.ifEmpty { choices.audio }.map {
+        it.code to if (it.code == "original") original else languageName(it.code, it.label)
+    }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         // Just Player: only subtitles can be asked for (the agent changes its audio in TV Agent Player and Kodi)
         if (audio) LanguageMenu(stringResource(R.string.audio_in), audios) { onAction(Actions.language(audio = it)) }
-        LanguageMenu(stringResource(R.string.subtitles_in), choices.subtitles.map { it.code to it.label } +
+        LanguageMenu(stringResource(R.string.subtitles_in), choices.subtitles.map { it.code to languageName(it.code, it.label) } +
             ("off" to stringResource(R.string.off))) { onAction(Actions.language(subtitles = it)) }
     }
     Text(stringResource(R.string.language_hint), color = MaterialTheme.colorScheme.onSurfaceVariant,

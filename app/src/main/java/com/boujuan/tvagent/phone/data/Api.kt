@@ -150,6 +150,8 @@ class AgentApi(
     /** The TV app and the players on the TV ({"tvagent": {"installed", "version"}, "tvplayer": …, "kodi": …, "just": …}). */
     suspend fun tvPackages(): JsonObject = get("/v1/tv/packages", JsonObject.serializer(), slow = true, okCodes = setOf(503))
     /** What the agent knows of newer releases of each part; null from an agent without it. */
+    /** The agent asks GitHub now (at most once a minute), and says what it found. */
+    suspend fun checkUpdates(): UpdatesInfo = post("/v1/updates/check", "{}", UpdatesInfo.serializer(), slow = true)
     suspend fun updates(): UpdatesInfo? = try {
         get("/v1/updates", UpdatesInfo.serializer())
     } catch (e: ApiException) {
@@ -162,8 +164,6 @@ class AgentApi(
     suspend fun speedtest(): Speed = post("/v1/tv/speedtest", "{}", Speed.serializer(), slow = true, okCodes = setOf(503))
     suspend fun screenshot(): ByteArray = bytes(Request.Builder().get(), "/v1/tv/screenshot")
     suspend fun recording(name: String): ByteArray = bytes(Request.Builder().get(), "/v1/recording?name=$name")
-    suspend fun playLink(url: String): Outcome =
-        post("/v1/tv/play-link", buildJsonObject { put("url", url) }, Outcome.serializer(), slow = true)
 
     // ---- plumbing ----
 
@@ -265,7 +265,6 @@ object Actions {
         if (audio != null) put("audio", audio)
         if (subtitles != null) put("subtitles", subtitles)
     }
-    fun binge(on: Boolean) = buildJsonObject { put("type", "binge"); put("on", on) }
     /** "What did they say?": back a little, subtitles on for a moment. */
     fun replay(seconds: Int = 10) = buildJsonObject { put("type", "replay"); put("seconds", seconds) }
     /** Stop (or turn the TV off) after [minutes], or when what's playing ends (null); or the timer cancelled. */
@@ -276,7 +275,5 @@ object Actions {
     }
     /** A start on its way, and what's left of a chain, stopped. */
     fun cancel() = buildJsonObject { put("type", "cancel") }
-    fun play(title: String) = buildJsonObject { put("type", "play_title"); put("title", title) }
     fun continueWatching() = buildJsonObject { put("type", "continue_watching") }
-    fun showList(list: String) = buildJsonObject { put("type", "show_list"); put("list", list) }
 }

@@ -9,6 +9,39 @@ One section per release, newest first; each `## X.Y.Z` section becomes that tag'
 - **The TV's numbered lists on the phone**: suggestions, a title to make sure of, the episodes or moments found and
   "go there?" open as a sheet over whichever screen is open, with their posters; a tap picks, as saying "number 2"
   or "sí" does (`GET /v1/shown`, `POST /v1/shown/pick`, tv-agent with them). Gone once the TV plays something else.
+  The Quick Settings tile and widget panel shows it too, and stays open while it's there.
+- **Playing**: replay with subtitles ("what did they say?"), Cancel (a start on its way, the rest of a chain), a
+  sleep timer (after this one, in 30 min or an hour, the TV off after this one), and "go to the part where…" (the
+  subtitles searched in the language you write in). *Audio in…* is hidden in Just Player (the agent only changes its
+  subtitles); previous and next episode only show for series.
+- **Search**: the quick commands in Spanish too, and three more: what did they say?, recommend something, cancel.
+  "Continue watching" sends the action itself ("seguir viendo" isn't a phrase the rules know). The example shows a
+  chain.
+- **Activity**: what happened, step by step (the agent's trace: when, how long, how each step was done, how sure
+  against its bar, what came of it), the settings it ran with, the speech model, where it ran, its hint and names,
+  and "Taught". Actions and how they were decided are named in words, in both languages.
+- **Overview**: the decision model, TV Agent Player's version, the apps running on the TV, the player by name, the
+  latency stages in words.
+- **Decisions**: *Try a sentence* finds the title a start would find, and shows its trace. Reasoning can be left
+  unset ("Don't send a setting").
+- **About**: "Ask GitHub now" makes the agent look for updates at once.
+
+### Changed
+- The vocabulary is the list of the language hint in use, as the panel saves it (each hint can have its own since
+  tv-agent server 0.8.0); a hint without one shows the no-hint names until changed here. The texts say only
+  AssemblyAI uses it, and that 100 names go at most.
+- Language names in the app's language ("Español"), and "Subtitles show" says your native language by its name.
+- Agents: the addresses hint says the agent's own are kept up to date by themselves.
+- Overview and Decisions say "the computer", not "the laptop". The bitrate slider goes to 400 Mbit/s, as the panel.
+
+### Fixed
+- Closing the voice panel before the agent decided now cancels the command (the agent's cancel frame): closing the
+  connection alone made the agent act on what it had heard. It says "Cancelled: nothing was done".
+- The phone listened for 12 s at most: now 15 s over the stream (the agent takes 16 s), so "go to the part where…"
+  isn't cut off; 12 s when the recording goes in one piece. The fallback waits 1.2 s of quiet, not 0.8 s.
+- Activity's "Spoken" filter counted typed commands and taps from the phone: it's the commands with a recording now.
+- About said a newer TV Agent Player (or TV app) was out when it wasn't installed or the TV hadn't been read; it
+  says when it's not on the TV, or a test build is ahead.
 
 ## 0.2.3 — 2026-10-24
 

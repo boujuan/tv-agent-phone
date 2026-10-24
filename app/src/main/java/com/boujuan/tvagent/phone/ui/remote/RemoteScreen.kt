@@ -141,7 +141,11 @@ fun RemoteScreen() {
             Key(Icons.Filled.PlayArrow, R.string.key_play_pause) { press("play_pause") }
             Key(Icons.Filled.Forward30, R.string.key_forward30) { tap(); vm.action(Actions.transport("forward", seconds = 30)) }
         }
-        if (numbers) NumberPad { press(it) }
+        if (numbers) {
+            NumberPad { press(it) }
+            Text(stringResource(R.string.numbers_hint), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
         SectionCard(stringResource(R.string.volume)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Key(Icons.AutoMirrored.Filled.VolumeDown, R.string.key_volume_down) { press("volume_down"); vm.refreshVolume() }
