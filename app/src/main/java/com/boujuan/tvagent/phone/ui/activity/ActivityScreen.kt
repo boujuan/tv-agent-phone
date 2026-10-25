@@ -329,7 +329,7 @@ private fun EntrySheet(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> U
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { vm.right(e) }) { Text(stringResource(R.string.this_was_right)) }
+                OutlinedButton(onClick = { vm.right(e); onClose() }) { Text(stringResource(R.string.this_was_right)) }    // its answer shows below
                 OutlinedButton(onClick = { wrong = true }) { Text(stringResource(R.string.this_was_wrong)) }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -338,7 +338,7 @@ private fun EntrySheet(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> U
             }
         }
     }
-    if (wrong) WrongDialog(vm, e) { wrong = false }
+    if (wrong) WrongDialog(vm, e, onDone = onClose) { wrong = false }
 }
 
 /** One of a command's big parts (a plot it read, a prompt and its answer): folded to a few lines. */
@@ -357,7 +357,7 @@ private fun DetailPart(key: String, value: String) {
  * understands it, checked first), the right episode or moment when it searched for one; taught too, unless unticked.
  */
 @Composable
-private fun WrongDialog(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> Unit) {
+private fun WrongDialog(vm: ActivityViewModel, e: ActivityEntry, onDone: () -> Unit, onClose: () -> Unit) {
     var words by rememberSaveable { mutableStateOf(e.heard) }
     var sentence by rememberSaveable { mutableStateOf("") }
     var episode by rememberSaveable { mutableStateOf("") }
@@ -392,7 +392,7 @@ private fun WrongDialog(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> 
             }
         },
         confirmButton = {
-            TextButton(onClick = { vm.wrong(e, words, understood, episode, moment, teach); onClose() },
+            TextButton(onClick = { vm.wrong(e, words, understood, episode, moment, teach); onClose(); onDone() },
                 enabled = understood != null || episode.isNotBlank() || moment.isNotBlank()) { Text(stringResource(R.string.ok)) }
         },
         dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) } },
