@@ -129,17 +129,11 @@
     <string name="t_done">hecho en %1$d ms</string>
     <string name="action">Acción</string>
     <string name="decided_via">Decidido por</string>
-    <string name="confidence">Confianza</string>
     <string name="speech_to_text">Voz a texto</string>
     <string name="audio_length">Audio</string>
     <string name="cost">Coste</string>
-    <string name="mark_wrong">Marcar como mal</string>
-    <string name="not_wrong">No está mal</string>
-    <string name="teach">Enseñar</string>
     <string name="do_again">Repetir</string>
     <string name="play_recording">Escuchar la grabación</string>
-    <string name="teach_title">Enseñar la acción correcta</string>
-    <string name="teach_hint">Oyó «%1$s». Escribe lo que debería haber hecho, como una orden:</string>
     <string name="teach_as">La orden correcta</string>
     <string name="check">Comprobar</string>
     <string name="teach_would">Eso hace: %1$s</string>
@@ -475,4 +469,26 @@
 
     <!-- Buscar: la ayuda del agente -->
     <string name="what_you_can_say">Lo que puedes decir</string>
+
+    <!-- Actividad: como la del panel -->
+    <string name="this_was_right">Esto estaba bien</string>
+    <string name="this_was_wrong">Esto estaba mal, debería ser…</string>
+    <string name="wrong_words">Lo que se dijo, palabra por palabra</string>
+    <string name="wrong_episode">El capítulo bueno (p. ej. S2E5)</string>
+    <string name="wrong_moment">El momento bueno (m:ss)</string>
+    <string name="wrong_teach">Enséñaselo también: desde ahora estas palabras hacen eso</string>
+    <string name="ok">Aceptar</string>
+    <string name="kept_voice_test">Guardado como prueba de voz</string>
+    <string name="kept_sentence">Guardado como una de tus frases</string>
+    <string name="kept_case">Guardado como caso de capítulo o escena</string>
+    <string name="kept_nothing">No se ha guardado nada (sin grabación ni palabras)</string>
+    <string name="details_read">Lo que leyeron sus búsquedas y lo que se preguntó a los modelos</string>
+    <string name="details_none">No se guardó nada más de esta</string>
+    <string name="tstage_decide">Decidir</string>
+    <string name="tstage_title">Buscar el título</string>
+    <string name="tstage_episode">Buscar el capítulo</string>
+    <string name="tstage_scene">Buscar la escena</string>
+    <string name="tstage_start">Ponerlo</string>
+    <string name="tstage_chain">La cadena</string>
+    <string name="tstage_skip">Saltar</string>
 </resources>

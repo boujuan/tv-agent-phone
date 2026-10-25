@@ -67,6 +67,11 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonPrimitive
+import com.boujuan.tvagent.phone.data.ApiException
+import com.boujuan.tvagent.phone.ui.Toggle
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.text.style.TextOverflow
 
 class ActivityViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     val entries = MutableStateFlow<List<ActivityEntry>>(emptyList())
@@ -106,12 +111,43 @@ class ActivityViewModel(repo: AgentRepository) : AgentViewModel(repo) {
     /** What a sentence would do (teaching: the right action for what was heard). */
     fun check(sentence: String) = call { preview.value = it.decide(sentence) }
 
-    fun teach(e: ActivityEntry) = call {
-        val action = preview.value?.action ?: return@call
-        it.learn(e.heard, action, e)
-        preview.value = null
-        tell(R.string.taught)
+    /** A command's big parts, read when asked for (t -> its parts; empty: none kept). */
+    val details = MutableStateFlow<Map<Double, JsonObject>>(emptyMap())
+
+    fun loadDetails(e: ActivityEntry) = call { details.value += e.t to it.activityDetails(e.t) }
+
+    /** "This was right": kept as a test by the agent (an agent before it: just not wrong). */
+    fun right(e: ActivityEntry) = call {
+        try {
+            tell(kept(it.right(e, e.heard).kept))
+        } catch (x: ApiException) {
+            if (x.code != 404) throw x
+            it.mark(e, false)
+        }
         refresh()
+    }
+
+    /** "This was wrong, it should be…": marked and kept as a test; taught too when asked (and understood). */
+    fun wrong(e: ActivityEntry, words: String, should: JsonObject?, episode: String, moment: String, teach: Boolean) = call {
+        try {
+            tell(kept(it.wrong(e, words, should, episode, moment).kept))
+        } catch (x: ApiException) {
+            if (x.code != 404) throw x
+            it.mark(e, true)                    // an agent before it: marked wrong only
+        }
+        if (teach && should != null && e.heard.isNotBlank()) {
+            it.learn(e.heard, should, e)
+            tell(R.string.taught)
+        }
+        preview.value = null
+        refresh()
+    }
+
+    private fun kept(what: List<String>): Int = when {
+        what.any { it.contains("voice test") } -> R.string.kept_voice_test
+        what.any { it.contains("sentences") } -> R.string.kept_sentence
+        what.any { it.contains("case") } -> R.string.kept_case
+        else -> R.string.kept_nothing
     }
 
     fun play(context: Context, e: ActivityEntry) = call {
@@ -250,16 +286,18 @@ private fun timesLine(e: ActivityEntry): String {
 @Composable
 private fun EntrySheet(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> Unit) {
     val context = LocalContext.current
-    var teaching by remember { mutableStateOf(false) }
+    var wrong by remember { mutableStateOf(false) }
+    val allDetails by vm.details.collectAsStateWithLifecycle()
     ModalBottomSheet(onDismissRequest = onClose) {
-        Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp).padding(bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(if (e.heard.isNotEmpty()) "“${e.heard}”" else stringResource(R.string.heard_nothing),
                 style = MaterialTheme.typography.titleLarge)
             Text(e.say, color = when (e.ok) { true -> Green; false -> Red; null -> MaterialTheme.colorScheme.onSurface },
                 fontWeight = FontWeight.Medium)
             LabeledValue(stringResource(R.string.action), actionLabel(e.action, e.type))
-            LabeledValue(stringResource(R.string.decided_via), listOf(viaLabel(e.via), e.rule).filter { it.isNotEmpty() }.joinToString(" · "))
-            e.confidence?.let { LabeledValue(stringResource(R.string.confidence), "%.2f".format(it)) }
+            LabeledValue(stringResource(R.string.decided_via), listOf(viaLabel(e.via), e.rule).filter { it.isNotEmpty() }.joinToString(" · ") +
+                (e.confidence?.let { " · %.2f".format(it) } ?: ""))
             (e.sttModel ?: e.stt)?.let { model ->
                 val where = when (e.sttWhere) { "hosted" -> stringResource(R.string.where_hosted); "local" -> stringResource(R.string.where_local); else -> null }
                 val hint = listOfNotNull(e.sttLanguage?.let { stringResource(R.string.stt_hint_used, it) },
@@ -271,11 +309,19 @@ private fun EntrySheet(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> U
             if (cost > 0) LabeledValue(stringResource(R.string.cost), "$%.5f".format(cost))
             Text(timesLine(e), style = MaterialTheme.typography.bodySmall)
             e.trace?.takeIf { it.isNotEmpty() }?.let { Trace(it) }
-            var details by remember { mutableStateOf(false) }
-            if (e.action != null || e.settings != null) {
-                TextButton(onClick = { details = !details }) { Text(stringResource(if (details) R.string.details_hide else R.string.details)) }
+            // What its searches read and the models' prompts: big, so asked for here, not with the list
+            val details = allDetails[e.t]
+            when {
+                details != null && details.isEmpty() -> Text(stringResource(R.string.details_none), style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                details != null -> details.forEach { (key, value) -> DetailPart(key, value.toString()) }
+                e.trace != null -> TextButton(onClick = { vm.loadDetails(e) }) { Text(stringResource(R.string.details_read)) }
             }
-            if (details) {
+            var raw by remember { mutableStateOf(false) }
+            if (e.action != null || e.settings != null) {
+                TextButton(onClick = { raw = !raw }) { Text(stringResource(if (raw) R.string.details_hide else R.string.details)) }
+            }
+            if (raw) {
                 e.action?.let { Text(it.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 e.settings?.let {
                     Text(stringResource(R.string.settings_then), style = MaterialTheme.typography.titleSmall)
@@ -283,10 +329,8 @@ private fun EntrySheet(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> U
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { vm.mark(e, e.wrong != true) }) {
-                    Text(stringResource(if (e.wrong == true) R.string.not_wrong else R.string.mark_wrong))
-                }
-                if (e.heard.isNotEmpty()) OutlinedButton(onClick = { teaching = true }) { Text(stringResource(R.string.teach)) }
+                OutlinedButton(onClick = { vm.right(e) }) { Text(stringResource(R.string.this_was_right)) }
+                OutlinedButton(onClick = { wrong = true }) { Text(stringResource(R.string.this_was_wrong)) }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (e.heard.isNotEmpty()) OutlinedButton(onClick = { vm.again(e); onClose() }) { Text(stringResource(R.string.do_again)) }
@@ -294,56 +338,91 @@ private fun EntrySheet(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> U
             }
         }
     }
-    if (teaching) TeachDialog(vm, e) { teaching = false }
+    if (wrong) WrongDialog(vm, e) { wrong = false }
 }
 
-/** "It should have done…": say it as a command, see what that does, and teach it for what was heard. */
+/** One of a command's big parts (a plot it read, a prompt and its answer): folded to a few lines. */
 @Composable
-private fun TeachDialog(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> Unit) {
+private fun DetailPart(key: String, value: String) {
+    var all by remember { mutableStateOf(false) }
+    Column(Modifier.fillMaxWidth().clickable { all = !all }) {
+        Text(key, style = MaterialTheme.typography.labelLarge)
+        Text(value, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = if (all) Int.MAX_VALUE else 4, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+/**
+ * "This was wrong, it should be…" (as the panel's): what was said, what it should have done (said the way the agent
+ * understands it, checked first), the right episode or moment when it searched for one; taught too, unless unticked.
+ */
+@Composable
+private fun WrongDialog(vm: ActivityViewModel, e: ActivityEntry, onClose: () -> Unit) {
+    var words by rememberSaveable { mutableStateOf(e.heard) }
     var sentence by rememberSaveable { mutableStateOf("") }
+    var episode by rememberSaveable { mutableStateOf("") }
+    var moment by rememberSaveable { mutableStateOf("") }
+    var teach by rememberSaveable { mutableStateOf(true) }
     val preview by vm.preview.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { vm.preview.value = null }
+    val searched = remember(e) {
+        e.trace.orEmpty().mapNotNull { it as? JsonObject }.filter { runCatching { it["step"]?.jsonPrimitive?.contentOrNull }.getOrNull() == "asked" }
+            .mapNotNull { runCatching { it["stage"]?.jsonPrimitive?.contentOrNull }.getOrNull() }.toSet()
+    }
+    val understood = preview?.action?.takeIf { runCatching { it["type"]?.jsonPrimitive?.contentOrNull }.getOrNull() != "none" }
     AlertDialog(
         onDismissRequest = onClose,
-        title = { Text(stringResource(R.string.teach_title)) },
+        title = { Text(stringResource(R.string.this_was_wrong)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.teach_hint, e.heard))
-                OutlinedTextField(sentence, { sentence = it }, singleLine = true,
-                    label = { Text(stringResource(R.string.teach_as)) }, modifier = Modifier.fillMaxWidth())
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(words, { words = it }, label = { Text(stringResource(R.string.wrong_words)) },
+                    modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(sentence, { sentence = it }, singleLine = true, label = { Text(stringResource(R.string.teach_as)) },
+                    modifier = Modifier.fillMaxWidth())
                 TextButton(onClick = { vm.check(sentence) }, enabled = sentence.isNotBlank()) { Text(stringResource(R.string.check)) }
                 preview?.let { p ->
-                    Text(if (p.action?.get("type")?.toString()?.contains("none") == true) stringResource(R.string.teach_not_understood)
-                    else stringResource(R.string.teach_would, p.describe), fontWeight = FontWeight.Medium)
+                    Text(if (understood == null) stringResource(R.string.teach_not_understood)
+                    else stringResource(R.string.teach_would, p.describe.ifEmpty { actionLabel(p.action) }), fontWeight = FontWeight.Medium)
                 }
+                if ("episode" in searched) OutlinedTextField(episode, { episode = it }, singleLine = true,
+                    label = { Text(stringResource(R.string.wrong_episode)) }, modifier = Modifier.fillMaxWidth())
+                if ("scene" in searched) OutlinedTextField(moment, { moment = it }, singleLine = true,
+                    label = { Text(stringResource(R.string.wrong_moment)) }, modifier = Modifier.fillMaxWidth())
+                if (e.heard.isNotEmpty()) Toggle(stringResource(R.string.wrong_teach), teach) { teach = it }
             }
         },
         confirmButton = {
-            TextButton(onClick = { vm.teach(e); onClose() },
-                enabled = preview?.action != null && preview?.action?.get("type")?.toString()?.contains("none") != true) {
-                Text(stringResource(R.string.teach))
-            }
+            TextButton(onClick = { vm.wrong(e, words, understood, episode, moment, teach); onClose() },
+                enabled = understood != null || episode.isNotBlank() || moment.isNotBlank()) { Text(stringResource(R.string.ok)) }
         },
         dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) } },
     )
 }
 
-/** What a command did, step by step (the agent's trace): when, how long, how it was done, how sure, what came of it. */
+/** What a command did, step by step (the agent's trace), by stage as the panel's Decisions tab shows it: when each
+ * step ended, how long it took, how it was done (rule, model, add-on…), how sure against its bar, what came of it. */
 @Composable
 fun Trace(steps: JsonArray) {
     Text(stringResource(R.string.trace_title), style = MaterialTheme.typography.titleSmall)
+    var stage: String? = null
     steps.forEach { el ->
         val s = el as? JsonObject ?: return@forEach
         fun str(k: String) = runCatching { s[k]?.jsonPrimitive?.contentOrNull }.getOrNull()
         fun num(k: String) = runCatching { s[k]?.jsonPrimitive?.doubleOrNull }.getOrNull()
-        val label = str("label") ?: listOfNotNull(str("stage"), str("step")).joinToString(" · ")
+        val now = str("stage")
+        if (now != null && now != stage) {
+            stage = now
+            Text(stageName(now), Modifier.padding(top = 6.dp), style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary)
+        }
+        val label = str("label") ?: str("step").orEmpty()
         val method = (s["method"] as? JsonObject)?.let { m ->
             val kind = runCatching { m["kind"]?.jsonPrimitive?.contentOrNull }.getOrNull().orEmpty()
             val id = runCatching { m["id"]?.jsonPrimitive?.contentOrNull }.getOrNull()
             listOfNotNull(methodLabel(kind).takeIf { kind.isNotEmpty() }, id).joinToString(" ")
         }
         val sure = num("confidence")?.let { c -> num("threshold")?.let { t -> c to t } }
-        val time = listOfNotNull(num("at")?.let { "%.0f ms".format(it) }, num("ms")?.let { "(%.0f)".format(it) }).joinToString(" ")
+        val time = listOfNotNull(num("at")?.let { secs(it) }, num("ms")?.let { "(${secs(it)})" }).joinToString(" ")
         Column(Modifier.padding(vertical = 2.dp)) {
             Row {
                 Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
@@ -357,4 +436,20 @@ fun Trace(steps: JsonArray) {
             }
         }
     }
+}
+
+private fun secs(ms: Double) = if (ms >= 1000) "%.1f s".format(ms / 1000) else "%.0f ms".format(ms)
+
+/** A trace stage's name: deciding, finding the title, the episode, the scene, starting it, the chain… */
+@Composable
+private fun stageName(stage: String) = when (stage) {
+    "decide", "llm", "d1" -> stringResource(R.string.tstage_decide)
+    "title" -> stringResource(R.string.tstage_title)
+    "episode" -> stringResource(R.string.tstage_episode)
+    "scene" -> stringResource(R.string.tstage_scene)
+    "start" -> stringResource(R.string.tstage_start)
+    "chain" -> stringResource(R.string.tstage_chain)
+    "skip" -> stringResource(R.string.tstage_skip)
+    "stt" -> stringResource(R.string.speech_to_text)
+    else -> stage
 }

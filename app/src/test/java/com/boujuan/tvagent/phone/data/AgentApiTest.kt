@@ -2,6 +2,7 @@ package com.boujuan.tvagent.phone.data
 
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JsonPrimitive
 import okhttp3.Call
 import okhttp3.EventListener
 import okhttp3.OkHttpClient
@@ -170,5 +171,33 @@ class AgentApiTest {
         } catch (e: ApiException) {
             assertEquals(409, e.code)
         }
+    }
+
+    @Test
+    fun `the TV's apps, the help, and a command said right or wrong`() = runBlocking {
+        server.enqueue(json("""{"apps": [{"key": "netflix", "label": "Netflix", "package": "com.netflix.ninja", "icon": true}],
+            "checked": 1792795369.0, "source": "tv app", "error": null, "count": 1}"""))
+        server.enqueue(json("""{"lang": "es", "legend": "‹…›", "sections": [{"name": "Varias de una vez", "commands": [
+            {"say": "pon ‹título› y ve al minuto ‹n›", "does": "…", "type": "sequence", "by": "rules",
+             "example": "pon ‹título› y ve al minuto tres"}]}]}"""))
+        server.enqueue(json("""{"details": {"llm": "the prompt"}}"""))
+        server.enqueue(json("""{"kept": ["one of your sentences"], "does": "transport · op pause"}"""))
+        server.enqueue(json("""{"kept": ["an episode case"]}"""))
+        val api = AgentApi(listOf(url), pin, "tvp_secret")
+        val apps = api.apps()
+        assertEquals("com.netflix.ninja", apps.apps.single().`package`)
+        assertEquals("tv app", apps.source)
+        assertEquals("sequence", api.help("es").sections.single().commands.single().type)
+        val e = ActivityEntry(t = 1792795369.5, heard = "pon la del oso")
+        assertEquals("the prompt", api.activityDetails(e.t)["llm"]?.toString()?.trim('"'))
+        assertEquals(listOf("one of your sentences"), api.right(e, "pon la del oso").kept)
+        val should = kotlinx.serialization.json.buildJsonObject { put("type", JsonPrimitive("play_title")); put("title", JsonPrimitive("The Bear")) }
+        assertEquals(listOf("an episode case"), api.wrong(e, "pon la del oso", should, "S2E5", null).kept)
+        assertEquals("/v1/apps", server.takeRequest().target)
+        assertEquals("/v1/help?lang=es", server.takeRequest().target)
+        assertEquals("/v1/activity/details?t=1.7927953695E9", server.takeRequest().target)
+        assertEquals("""{"t":1.7927953695E9,"words":"pon la del oso"}""", server.takeRequest().body?.utf8())
+        assertEquals("""{"t":1.7927953695E9,"words":"pon la del oso","should":{"type":"play_title","title":"The Bear"},"episode":"S2E5"}""",
+            server.takeRequest().body?.utf8())
     }
 }

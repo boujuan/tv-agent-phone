@@ -3,6 +3,23 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
+## Unreleased
+
+### Added
+- **Remote**: the apps really on the TV, as its home screen lists them, with their icons (read by the agent from
+  the TV app at its start, daily, and with the new refresh button); TV Agent Player among them. The agent's voice
+  list learns them too: "open ‹any of them›" works by its name. Needs tv-agent with `GET /v1/apps` icons and the
+  TV app with AppsReceiver; an older agent shows the apps it knows, as before.
+- **Search**: the quick commands come from what the agent says it understands (`GET /v1/help`), one of each kind
+  (a language now and from now on, a chain, an episode described, a scene, skips, next episode, a number from the
+  TV's list, replay, suggestions, cancel), Spanish and English in turn; a ‹title› in one is selected for you to
+  type over. "What you can say" lists everything, by section, as the panel's Commands tab.
+- **Activity**: the trace by stage (deciding, finding the title, the episode, the scene, starting it, the chain),
+  each step's time, how it was done (rule, model, add-on…) and how sure against its bar; what its searches read and
+  the models were asked, on demand. **This was right** and **This was wrong, it should be…** as in the panel: kept
+  as tests by the agent (the right episode or moment too, when it searched for one), and taught unless unticked.
+  They replace Mark wrong and Teach.
+
 ## 0.2.4 — 2026-10-25
 
 ### Added

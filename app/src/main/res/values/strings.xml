@@ -135,17 +135,11 @@
     <string name="t_done">done in %1$d ms</string>
     <string name="action">Action</string>
     <string name="decided_via">Decided by</string>
-    <string name="confidence">Confidence</string>
     <string name="speech_to_text">Speech-to-text</string>
     <string name="audio_length">Audio</string>
     <string name="cost">Cost</string>
-    <string name="mark_wrong">Mark wrong</string>
-    <string name="not_wrong">Not wrong</string>
-    <string name="teach">Teach</string>
     <string name="do_again">Do it again</string>
     <string name="play_recording">Play the recording</string>
-    <string name="teach_title">Teach the right action</string>
-    <string name="teach_hint">It heard “%1$s”. Write what it should have done, as a command:</string>
     <string name="teach_as">The right command</string>
     <string name="check">Check</string>
     <string name="teach_would">That does: %1$s</string>
@@ -475,4 +469,26 @@
 
     <!-- Search: the agent's help -->
     <string name="what_you_can_say">What you can say</string>
+
+    <!-- Activity: like the panel's -->
+    <string name="this_was_right">This was right</string>
+    <string name="this_was_wrong">This was wrong, it should be…</string>
+    <string name="wrong_words">What was said, word for word</string>
+    <string name="wrong_episode">The right episode (e.g. S2E5)</string>
+    <string name="wrong_moment">The right moment (m:ss)</string>
+    <string name="wrong_teach">Teach it too: from now on these words do that</string>
+    <string name="ok">OK</string>
+    <string name="kept_voice_test">Kept as a voice test</string>
+    <string name="kept_sentence">Kept as one of your sentences</string>
+    <string name="kept_case">Kept as an episode or scene case</string>
+    <string name="kept_nothing">Nothing kept (no recording, no words)</string>
+    <string name="details_read">What its searches read and the models were asked</string>
+    <string name="details_none">Nothing more kept for this one</string>
+    <string name="tstage_decide">Deciding</string>
+    <string name="tstage_title">Finding the title</string>
+    <string name="tstage_episode">Finding the episode</string>
+    <string name="tstage_scene">Finding the scene</string>
+    <string name="tstage_start">Starting it</string>
+    <string name="tstage_chain">The chain</string>
+    <string name="tstage_skip">Skipping</string>
 </resources>
