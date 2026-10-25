@@ -465,4 +465,11 @@
     <string name="agent_update_ahead">%1$s: a test build, newer than the latest release</string>
     <string name="agent_updates_check">Ask GitHub now</string>
     <string name="numbers_hint">Picks from the TV’s numbered list too, as saying “number 2” does.</string>
+
+    <!-- Remote: the TV's apps -->
+    <string name="apps_refresh">Read the TV’s apps again</string>
+    <string name="apps_refreshed">The TV’s apps, read again</string>
+    <string name="apps_read">As the TV lists them, read %1$s</string>
+    <string name="apps_read_adb">As the TV lists them, read %1$s (update the TV app for their names and icons)</string>
+    <string name="apps_not_read">The agent hasn’t read the TV’s apps yet: these are the ones it knows.</string>
 </resources>

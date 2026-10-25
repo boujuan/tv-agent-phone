@@ -102,7 +102,12 @@ class AgentApi(
     suspend fun type(text: String): Outcome =
         post("/v1/remote/text", buildJsonObject { put("text", text) }, Outcome.serializer())
     suspend fun volume(): VolumeLevel = get("/v1/tv/volume", VolumeLevel.serializer())
-    suspend fun apps(): List<AppEntry> = get("/v1/apps", AppsResponse.serializer()).apps
+    suspend fun apps(): AppsResponse = get("/v1/apps", AppsResponse.serializer())
+    /** The TV's apps read again now (one installed or removed). */
+    suspend fun refreshApps(): AppsResponse = post("/v1/apps/refresh", "{}", AppsResponse.serializer(), slow = true)
+    suspend fun appIcon(pkg: String): ByteArray = bytes(Request.Builder().get(), "/v1/apps/icon?package=$pkg")
+    /** What you can say (404 from an agent without it). */
+    suspend fun help(lang: String): HelpResponse = get("/v1/help?lang=$lang", HelpResponse.serializer())
 
     /** Decide and do it, as if said ("play the bear season 3"). */
     suspend fun text(text: String): CommandResult =
@@ -125,6 +130,21 @@ class AgentApi(
     suspend fun pick(list: String, item: ListItem): Outcome = post("/v1/lists/pick", buildJsonObject {
         put("list", list); put("imdb", item.imdb); put("video", item.video)
     }, Outcome.serializer(), slow = true)
+
+    /** A command's big parts (what its searches read, model prompts), asked for one at a time. */
+    suspend fun activityDetails(t: Double): JsonObject =
+        get("/v1/activity/details?t=$t", JsonObject.serializer(), slow = true)["details"] as? JsonObject ?: JsonObject(emptyMap())
+    /** "This was right": kept as a test. */
+    suspend fun right(e: ActivityEntry, words: String): KeptResult =
+        post("/v1/activity/right", buildJsonObject { put("t", e.t); put("words", words) }, KeptResult.serializer())
+    /** "This was wrong, it should be…": marked and kept as a test (teaching is learn()). */
+    suspend fun wrong(e: ActivityEntry, words: String, should: JsonObject?, episode: String?, moment: String?): KeptResult =
+        post("/v1/activity/wrong", buildJsonObject {
+            put("t", e.t); put("words", words)
+            if (should != null) put("should", should)
+            if (!episode.isNullOrBlank()) put("episode", episode)
+            if (!moment.isNullOrBlank()) put("moment", moment)
+        }, KeptResult.serializer())
 
     suspend fun activity(limit: Int = 50, before: Double? = null): ActivityPage =
         get("/v1/activity?limit=$limit" + (before?.let { "&before=$it" } ?: ""), ActivityPage.serializer())

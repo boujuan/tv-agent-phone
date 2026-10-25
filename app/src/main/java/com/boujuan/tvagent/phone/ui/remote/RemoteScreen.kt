@@ -77,9 +77,21 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import com.boujuan.tvagent.phone.data.AppsResponse
+import com.boujuan.tvagent.phone.ui.AppIcon
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.IconButton
+import android.text.format.DateUtils
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 class RemoteViewModel(repo: AgentRepository) : AgentViewModel(repo) {
-    val apps = MutableStateFlow<List<AppEntry>>(emptyList())
+    val apps = MutableStateFlow<AppsResponse?>(null)
     val volume = MutableStateFlow<Int?>(null)
     // Key presses go one after the other, in the order pressed (each is a command on the TV).
     private val keys = Channel<Pair<String, Boolean>>(capacity = 32)
@@ -91,10 +103,14 @@ class RemoteViewModel(repo: AgentRepository) : AgentViewModel(repo) {
                 runCatching { api.key(key, long) }.onFailure { fail(it) }
             }
         }
-        viewModelScope.launch { repo.current.collect { apps.value = emptyList(); loadApps() } }
+        viewModelScope.launch {
+            repo.current.map { it?.agent?.id }.distinctUntilChanged().collect { apps.value = null; loadApps() }
+        }
     }
 
     fun loadApps() = call { apps.value = it.apps() }
+    /** The TV's apps read again now. */
+    fun refreshApps() = call { apps.value = it.refreshApps(); tell(R.string.apps_refreshed) }
     fun key(key: String, long: Boolean = false) = keys.trySend(key to long)
     fun action(a: JsonObject) = call(touch = true) { val o = it.action(a); if (!o.ok) tell(o.say) }
     fun type(text: String) = call { it.type(text) }
@@ -115,7 +131,7 @@ fun RemoteScreen() {
     var numbers by rememberSaveable { mutableStateOf(false) }
     WhileVisible(30_000) {
         vm.refreshVolume()
-        if (vm.apps.value.isEmpty()) vm.loadApps()
+        if (vm.apps.value == null) vm.loadApps()
     }
     fun press(key: String, long: Boolean = false) { tap(); vm.key(key, long) }
 
@@ -163,7 +179,7 @@ fun RemoteScreen() {
                 TextButton(onClick = { tap(); vm.action(Actions.volume("unmute")) }) { Text(stringResource(R.string.unmute)) }
             }
         }
-        if (apps.isNotEmpty()) SectionCard(stringResource(R.string.apps)) { AppChips(apps) { tap(); vm.action(Actions.openApp(it)) } }
+        apps?.let { a -> AppsCard(a, onRefresh = { vm.refreshApps() }) { tap(); vm.action(Actions.openApp(it)) } }
         SectionCard(stringResource(R.string.keyboard)) { Keyboard(onType = { vm.type(it) }, onKey = { press(it) }) }
     }
 }
@@ -237,11 +253,35 @@ private fun VolumeSlider(level: Int?, modifier: Modifier, onSet: (Int) -> Unit) 
     )
 }
 
+/** The apps on the TV (as its home screen lists them, read by the agent), with their icons: a tap opens one. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AppChips(apps: List<AppEntry>, onOpen: (String) -> Unit) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        apps.forEach { a -> AssistChip(onClick = { onOpen(a.key) }, label = { Text(a.label) }) }
+private fun AppsCard(r: AppsResponse, onRefresh: () -> Unit, onOpen: (String) -> Unit) {
+    SectionCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.apps), Modifier.weight(1f), style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold)
+            IconButton(onClick = onRefresh) { Icon(Icons.Filled.Refresh, stringResource(R.string.apps_refresh)) }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            r.apps.forEach { a ->
+                Column(Modifier.width(76.dp).clip(RoundedCornerShape(12.dp)).clickable { onOpen(a.key) }.padding(vertical = 6.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (a.icon) AppIcon(a.`package`, Modifier.size(44.dp).clip(RoundedCornerShape(10.dp)))
+                    else Box(Modifier.size(44.dp).background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(10.dp)),
+                        contentAlignment = Alignment.Center) { Text(a.label.take(1), style = MaterialTheme.typography.titleMedium) }
+                    Text(a.label, style = MaterialTheme.typography.labelSmall, maxLines = 2, textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis)
+                }
+            }
+        }
+        val read = r.checked?.let { DateUtils.getRelativeTimeSpanString((it * 1000).toLong()).toString() }
+        Text(when {
+            r.checked == null -> stringResource(R.string.apps_not_read)
+            r.source == "adb" -> stringResource(R.string.apps_read_adb, read.orEmpty())
+            else -> stringResource(R.string.apps_read, read.orEmpty())
+        } + (r.error?.let { " · $it" } ?: ""), style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

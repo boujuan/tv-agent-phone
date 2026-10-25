@@ -199,6 +199,27 @@ fun clock(seconds: Long): String {
     return if (s >= 3600) "%d:%02d:%02d".format(s / 3600, s / 60 % 60, s % 60) else "%d:%02d".format(s / 60, s % 60)
 }
 
+// ---- an app's icon, from the agent (it read them from the TV) ----
+
+private val icons = LruCache<String, ImageBitmap>(64)
+
+@Composable
+fun AppIcon(pkg: String, modifier: Modifier = Modifier) {
+    val conn by LocalContext.current.app.repo.current.collectAsStateWithLifecycle()
+    val key = "${conn?.agent?.id}/$pkg"
+    val image by produceState(icons.get(key), key) {
+        val api = conn?.api ?: return@produceState
+        if (value != null) return@produceState
+        value = runCatching {
+            val bytes = api.appIcon(pkg)
+            withContext(Dispatchers.Default) { BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.asImageBitmap() }
+        }.getOrNull()?.also { icons.put(key, it) }
+    }
+    Box(modifier, contentAlignment = Alignment.Center) {
+        image?.let { Image(it, contentDescription = null, contentScale = ContentScale.Fit, modifier = Modifier.matchParentSize()) }
+    }
+}
+
 // ---- pictures from the internet (posters), small and cached ----
 
 private val images = LruCache<String, ImageBitmap>(48)

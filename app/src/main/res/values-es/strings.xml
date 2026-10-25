@@ -465,4 +465,11 @@
     <string name="agent_update_ahead">%1$s: una versión de prueba, más nueva que la última publicada</string>
     <string name="agent_updates_check">Preguntar a GitHub ahora</string>
     <string name="numbers_hint">También elige de la lista numerada de la tele, como decir «número 2».</string>
+
+    <!-- Mando: las apps de la tele -->
+    <string name="apps_refresh">Leer otra vez las apps de la tele</string>
+    <string name="apps_refreshed">Apps de la tele leídas otra vez</string>
+    <string name="apps_read">Como las lista la tele, leídas %1$s</string>
+    <string name="apps_read_adb">Como las lista la tele, leídas %1$s (actualiza la app de la tele para ver sus nombres e iconos)</string>
+    <string name="apps_not_read">El agente aún no ha leído las apps de la tele: estas son las que conoce.</string>
 </resources>

@@ -132,10 +132,29 @@ data class Segment(val what: String, @SerialName("start_s") val startS: Long, @S
 data class VolumeLevel(val level: Int? = null)
 
 @Serializable
-data class AppEntry(val key: String, val label: String)
+data class AppEntry(val key: String, val label: String, val `package`: String = "", val icon: Boolean = false)
+
+/** GET /v1/apps: the apps on the TV the agent may open, in the TV's order; when they were read from it. */
+@Serializable
+data class AppsResponse(
+    val apps: List<AppEntry> = emptyList(),
+    val checked: Double? = null,
+    val source: String = "",
+    val error: String? = null,
+)
+
+/** GET /v1/help: everything you can say, by section (the agent's commands.py), with an example of each. */
+@Serializable
+data class HelpResponse(val lang: String = "en", val legend: String = "", val sections: List<HelpSection> = emptyList())
 
 @Serializable
-data class AppsResponse(val apps: List<AppEntry> = emptyList())
+data class HelpSection(val name: String, val commands: List<HelpCommand> = emptyList())
+
+@Serializable
+data class HelpCommand(val say: String, val does: String = "", val type: String = "", val by: String = "rules", val example: String = "")
+
+@Serializable
+data class KeptResult(val kept: List<String> = emptyList(), val does: String = "")
 
 @Serializable
 data class ListItem(

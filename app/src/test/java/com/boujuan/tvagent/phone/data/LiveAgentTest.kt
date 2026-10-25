@@ -35,7 +35,7 @@ class LiveAgentTest {
             val tv = api.tvStatus()
             assertTrue(tv.toString(), tv.error != null || tv.model.isNotEmpty())
             // Remote
-            assertTrue(api.apps().isNotEmpty())
+            assertTrue(api.apps().apps.isNotEmpty())
             api.volume()
             // Now playing, the lists, Activity
             api.nowPlaying()
