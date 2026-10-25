@@ -491,4 +491,6 @@
     <string name="tstage_start">Ponerlo</string>
     <string name="tstage_chain">La cadena</string>
     <string name="tstage_skip">Saltar</string>
+    <string name="tstage_clean">Limpieza</string>
+    <string name="tstage_done">Resultado</string>
 </resources>

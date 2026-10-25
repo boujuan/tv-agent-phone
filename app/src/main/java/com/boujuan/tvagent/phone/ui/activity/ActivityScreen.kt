@@ -410,12 +410,24 @@ fun Trace(steps: JsonArray) {
         fun str(k: String) = runCatching { s[k]?.jsonPrimitive?.contentOrNull }.getOrNull()
         fun num(k: String) = runCatching { s[k]?.jsonPrimitive?.doubleOrNull }.getOrNull()
         val now = str("stage")
-        if (now != null && now != stage) {
-            stage = now
-            Text(stageName(now), Modifier.padding(top = 6.dp), style = MaterialTheme.typography.labelLarge,
+        val group = if (now in DECIDING) "decide" else now          // the router's steps go under "Deciding"
+        if (group != null && group != stage) {
+            stage = group
+            Text(stageName(group), Modifier.padding(top = 6.dp), style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary)
         }
-        val label = str("label") ?: str("step").orEmpty()
+        // The decision router's own steps ({"stage": "phrase", "rule", "matched"…}) have no label: named by their
+        // stage, with what they hold
+        val routerStep = str("label") == null && str("step") == null
+        val label = if (routerStep) routerName(now.orEmpty()) else str("label") ?: str("step").orEmpty()
+        val held = if (!routerStep) null else s.entries.filter { it.key != "stage" }.joinToString(" · ") { (k, v) ->
+            val text = runCatching { v.jsonPrimitive.contentOrNull }.getOrNull() ?: v.toString()
+            when {
+                k == "matched" -> if (text == "true") "✓" else "✗"
+                k == "text" -> "“$text”"
+                else -> text
+            }
+        }
         val method = (s["method"] as? JsonObject)?.let { m ->
             val kind = runCatching { m["kind"]?.jsonPrimitive?.contentOrNull }.getOrNull().orEmpty()
             val id = runCatching { m["id"]?.jsonPrimitive?.contentOrNull }.getOrNull()
@@ -428,7 +440,7 @@ fun Trace(steps: JsonArray) {
                 Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                 Text(time, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            val line = listOfNotNull(method, str("verdict"),
+            val line = listOfNotNull(held, method, str("verdict"),
                 sure?.let { (c, t) -> stringResource(R.string.trace_sure, c, t) }, str("why")).filter { it.isNotEmpty() }
             if (line.isNotEmpty()) {
                 Text(line.joinToString(" · "), style = MaterialTheme.typography.bodySmall,
@@ -440,10 +452,21 @@ fun Trace(steps: JsonArray) {
 
 private fun secs(ms: Double) = if (ms >= 1000) "%.1f s".format(ms / 1000) else "%.0f ms".format(ms)
 
+/** The decision router's steps (decide/router.py): the clean-up, then each way of deciding tried. */
+private val DECIDING = setOf("clean", "phrase", "pattern", "llm", "d1", "fallback")
+
+@Composable
+private fun routerName(stage: String) = when (stage) {
+    "clean" -> stringResource(R.string.tstage_clean)
+    "phrase", "pattern", "llm", "d1" -> viaLabel(stage)
+    else -> stage
+}
+
 /** A trace stage's name: deciding, finding the title, the episode, the scene, starting it, the chain… */
 @Composable
 private fun stageName(stage: String) = when (stage) {
     "decide", "llm", "d1" -> stringResource(R.string.tstage_decide)
+    "done" -> stringResource(R.string.tstage_done)
     "title" -> stringResource(R.string.tstage_title)
     "episode" -> stringResource(R.string.tstage_episode)
     "scene" -> stringResource(R.string.tstage_scene)

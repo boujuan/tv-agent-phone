@@ -14,7 +14,7 @@ object Suggestions {
         Pick("tracks", placeholder = true, fromEnd = 1),        // audio in ‹language›
         Pick("tracks", placeholder = true, fromEnd = 0),        // from now on, audio in ‹language›
         Pick("sequence"),
-        Pick("play_title", by = "llm"),                          // the episode where…
+        Pick("play_title", described = true),                   // the episode of ‹title› where ‹moment›
         Pick("find_scene"),
         Pick("skip"),
         Pick("next_episode"),
@@ -24,7 +24,11 @@ object Suggestions {
         Pick("cancel"),
     )
 
-    private data class Pick(val type: String, val by: String? = null, val placeholder: Boolean = false, val fromEnd: Int? = null)
+    /** described: a placeholder besides the title and numbers (‹moment›): what's in it is described, not named. */
+    private data class Pick(val type: String, val described: Boolean = false, val placeholder: Boolean = false, val fromEnd: Int? = null)
+
+    private val NAMED = setOf("title", "título", "n")
+    private fun placeholders(say: String) = Regex("‹([^›]+)›").findAll(say).map { it.groupValues[1] }.toList()
 
     /** (section, command) of each kind in [help], in KINDS' order; a kind the agent doesn't have is left out. */
     fun indices(help: HelpResponse): List<Pair<Int, Int>> {
@@ -32,7 +36,8 @@ object Suggestions {
         val out = mutableListOf<Pair<Int, Int>>()
         for (k in KINDS) {
             val matching = all.filter { (_, _, cmd) ->
-                cmd.type == k.type && (k.by == null || cmd.by == k.by) && (!k.placeholder || '‹' in cmd.say)
+                cmd.type == k.type && (!k.placeholder || '‹' in cmd.say) &&
+                    (!k.described || placeholders(cmd.say).any { it !in NAMED })
             }
             val hit = if (k.fromEnd != null) matching.getOrNull(matching.size - 1 - k.fromEnd) else matching.firstOrNull()
             hit?.let { (s, c, _) -> (s to c).takeIf { it !in out }?.let(out::add) }

@@ -491,4 +491,6 @@
     <string name="tstage_start">Starting it</string>
     <string name="tstage_chain">The chain</string>
     <string name="tstage_skip">Skipping</string>
+    <string name="tstage_clean">Clean-up</string>
+    <string name="tstage_done">Result</string>
 </resources>

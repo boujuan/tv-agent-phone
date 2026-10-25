@@ -12,7 +12,9 @@ class SuggestionsTest {
     private fun help(lang: String) = HelpResponse(lang, sections = listOf(
         HelpSection("films", listOf(
             HelpCommand(if (lang == "es") "pon ‹título›" else "play ‹title›", type = "play_title", example = "x"),
-            HelpCommand("ep", type = "play_title", by = "llm", example = if (lang == "es") "pon el capítulo de ‹título› en el que se besan" else "play the episode of ‹title› where they kiss"),
+            HelpCommand("play ‹title› season ‹n›", type = "play_title", example = "y"),
+            HelpCommand(if (lang == "es") "pon el capítulo de ‹título› en el que ‹momento›" else "play the episode of ‹title› where ‹moment›",
+                type = "play_title", example = if (lang == "es") "pon el capítulo de ‹título› en el que se besan" else "play the episode of ‹title› where they kiss"),
             HelpCommand("next", type = "next_episode", example = if (lang == "es") "siguiente capítulo" else "next episode"))),
         HelpSection("tracks", listOf(
             HelpCommand("subtitles on/off", type = "tracks", example = "subtitles on"),
