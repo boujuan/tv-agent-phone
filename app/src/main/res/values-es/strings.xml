@@ -472,4 +472,7 @@
     <string name="apps_read">Como las lista la tele, leídas %1$s</string>
     <string name="apps_read_adb">Como las lista la tele, leídas %1$s (actualiza la app de la tele para ver sus nombres e iconos)</string>
     <string name="apps_not_read">El agente aún no ha leído las apps de la tele: estas son las que conoce.</string>
+
+    <!-- Buscar: la ayuda del agente -->
+    <string name="what_you_can_say">Lo que puedes decir</string>
 </resources>

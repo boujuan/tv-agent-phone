@@ -472,4 +472,7 @@
     <string name="apps_read">As the TV lists them, read %1$s</string>
     <string name="apps_read_adb">As the TV lists them, read %1$s (update the TV app for their names and icons)</string>
     <string name="apps_not_read">The agent hasn’t read the TV’s apps yet: these are the ones it knows.</string>
+
+    <!-- Search: the agent's help -->
+    <string name="what_you_can_say">What you can say</string>
 </resources>
