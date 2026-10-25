@@ -3,7 +3,7 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
-## Unreleased
+## 0.2.5 — 2026-10-25
 
 ### Added
 - **Remote**: the apps really on the TV, as its home screen lists them, with their icons (read by the agent from
