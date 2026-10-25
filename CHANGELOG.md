@@ -3,7 +3,7 @@
 One section per release, newest first; each `## X.Y.Z` section becomes that tag's GitHub Release notes. Format:
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions: [SemVer](https://semver.org/).
 
-## Unreleased
+## 0.2.4 — 2026-10-25
 
 ### Added
 - **The TV's numbered lists on the phone**: suggestions, a title to make sure of, the episodes or moments found and
